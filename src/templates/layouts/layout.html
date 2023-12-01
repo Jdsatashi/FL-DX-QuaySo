@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% if title %} {{ title }} {% else %} Heart web {% endif %}
+    </title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/heart-favor.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css') }}">
+    {% block header %}{% endblock header %}
+</head>
+<body>
+    {% include 'layouts/flash.html' %}
+    {% include 'layouts/navbar.html' %}
+    <div>
+        {% block content %}{% endblock content %}
+    </div>
+    <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+            integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+            crossorigin="anonymous"
+    ></script>
+    <script src="{{ url_for('static', filename='scripts/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
