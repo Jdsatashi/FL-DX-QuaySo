@@ -1,0 +1,68 @@
+{% extends 'layouts/layout.html' %}
+{% block header %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+{% endblock header %}
+{% block content %}
+<div class="container">
+        <div class="col-12">
+            <div class="row mt-4">
+                <div class="d-flex">
+                    <div class="">
+                        <h2>Booking Management</h2>
+                    </div>
+                    <div class="ms-auto p-2">
+                        <form onsubmit="" action="" method="GET">
+                            <div class="input-group mb-3">
+                                <label for="datebook"></label>
+                                <select id="datebook" name="datebook" class="form-select">
+                                    <option value="" selected>Choose Booking Date</option>
+                                </select>
+                                <label for="type_search"></label>
+                                <select style="max-width: 7rem" id="type_search" name="type_search" class="form-select">
+                                    <option value="doctor">Doctor</option>
+                                    <option value="user_booking">User</option>
+                                    <option value="note">Notes</option>
+                                </select>
+                                <label for="query_search"></label>
+                                <input type="text" id="query_search"
+                                       name="query_search" placeholder="Search"
+                                       class="form-control">
+                                <button type="submit" class="btn btn-outline-dark">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-flex mb-2">
+
+            </div>
+            <table class="table-design mb-2">
+                <thead>
+                <tr>
+                    <th style="width: 7em; max-width: 9em;">Username</th>
+                    <th style="width: 8em; max-width: 10em;">Email</th>
+                    <th style="width: 8em; max-width: 10em;">Role id</th>
+                    <th style="width: 8em; max-width: 10em;">Date created</th>
+                    <th style="width: 4em; min-width: 6em;">Edit</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for acc in accounts %}
+                    <tr>
+                        <td>{{ acc.username }}</td>
+                        <td>{{ acc.email }}</td>
+                        <td>{{ acc.role_id }}</td>
+                        <td>{{ acc.date_created }}</td>
+                        <td>
+                            <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#edit-{{ acc._id }}">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

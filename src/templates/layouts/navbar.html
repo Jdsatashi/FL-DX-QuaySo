@@ -14,7 +14,7 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('roll_number') }}">Quay số</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Test 2</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.account_manager') }}">Test 2</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
@@ -50,7 +50,6 @@
             {% else %}
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Register</a></li>
                 </ul>
             {% endif %}
         </div>

@@ -16,7 +16,7 @@ def add_default_role():
 
 
 def create_admin_account():
-    if not ACCOUNT_TABLE.find_one('admin'):
+    if not ACCOUNT_TABLE.find_one({'username': 'admin'}):
         password = 'dxAdministrator'.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
         ACCOUNT_TABLE.insert_one({

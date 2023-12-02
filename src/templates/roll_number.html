@@ -1,6 +1,6 @@
 {% extends 'layouts/layout.html' %}
 {% block header %}
-    <link rel="stylesheet" href="../static/styles/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 {% endblock header %}
 
 {% block content %}

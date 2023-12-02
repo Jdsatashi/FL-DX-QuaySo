@@ -4,7 +4,7 @@
         <div class="col-md-6 offset-3">
             <div class="card mt-lg-4">
                 <div class="card-header">
-                    <h1>Register</h1>
+                    <h1>Create account</h1>
                 </div>
                 <div class="card-body">
                     <form method="POST">
@@ -35,6 +35,20 @@
                                     {% endfor %}
                                 {% else %}
                                     {{ form.email(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.turn_roll.label(class="form-control-label", type="password") }}
+                                {% if form.turn_roll.errors %}
+                                    {{ form.turn_roll(class="form-control is-invalid", id="turn-roll-input") }}
+                                    {% for error in form.turn_roll.errors %}
+                                        <div class="invalid-feedback">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ form.turn_roll(class="form-control") }}
                                 {% endif %}
                             </div>
 

@@ -8,6 +8,7 @@ def home():
     return render_template('home.html', title='Home page')
 
 
-from .requests import authenticate, roll_number
+from .requests import authenticate, roll_number, administrator
 auth_route = authenticate
-roll_number = roll_number
+roll_number_route = roll_number
+admin_route = administrator

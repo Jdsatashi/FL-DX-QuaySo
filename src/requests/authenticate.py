@@ -1,48 +1,12 @@
-from _datetime import datetime
-import validators
+
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
-from src.forms import RegisterForm, LoginForm
+from src.forms import LoginForm
 from ..mongodb import ACCOUNT_TABLE
 from ..utils.utilities import role_auth_id, role_admin_id
 
 auth = Blueprint('auth', __name__)
-
-
-@auth.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if request.method == 'POST':
-        username = form.username.data
-        emails = form.email.data
-        password = form.password.data.encode("utf-8")
-        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-
-        if not validators.email(emails):
-            flash(f"Email was not valid.", "warning")
-            return redirect(url_for('auth.register'))
-        if ACCOUNT_TABLE.find_one(username):
-            flash(f"Username of Email.", "warning")
-            return redirect(url_for('auth.register'))
-        if ACCOUNT_TABLE.find_one(emails):
-            flash(f"Email {emails} was used.", "warning")
-            return redirect(url_for('auth.register'))
-
-        if form.validate_on_submit():
-            ACCOUNT_TABLE.insert_one({
-                "username": username,
-                "email": emails,
-                "password": hashed_password,
-                "role_id": role_auth_id,
-                "date_created": datetime.utcnow()
-            })
-            # session auto login after register
-            # session["username"] = username
-            flash(f"Account '{username}' creating successful.", "success")
-            return redirect(url_for('home'))
-    else:
-        return render_template('auth/register.html', title='Register', form=form)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -93,23 +57,6 @@ def authorize_user():
         if 'password' in data:
             data.pop('password')
         return data
-    # elif (request.authorization is not None
-    #         and "username" in request.authorization
-    #         and "password" in request.authorization):
-    #     username = request.authorization["username"]
-    #     password = request.authorization["password"]
-    #     password_hash = password.encode('utf8')
-    #     authorize = ACCOUNT_TABLE.find_one({
-    #         'username': username,
-    #     })
-    #     authorize['_id'] = str(authorize['_id'])
-    #     if bcrypt.checkpw(password_hash, authorize["password"]):
-    #         data = authorize
-    #         if 'password' in data:
-    #             data.pop('password')
-    #     else:
-    #         return False
-    #     return data
     else:
         return False
 
