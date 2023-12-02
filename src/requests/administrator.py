@@ -1,22 +1,19 @@
 from _datetime import datetime
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
-import validators
 from .authenticate import admin_authorize
 from ..forms import CreateAccountForm
 from ..mongodb import ACCOUNT_TABLE
-from ..utils.utilities import role_auth_id, role_admin_id
+from ..utils.utilities import role_auth_id, validate_account_value
 
-import validators
 import bcrypt
-
 
 admin = Blueprint('admin', __name__)
 
 
 @admin.route('/accounts/')
 def account_manager():
-    adm = admin_authorize
+    adm = admin_authorize()
     if not adm:
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
@@ -38,46 +35,76 @@ def account_manager():
 
 @admin.route('/accounts/create', methods=['GET', 'POST'])
 def account_create():
+    adm = admin_authorize()
+    if not adm:
+        flash("You're not allow to access this page.", 'danger')
+        return redirect(url_for('home'))
     form = CreateAccountForm()
     if request.method == 'POST':
-        username = form.username.data
-        emails = form.email.data
         password = form.password.data.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-        turn_roll = form.turn_roll.data
-        is_active = True
 
-        if not validators.email(emails):
-            flash(f"Email was not valid.", "warning")
-            return redirect(url_for('admin.account_create'))
-        if ACCOUNT_TABLE.find_one(username):
-            flash(f"Username of Email.", "warning")
-            return redirect(url_for('admin.account_create'))
-        if ACCOUNT_TABLE.find_one(emails):
-            flash(f"Email {emails} was used.", "warning")
-            return redirect(url_for('admin.account_create'))
-        if isinstance(turn_roll, int):
-            flash(f"Lượt quay phải là số.", "warning")
-            return redirect(url_for('admin.account_create'))
+        form_data = {
+            "username": form.username.data,
+            "email": form.email.data,
+            "password": hashed_password,
+            "turn_roll": form.turn_roll.data,
+            "role_id": role_auth_id,
+            "is_active": True,
+            "date_created": datetime.utcnow()
+        }
+
+        validate_account_value(form_data['email'], form_data['username'], form_data['turn_roll'])
 
         if form.validate_on_submit():
             try:
-                ACCOUNT_TABLE.insert_one({
-                    "username": username,
-                    "email": emails,
-                    "password": hashed_password,
-                    "turn_roll": turn_roll,
-                    "role_id": role_auth_id,
-                    "is_active": is_active,
-                    "date_created": datetime.utcnow()
-                })
+                ACCOUNT_TABLE.insert_one(form_data)
                 # session auto login after register
                 # session["username"] = username
-                flash(f"Account '{username}' creating successful.", "success")
+                print(f"Created successfully {form_data['username']}.")
+                flash(f"Account '{form_data['username']}' creating successful.", "success")
                 return redirect(url_for('home'))
             except Exception as e:
                 print(f"Error.\n{e}")
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('home'))
     else:
-        return render_template('auth/register.html', title='Register', form=form)
+        return render_template('admin/account/create.html', title='Create account', form=form)
+
+
+@admin.route('account/<string:_id>', methods=['POST', 'GET'])
+def account_edit(_id):
+    adm = admin_authorize()
+    if not adm:
+        flash("You're not allow to access this page.", 'danger')
+        return redirect(url_for('home'))
+    form = CreateAccountForm()
+    if request.method == 'GET':
+        return render_template('admin/account/edit.html', form=form)
+    elif request.method == 'POST':
+        password = form.password.data.encode("utf-8")
+        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+
+        form_data = {
+            "username": form.username.data,
+            "email": form.email.data,
+            "password": hashed_password,
+            "turn_roll": form.turn_roll.data,
+            "role_id": role_auth_id,
+            "is_active": True,
+            "date_created": datetime.utcnow()
+        }
+
+        validate_account_value(form_data['email'], form_data['username'], form_data['turn_roll'])
+
+        if form.validate_on_submit():
+            edit_account = ACCOUNT_TABLE.find_one_and_update(
+                {'_id': ObjectId(_id)},
+                {
+                    '$set': form_data
+                }
+            )
+            if not edit_account:
+                print('Error when editing account.')
+                flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
+                return redirect(url_for('admin.account_manager'))

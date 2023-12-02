@@ -24,6 +24,15 @@ def create_number_list():
 
 @app.route('/quay-so/')
 def roll_number():
+    user = authorize_user()
+    if not user:
+        flash(f"Bạn phải đăng nhập để quay số", 'warning')
+        return redirect(url_for('home'))
+    user_id = user['_id']
+    roll_data = ROLL_TABLE.find_one({'user_id': user_id})
+    roll_data['_id'] = str(roll_data['_id'])
+    print(user)
+    print(roll_data)
     form = NumberSelectedForm()
     number_list = create_number_list()
     print('Refresh page.')
