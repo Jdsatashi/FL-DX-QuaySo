@@ -30,7 +30,8 @@ def roll_number():
         return redirect(url_for('home'))
     user_id = user['_id']
     roll_data = ROLL_TABLE.find_one({'user_id': user_id})
-    roll_data['_id'] = str(roll_data['_id'])
+    if roll_data:
+        roll_data['_id'] = str(roll_data['_id'])
     print(user)
     print(roll_data)
     form = NumberSelectedForm()

@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 {% endblock header %}
 {% block content %}
-<div class="container">
+    <div class="container">
         <div class="col-12">
             <div class="row mt-4">
                 <div class="d-flex">
@@ -42,8 +42,9 @@
                     <th style="width: 7em; max-width: 9em;">Username</th>
                     <th style="width: 8em; max-width: 10em;">Email</th>
                     <th style="width: 8em; max-width: 10em;">Lượt quay</th>
-                    <th style="width: 8em; max-width: 10em;">Date created</th>
+                    <th style="width: 8em; max-width: 10em;">Active</th>
                     <th style="width: 4em; min-width: 6em;">Edit</th>
+                    <th style="width: 4em; min-width: 6em;">Password</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -52,11 +53,28 @@
                         <td>{{ acc.username }}</td>
                         <td>{{ acc.email }}</td>
                         <td>{{ acc.turn_roll }}</td>
-                        <td>{{ acc.date_created }}</td>
+                        <td>
+                            {% if acc.is_active %}
+                                Active
+                            {% else %}
+                                No Active
+                            {% endif %}
+                        </td>
                         <td>
                             <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="modal"
                                     data-bs-target="#edit-{{ acc._id }}">
-                                Edit
+                                <a href="{{ url_for('admin.account_edit', _id=acc._id) }}">
+                                    Edit
+                                </a>
+                            </button>
+                        </td>
+
+                        <td>
+                            <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#edit-{{ acc._id }}">
+                                <a href="{{ url_for('auth.reset_password', _id=acc._id) }}">
+                                    Edit
+                                </a>
                             </button>
                         </td>
                     </tr>

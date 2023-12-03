@@ -2,14 +2,15 @@ function JdModal(info) {
     const modalParent = document.querySelector(`#${info.idModalParent}`);
     const openModalButton = document.querySelector(`#${info.idOpenModal}`)
     const closeModalButton = document.querySelector(`#${info.idCloseModal}`)
-    const mainModal = document.querySelector(`#${info.idMainModal}`)
     const showData = document.querySelector(`#${info.idShowNumberToConfirm}`)
+    const mainModal = document.querySelector(`#${info.idMainModal}`)
     const formModal = document.querySelector(`#${info.idModalForm}`)
     const inputModalForm = formModal.querySelector(`#${info.idModalInput}`)
-
+    const idModalConfirm = mainModal.querySelector(`#${info.idModalConfirm}`)
+    console.log(idModalConfirm, inputModalForm)
     // Open modal and send data to confirm
     openModalButton.addEventListener('click', (e) => {
-        let listNumber = Array.from(showListSelected.querySelectorAll('p.list-group-item'))
+        let listNumber = Array.from(showData.querySelectorAll('p.list-group-item'))
         // Display modal when have value selected
         if (listNumber.length > 0) {
             // Change style to 'block' to display modal
@@ -23,7 +24,7 @@ function JdModal(info) {
                 listValue.push(confirmValue)
                 // Add selected item
                 let addItem = document.createElement('p')
-                showData.appendChild(addItem)
+                idModalConfirm.appendChild(addItem)
                 addItem.className = `list-group-item jd-col border border-1 border-success px-4 py-2 text-center`
                 addItem.innerHTML = confirmValue.toString()
             })
@@ -47,7 +48,7 @@ function JdModal(info) {
         mainModal.style.display = 'none'
         modalParent.style.display = 'none';
         const
-            itemList = Array.from(showData.querySelectorAll('p.list-group-item'))
+            itemList = Array.from(idModalConfirm.querySelectorAll('p.list-group-item'))
         if (itemList) {
             itemList.forEach(item => item.remove())
         }

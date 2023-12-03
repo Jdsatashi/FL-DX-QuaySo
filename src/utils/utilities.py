@@ -11,7 +11,8 @@ role_admin = ROLE_TABLE.find_one({'role': 'admin'})
 role_admin_id = str(role_admin['_id']) if role_admin else ROLE_TABLE.find_one(
     {'role': 'admin'})
 
-def validate_account_value(emails, username, turn_roll):
+
+def validate_account_create(emails, username, turn_roll):
     if not validators.email(emails):
         flash(f"Email was not valid.", "warning")
         return redirect(url_for('admin.account_create'))

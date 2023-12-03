@@ -2,7 +2,7 @@
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
-from src.forms import LoginForm
+from src.forms import LoginForm, UpdatePasswordForm
 from ..mongodb import ACCOUNT_TABLE
 from ..utils.utilities import role_auth_id, role_admin_id
 
@@ -33,6 +33,7 @@ def login():
                         }
                     })
                 session["username"] = username
+                session["_id"] = user["_id"]
                 flash(f"Successfully Login! Welcome '{username}'.", "success")
                 return redirect(url_for('home'))
             else:
@@ -46,6 +47,24 @@ def login():
 def logout():
     session.pop('username')
     return redirect(url_for('home'))
+
+
+@auth.route('account/reset-password/<string:_id>', methods=['GET'])
+def reset_password(_id):
+    user = authorize_user()
+    is_admin = admin_authorize()
+    form = UpdatePasswordForm()
+    print("Reset password function")
+    if user['_id'] == _id:
+        print(f'User edit: {user}')
+        return render_template('auth/reset_password.html', account=user, form=form)
+    elif is_admin:
+        account = ACCOUNT_TABLE.find_one({'_id': ObjectId(_id)})
+        print(f'Admin edit: {user}')
+        return render_template('auth/reset_password.html', form=form, account=account)
+    else:
+        print('Not access able.')
+    return redirect(url_for('admin.account_manager'))
 
 
 def authorize_user():

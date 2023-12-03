@@ -1,10 +1,10 @@
 from _datetime import datetime
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
-from .authenticate import admin_authorize
-from ..forms import CreateAccountForm
+from .authenticate import admin_authorize, authorize_user
+from ..forms import CreateAccountForm, UpdateAccountForm
 from ..mongodb import ACCOUNT_TABLE
-from ..utils.utilities import role_auth_id, validate_account_value
+from ..utils.utilities import role_auth_id, validate_account_create
 
 import bcrypt
 
@@ -24,8 +24,24 @@ def account_manager():
             data.pop('password')
             data['_id'] = str(data['_id'])
             data['role_id'] = str(data['role_id'])
-        # data.append()
-        print(data_list)
+            if 'turn_roll' not in data:
+                ACCOUNT_TABLE.update_one({
+                    '_id': ObjectId(data['_id']),
+                }, {
+                    '$set': {
+                        'turn_roll': 0
+                    }
+                })
+                data['turn_roll'] = 0
+            if 'is_active' not in data:
+                ACCOUNT_TABLE.update_one({
+                    '_id': ObjectId(data['_id']),
+                }, {
+                    '$set': {
+                        'is_active': True
+                    }
+                })
+                data['is_active'] = True
         return render_template('admin/account/index.html', accounts=data_list)
     except Exception as e:
         print(f"Error.\n{e}")
@@ -54,7 +70,7 @@ def account_create():
             "date_created": datetime.utcnow()
         }
 
-        validate_account_value(form_data['email'], form_data['username'], form_data['turn_roll'])
+        validate_account_create(form_data['email'], form_data['username'], form_data['turn_roll'])
 
         if form.validate_on_submit():
             try:
@@ -78,24 +94,24 @@ def account_edit(_id):
     if not adm:
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
-    form = CreateAccountForm()
+    form = UpdateAccountForm()
+    account = ACCOUNT_TABLE.find_one({
+        '_id': ObjectId(_id)
+    })
+    if not account:
+        flash('Account not found.', 'warning')
+        return redirect(url_for('home'))
     if request.method == 'GET':
-        return render_template('admin/account/edit.html', form=form)
+        return render_template('admin/account/edit.html', form=form, account=account, _id=account['_id'])
     elif request.method == 'POST':
-        password = form.password.data.encode("utf-8")
-        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
         form_data = {
             "username": form.username.data,
             "email": form.email.data,
-            "password": hashed_password,
             "turn_roll": form.turn_roll.data,
-            "role_id": role_auth_id,
-            "is_active": True,
-            "date_created": datetime.utcnow()
+            "is_active": form.is_active.data,
+            "date_updated": datetime.utcnow()
         }
-
-        validate_account_value(form_data['email'], form_data['username'], form_data['turn_roll'])
 
         if form.validate_on_submit():
             edit_account = ACCOUNT_TABLE.find_one_and_update(
@@ -108,3 +124,9 @@ def account_edit(_id):
                 print('Error when editing account.')
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('admin.account_manager'))
+            print(f'{edit_account["date_updated"]}Successful editing account.')
+            print(edit_account)
+            flash(f'Update tài khoản "{edit_account["username"]}".', 'success')
+            return redirect(url_for('admin.account_manager'))
+        flash('Một số thông tin bị lỗi, vui lòng kiểm tra.', 'warning')
+        return render_template('admin/account/edit.html', form=form, account=account, _id=account['_id'])
