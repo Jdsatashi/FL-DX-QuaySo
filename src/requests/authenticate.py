@@ -33,6 +33,7 @@ def login():
                         }
                     })
                 session["username"] = username
+                user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
                 flash(f"Successfully Login! Welcome '{username}'.", "success")
                 return redirect(url_for('home'))

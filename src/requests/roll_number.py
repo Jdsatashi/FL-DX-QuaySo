@@ -16,9 +16,27 @@ class NumberSelectedForm(FlaskForm):
 
 def create_number_list():
     list_number = []
+    roll_data = ROLL_TABLE.find()
+    selected_number = list()
+    all_number = []
+    if roll_data:
+        for roll in roll_data:
+            roll['_id'] = str(roll['_id'])
+            selected_number.append(roll['select_number'])
+    for number in selected_number:
+        arr = number.split(',')
+        for i in arr:
+            all_number.append(int(i))
+    all_number.sort()
+    print(all_number)
     for i in range(1000):
-        if not i == 0:
+        if i != 0:
             list_number.append(i)
+        # if i != all_number[0] and i != 0:
+        #
+        # else:
+        #     all_number.pop(0)
+        #     print(f'remove {i}')
     return list_number
 
 
@@ -34,6 +52,14 @@ def roll_number():
         roll_data['_id'] = str(roll_data['_id'])
     print(user)
     print(roll_data)
+    if 'select_number' in roll_data:
+        select_number = roll_data['select_number']
+        print(select_number)
+        list_select_number = select_number.split(',')
+        print(list_select_number)
+        if str(4) in select_number:
+            print('4 is selected')
+        # select_number
     form = NumberSelectedForm()
     number_list = create_number_list()
     print('Refresh page.')

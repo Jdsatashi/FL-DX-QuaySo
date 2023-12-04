@@ -1,16 +1,20 @@
-from flask import render_template, session
+from flask import render_template, session, redirect, url_for
 
 from src import app
 from .mongodb import ACCOUNT_TABLE
+from .requests.authenticate import authorize_user
 
 
 @app.route('/')
 def home():
-    if session['username']:
+    user = authorize_user()
+    if not user:
+        return render_template('home.html', title='Home page')
+    elif session['username']:
         user = ACCOUNT_TABLE.find_one({
             'username': session['username']
         })
-        if '_id' not in session:
+        if '_id' in session:
             session['_id'] = str(user['_id'])
     return render_template('home.html', title='Home page')
 
