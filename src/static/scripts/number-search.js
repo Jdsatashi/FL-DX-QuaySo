@@ -55,7 +55,8 @@ function clickAddItem(item, item_value, showListSelected) {
             id: `btn-remove-${item_value}`,
             className: 'btn-close',
             'style.padding': '8px',
-            'style.margin': '0 0 8px 0'
+            'style.margin': '0 0 8px 0',
+            title: 'Bỏ chọn'
         }
     })
     const removeBtnE = document.getElementById(removeButton.id)

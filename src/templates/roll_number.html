@@ -46,19 +46,21 @@
                         </div>
                         <div class="card-body">
                             <p style="font-size: 1.5rem;">Player '{{ session['username'] }}' được chọn
-                                <strong>5</strong> số.</p>
+                                <strong>{{ user['turn_roll'] }}</strong> số.</p>
                             <fieldset class="form-group text-center" style="margin-block-start: 0;">
                                 <div class="form-group">
                                     <label for="input-search-number"></label>
                                     <input type="text" id="input-search-number"
                                            style="padding: 0.25em 2em 0.25em 0.125em; border-radius: 4px 4px 4px 4px"
-                                           placeholder="Tìm số">
+                                           placeholder="Tìm số"
+                                           title="Nhập số cần tìm"
+                                    >
                                 </div>
                                 <!-- div tag parent to put child result -->
                                 <div id="show-selected-number" class="row d-flex justify-content-center">
 
                                 </div>
-                                <button type="button" class="btn btn-dark mt-2" id="open-modal-btn">
+                                <button type="button" class="btn btn-dark mt-2" id="open-modal-btn" title="Xác nhận chọn số">
                                     Xác nhận
                                 </button>
                             </fieldset>
@@ -70,7 +72,9 @@
             <div id="group-data" class="d-flex flex-md-wrap">
                 {% for number in number_list %}
                     <p id="li-{{ number }}"
-                       class="grid-col grid-item text-center">{{ number }}</p>
+                       class="grid-col grid-item text-center"
+                       title="Nhấn để chọn số"
+                    >{{ number }}</p>
                 {% endfor %}
             </div>
         </div>

@@ -56,7 +56,7 @@
                             <div class="form-group">
                                 <label for="is_active">Hoạt động:</label>
                                 <input type="checkbox" id="is_active" name="is_active"
-                                       {% if form.is_active.data %}checked{% endif %}>
+                                       {% if account.is_active == True %}checked{% endif %}>
                             </div>
 
                             <div class="form-group mt-2">

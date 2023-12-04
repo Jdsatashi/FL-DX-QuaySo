@@ -7,7 +7,6 @@ function JdModal(info) {
     const formModal = document.querySelector(`#${info.idModalForm}`)
     const inputModalForm = formModal.querySelector(`#${info.idModalInput}`)
     const idModalConfirm = mainModal.querySelector(`#${info.idModalConfirm}`)
-    console.log(idModalConfirm, inputModalForm)
     // Open modal and send data to confirm
     openModalButton.addEventListener('click', (e) => {
         let listNumber = Array.from(showData.querySelectorAll('p.list-group-item'))

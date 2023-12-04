@@ -114,6 +114,14 @@ def account_edit(_id):
         }
 
         if form.validate_on_submit():
+            ACCOUNT_TABLE.find_one_and_update(
+                {'_id': ObjectId(_id)},
+                {
+                    '$set': {
+                        'date_updated': ''
+                    }
+                }
+            )
             edit_account = ACCOUNT_TABLE.find_one_and_update(
                 {'_id': ObjectId(_id)},
                 {
