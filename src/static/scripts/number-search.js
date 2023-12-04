@@ -1,18 +1,10 @@
 import addElement from "./helper.js";
 const inputSearch = document.querySelector('#input-search-number');
-const groupData = document.querySelector('#group-data')
 const showListSelected = document.querySelector('#show-selected-number')
+const groupData = document.querySelector('#group-data')
 let listItem = groupData.querySelectorAll('.grid-col.grid-item')
-
 // Live searching
-// function inputLiveSearch(info) {
-//     const inputSearch = document.querySelector(`#${info.idInputSearch}`);
-//     const groupData = document.querySelector(`#${info.idGroupData}`);
-//     const showListSelected = document.querySelector(`#${info.idShowListSelected}`);
-//     let listItem = groupData.querySelectorAll(info.classListItem)
-// }
-
-let inputSearchEvent = (e, listItem, showListSelected) => {
+let inputSearchEvent = (e) => {
     liveSearch(e, listItem, showListSelected)
 }
 
