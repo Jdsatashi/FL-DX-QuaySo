@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components{
+    .card-simple {
+        @apply m-10 lg:w-auto sm:rounded-lg bg-white px-6 py-8 shadow-xl ring-1 ring-slate-900/5 dark:bg-slate-500
+    }
+    .button-gradient {
+        @apply transform rounded-lg bg-gradient-to-r from-purple-400 to-blue-500 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:from-purple-500 hover:to-blue-500 focus:outline-none focus:ring focus:ring-purple-300 active:bg-blue-700
+    }
+    .button-simple {
+        @apply mt-8 rounded-md bg-blue-100 px-4 py-2 text-sm sm:w-auto font-medium text-blue-900 hover:bg-blue-300 hover:ring-1 hover:ring-slate-400
+    }
+    .btn-primary{
+        @apply mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
+    }
+    .form-input{
+        @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+    }
+    .input-label{
+        @apply block mb-2 text-sm font-medium md:text-xl sm-max:text-2xl text-gray-900 dark:text-white
+    }
+    .alert-info {
+        @apply border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800
+    }
+    .alert-danger {
+        @apply border-red-300 rounded-lg bg-red-50 dark:bg-gray-800
+    }
+    .alert-warning {
+        @apply border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800
+    }
+    .alert-success {
+        @apply border-green-300 rounded-lg bg-green-50 dark:bg-gray-800
+    }
+    .alert-dark {
+        @apply border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800
+    }
+    .text-info{
+        @apply text-blue-800 dark:text-blue-300
+    }
+    .text-danger{
+        @apply text-red-800 dark:text-red-300
+    }
+    .text-warning{
+        @apply text-yellow-800 dark:text-yellow-300
+    }
+    .text-success{
+        @apply text-green-800 dark:text-green-300
+    }
+    .text-dark{
+        @apply text-gray-800 dark:text-gray-300
+    }
+}
