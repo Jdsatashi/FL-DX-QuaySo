@@ -46,7 +46,9 @@ def login():
 
 @auth.route('/logout')
 def logout():
-    session.pop('username')
+    if 'username' in session:
+        session.pop('username')
+        return redirect(url_for('home'))
     return redirect(url_for('home'))
 
 

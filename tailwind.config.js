@@ -10,6 +10,9 @@ module.exports = {
         extend: {
             screens: {
                 'sm-max': {'max': '767px'},
+                'md-max': {'max': '1023px'},
+                'lg-max': {'max': '1279px'},
+                'xl-max': {'max': '1535px'},
             }
         },
     },

@@ -1,71 +1,76 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
-    <div class="container">
-        <div class="col-md-6 offset-3">
-            <div class="card mt-lg-4">
-                <div class="card-header">
-                    <h1>Edit account</h1>
-                    <p>{{ account.username }}</p>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.account_edit', _id=account._id) }}">
-                        {{ form.csrf_token() }}
-                        <fieldset class="form-group">
-                            <div class="form-group">
-                                {{ form.username.label(class="form-control-label") }}
-                                {% if form.username.errors %}
-                                    {{ form.username(class="form-control is-invalid") }}
-                                    {% for error in form.username.errors %}
-                                        <div class="invalid-feedback">
-                                            <span>{{ error }}</span>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    {{ form.username(class="form-control", value=account.username) }}
-                                {% endif %}
-                            </div>
+{#<div class="form-group">#}
+    {#                                <label for="is_active">Hoạt động:</label>#}
+    {#                                <input type="checkbox" id="is_active" name="is_active"#}
+    {#                                       {% if account.is_active == True %}checked{% endif %}>#}
+    {#                            </div>#}
 
-                            <div class="form-group">
-                                {{ form.email.label(class="form-control-label", type="email") }}
-                                {% if form.email.errors %}
-                                    {{ form.email(class="form-control is-invalid") }}
-                                    {% for error in form.email.errors %}
-                                        <div class="invalid-feedback">
-                                            <span>{{ error }}</span>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    {{ form.email(class="form-control", value=account.email) }}
-                                {% endif %}
-                            </div>
+    <div class="flex justify-center items-center">
+        <div class="card-simple md-max:w-full w-[800px]">
+            <div class="rounded mx-auto text-center text-4xl font-bold">
+                Tạo tài khoản
+            </div>
+            <div class="mt-2">
+                <form method="POST" action="{{ url_for('admin.account_edit', _id=account._id) }}"
+                      class="max-w-sm mx-auto">
+                    {{ form.csrf_token() }}
+                    <fieldset>
+                        <div class="mb-3">
+                            {{ form.username.label(class="input-label") }}
+                            {% if form.username.errors %}
+                                {{ form.username(class="form-input is-invalid") }}
+                                {% for error in form.username.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.username(class="form-input", placeholder="Tên đăng nhập", value=account.username) }}
+                            {% endif %}
+                        </div>
 
-                            <div class="form-group">
-                                {{ form.turn_roll.label(class="form-control-label", type="number") }}
-                                {% if form.turn_roll.errors %}
-                                    {{ form.turn_roll(class="form-control is-invalid", id="turn-roll-input") }}
-                                    {% for error in form.turn_roll.errors %}
-                                        <div class="invalid-feedback">
-                                            <span>{{ error }}</span>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    {{ form.turn_roll(class="form-control", value=account.turn_roll) }}
-                                {% endif %}
-                            </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="input-label") }}
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-input is-invalid") }}
+                                {% for error in form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.email(class="form-input", placeholder="Địa chỉ mail", value=account.email) }}
+                            {% endif %}
+                        </div>
 
-                            <div class="form-group">
-                                <label for="is_active">Hoạt động:</label>
-                                <input type="checkbox" id="is_active" name="is_active"
-                                       {% if account.is_active == True %}checked{% endif %}>
-                            </div>
+                        <div class="mb-3">
+                            {{ form.turn_roll.label(class="input-label") }}
+                            {% if form.turn_roll.errors %}
+                                {{ form.turn_roll(class="form-input is-invalid", id="turn-roll-input") }}
+                                {% for error in form.turn_roll.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.turn_roll(class="form-input", placeholder="Lượt chọn số", value=account.turn_roll) }}
+                            {% endif %}
+                        </div>
 
-                            <div class="form-group mt-2">
-                                {{ form.submit(class="btn btn-primary") }}
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
+                        <label class="relative inline-flex items-center mb-5 cursor-pointer">
+                            <input type="checkbox" id="is_active" name="is_active" value="True" class="sr-only peer" {% if account.is_active == True %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hoạt động</span>
+                        </label>
+
+                        <div class="mt-2 flex justify-center items-center">
+                            {{ form.submit(class="btn-primary") }}
+                        </div>
+                    </fieldset>
+                </form>
             </div>
         </div>
     </div>
+
 {% endblock %}
