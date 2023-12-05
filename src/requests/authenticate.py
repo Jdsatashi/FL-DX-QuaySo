@@ -1,4 +1,3 @@
-
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
@@ -52,18 +51,38 @@ def logout():
     return redirect(url_for('home'))
 
 
-@auth.route('account/reset-password/<string:_id>', methods=['GET'])
+@auth.route('account/reset-password/<string:_id>', methods=['GET', 'POST'])
 def reset_password(_id):
     user = authorize_user()
     is_admin = admin_authorize()
     form = UpdatePasswordForm()
+    password = form.new_password.data
+    hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
     print("Reset password function")
     if user['_id'] == _id:
         print(f'User edit: {user}')
+        if request.method == 'POST':
+            ACCOUNT_TABLE.update({'_id': ObjectId(_id)}, {
+                '$set': {
+                    'password': hash_password
+                }
+            })
+            flash(f"Successfully update password'.", "success")
+            return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
     elif is_admin:
         account = ACCOUNT_TABLE.find_one({'_id': ObjectId(_id)})
         print(f'Admin edit: {user}')
+        if request.method == 'POST':
+            ACCOUNT_TABLE.find_one_and_update(
+                {'_id': ObjectId(_id)},
+                {
+                    '$set': {
+                        'password': hash_password
+                    }
+                })
+            flash(f"Successfully update password for {account['username']}.", "success")
+            return redirect(url_for('home'))
         return render_template('auth/reset_password.html', form=form, account=account)
     else:
         print('Not access able.')
