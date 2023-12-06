@@ -2,7 +2,6 @@ from flask import Flask
 import os
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-# from flask_wtf import CSRFProtect
 
 load_dotenv()
 

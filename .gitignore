@@ -7,3 +7,4 @@ __pycache__
 .vscode
 node_modules
 src/static/dist
+.vercel
