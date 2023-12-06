@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.min.css') }}">
+</head>
+<body>
+<div class="w-full element-center">
+    <div class="card-simple w-[400px] md-max:w-full mt-48 md-max:mt-24">
+        <div class="element-center mt-2 mb-4">
+            <h1 class="font-bold text-5xl">Lỗi: {{ error_code }}</h1>
+        </div>
+        <div>
+            <p><b class="text-lg">Message:</b> {{ error_message }}</p>
+        </div>
+        <div class="flex justify-end mt-4">
+            <p>Quay lại <a href="{{ url_for('home') }}" class="text-blue-500 hover:text-blue-700" title="Trang chủ">Trang chủ</a>.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+</html>
