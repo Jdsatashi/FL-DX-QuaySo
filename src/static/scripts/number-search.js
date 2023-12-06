@@ -2,7 +2,7 @@ import addElement from "./helper.js";
 const inputSearch = document.querySelector('#input-search-number');
 const showListSelected = document.querySelector('#show-selected-number')
 const groupData = document.querySelector('#group-data')
-let listItem = groupData.querySelectorAll('.grid-col.grid-item')
+let listItem = groupData.querySelectorAll('.group-item')
 // Live searching
 let inputSearchEvent = (e) => {
     liveSearch(e, listItem, showListSelected)
@@ -44,8 +44,9 @@ function clickAddItem(item, item_value, showListSelected) {
         createTag: 'p',
         options: {
             id: `li-result-${item_value}`,
-            className: 'list-group-item jd-col border border-1 border-success px-4 py-2 text-center',
-            innerHTML: item_value.toString()
+            className: 'item-card',
+            title: `Số ${item_value.toString()}`,
+            innerHTML: `<span class="item-list">${item_value.toString()}</span>`
         }
     })
 
@@ -53,10 +54,16 @@ function clickAddItem(item, item_value, showListSelected) {
         createTag: 'button',
         options: {
             id: `btn-remove-${item_value}`,
-            className: 'btn-close',
-            'style.padding': '8px',
-            'style.margin': '0 0 8px 0',
-            title: 'Bỏ chọn'
+            className: 'item-button',
+            title: `Bỏ chọn số ${item_value.toString()}`,
+            innerHTML: `
+                    <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2"
+                              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                    </svg>`
         }
     })
     const removeBtnE = document.getElementById(removeButton.id)

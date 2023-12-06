@@ -5,3 +5,5 @@ __pycache__
 .git
 .idea
 .vscode
+node_modules
+src/static/dist

@@ -8,7 +8,7 @@ class CreateAccountForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired()])
     password = PasswordField("Mật khẩu", validators=[Length(min=2), DataRequired()])
     confirm_password = PasswordField("Xác nhận mật khẩu", validators=[EqualTo('password'), DataRequired()])
-    turn_roll = IntegerField("Lượt quay")
+    turn_roll = IntegerField("Lượt chọn")
     submit = SubmitField("Tạo tài khoản")
 
 

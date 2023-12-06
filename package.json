@@ -1,0 +1,18 @@
+{
+  "name": "fl_dx_quayso2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-test": "npx tailwindcss -i src/static/styles/input.css -o src/static/dist/css/output.min.css --watch",
+    "build": "npx tailwindcss -i src/static/styles/input.css -o src/static/styles/tailwind.min.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "flowbite": "^2.2.0",
+    "tailwindcss": "^3.3.5"
+  }
+}

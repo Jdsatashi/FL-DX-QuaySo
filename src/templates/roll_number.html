@@ -5,78 +5,85 @@
 
 {% block content %}
     <!-- Card modal -->
-    <div id="overlay" style="display: none;">
-        <div class="jd-modal" id="main-modal">
-            <div class="container">
-                <div class="col-md-8 offset-2">
-                    <div class="card mt-lg-4">
-                        <div class="card-header">
-                            <h1 class="card-title" style="font-size: 2em;">Xác nhận lựa chọn.</h1>
+    <div id="overlay" tabindex="-1"
+         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
+         style="display: none;">
+        <div class="grid place-items-center mt-40 sm-max:mt-28">
+            <div class="card-simple lg:w-[760px] md-max:w-full" id="main-modal">
+                <div class="w-full h-full">
+                    <div class="card-header bg-green-100 mb-1">
+                        <h2 class="card-title">Xác nhận lựa chọn.</h2>
+                    </div>
+                    <div class="card-content bg-green-50 mt-4 w-full h-auto ring-1 ring-amber-100 ring-opacity-10">
+                        <div class="element-center">
+                            <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
                         </div>
-                        <div class="card-body">
-                            <fieldset class="form-group text-center" style="margin-block-start: 0;">
-                                <div id="confirm-result" class="modal-body text-center">
-                                    <p style="font-size: 1.5em;">Các số đã chọn:</p>
-                                </div>
-                                <div class="d-flex justify-content-end m-2">
-                                    <button type="button" class="btn btn-secondary me-2" id="close-modal-btn">Close
-                                    </button>
-                                    <form id="modal-form" method="post" action="{{ url_for('selecting_number') }}">
-                                        {{ form.csrf_token() }}
-                                        {{ form.number(id="modal-input", style="display: none") }}
-                                        {{ form.submit(class="btn btn-primary", id="submit-modal-btn") }}
-                                    </form>
-                                </div>
-                            </fieldset>
+                        <div class="flex justify-center mt-3 w-auto">
+                            <div id="confirm-result"
+                                 class="w-auto md-max:w-full grid grid-cols-4 md-max:grid-cols-3 xl-max:text-xl">
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-end me-4">
+                            <button type="button" class="button-simple" id="close-modal-btn">Close
+                            </button>
+                            <form id="modal-form" method="post" action="{{ url_for('selecting_number') }}">
+                                {{ form.csrf_token() }}
+                                {{ form.number(id="modal-input", style="display: none") }}
+                                {{ form.submit(class="btn-primary ms-3", id="submit-modal-btn") }}
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Main content -->
-    <div class="row">
-        <div class="col-md-10 offset-1">
-            <!-- Card search and select -->
-            <div class="container mb-2">
-                <div class="col-md-8 offset-2">
-                    <div class="card mt-lg-4">
-                        <div class="card-header">
-                            <h2 class="text-center">Chọn số may mắn</h2>
-                        </div>
-                        <div class="card-body">
-                            <p style="font-size: 1.5rem;">Player '{{ session['username'] }}' được chọn
-                                <strong>{{ user['turn_roll'] }}</strong> số.</p>
-                            <fieldset class="form-group text-center" style="margin-block-start: 0;">
-                                <div class="form-group">
-                                    <label for="input-search-number"></label>
-                                    <input type="text" id="input-search-number"
-                                           style="padding: 0.25em 2em 0.25em 0.125em; border-radius: 4px 4px 4px 4px"
-                                           placeholder="Tìm số"
-                                           title="Nhập số cần tìm"
-                                    >
-                                </div>
-                                <!-- div tag parent to put child result -->
-                                <div id="show-selected-number" class="row d-flex justify-content-center">
 
-                                </div>
-                                <button type="button" class="btn btn-dark mt-2" id="open-modal-btn" title="Xác nhận chọn số">
-                                    Xác nhận
-                                </button>
-                            </fieldset>
+    <!-- Main content -->
+    <div class="w-auto">
+        <div class="element-center">
+            <div class="card-simple lg:w-[760px] md-max:w-full">
+                <div class="w-full h-full">
+                    <div class="card-header bg-green-100 mb-1">
+                        <h2 class="card-title">Chọn số may mắn</h2>
+                    </div>
+                    <div class="card-content bg-green-50 mt-4 w-full h-auto ring-1 ring-amber-100 ring-opacity-10">
+                        <div class="element-center">
+                            <p class="w-auto text-xl md-max:text-2xl">Player '{{ session['username'] }}' được chọn
+                                <strong>{{ user['turn_roll'] }}</strong> số.</p>
+                        </div>
+                        <div class="element-center max-w-sm mx-auto">
+                            <div class="mb-3 mt-3">
+                                <label for="input-search-number"></label>
+                                <input type="text" id="input-search-number"
+                                       class="input-e w-[300px] md-max:w-full md-max:text-xl xl-max:text-xl"
+                                       placeholder="Tìm số"
+                                       title="Nhập số cần tìm"
+                                >
+                            </div>
+                        </div>
+                        <div class="flex justify-center mt-3 w-auto">
+                            <div id="show-selected-number"
+                                 class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+                            </div>
+                        </div>
+                        <div class="element-center mb-3">
+                            <button type="button" class="button-simple-green" id="open-modal-btn"
+                                    title="Xác nhận chọn số">
+                                Xác nhận
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div id="group-data" class="d-flex flex-md-wrap">
-                {% for number in number_list %}
-                    <p id="li-{{ number }}"
-                       class="grid-col grid-item text-center"
-                       title="Nhấn để chọn số"
-                    >{{ number }}</p>
-                {% endfor %}
-            </div>
+        <div id="group-data" class="w-auto mx-32 my-4 grid grid-cols-10 lg-max:mx-4 lg-max:grid-cols-6 ">
+            {% for number in number_list %}
+                <p id="li-{{ number }}"
+                   class="group-item"
+                   title="Nhấn để chọn số"
+                >{{ number }}</p>
+            {% endfor %}
         </div>
     </div>
     <script type="module" src="../static/scripts/number-search.js"></script>

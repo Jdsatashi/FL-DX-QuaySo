@@ -7,14 +7,31 @@ function JdModal(info) {
     const formModal = document.querySelector(`#${info.idModalForm}`)
     const inputModalForm = formModal.querySelector(`#${info.idModalInput}`)
     const idModalConfirm = mainModal.querySelector(`#${info.idModalConfirm}`)
+    console.log(modalParent.firstElementChild)
+
+    window.addEventListener('click', (e) => {
+        console.log(e.target)
+    })
+
+    function preventDefault(event) {
+        event.preventDefault();
+    }
+
     // Open modal and send data to confirm
     openModalButton.addEventListener('click', (e) => {
-        let listNumber = Array.from(showData.querySelectorAll('p.list-group-item'))
+        let listNumber = Array.from(showData.querySelectorAll('span.item-list'))
         // Display modal when have value selected
         if (listNumber.length > 0) {
+            document.addEventListener('wheel', preventDefault, {passive: false});
+            document.addEventListener('touchmove', preventDefault, {passive: false});
             // Change style to 'block' to display modal
             mainModal.style.display = 'block'
             modalParent.style.display = 'block';
+            if (idModalConfirm.hasChildNodes()) {
+                while (idModalConfirm.firstChild) {
+                    idModalConfirm.firstChild.remove()
+                }
+            }
             // Add data to modal
             let listValue = Array()
             listNumber.forEach((number) => {
@@ -24,21 +41,25 @@ function JdModal(info) {
                 // Add selected item
                 let addItem = document.createElement('p')
                 idModalConfirm.appendChild(addItem)
-                addItem.className = `list-group-item jd-col border border-1 border-success px-4 py-2 text-center`
+                addItem.className = `item-list-result text-center w-[64px] md-max:w-auto md-max:text-lg md-max:m-1 bg-white m-2 p-2 text-base ring-1 ring-gray-400`
                 addItem.innerHTML = confirmValue.toString()
             })
             // Add list data to input as string datatype
             inputModalForm.value = listValue.toString()
+        } else {
+
         }
     })
 
     // close modal
     modalParent.onclick = function (e) {
         switch (e.target) {
-            case(mainModal):
-            case(mainModal.querySelector('div.container')):
+            case(modalParent):
+            case(modalParent.firstElementChild):
             case(closeModalButton):
                 clearData()
+                document.removeEventListener('wheel', preventDefault);
+                document.removeEventListener('touchmove', preventDefault);
         }
     }
 
@@ -47,7 +68,7 @@ function JdModal(info) {
         mainModal.style.display = 'none'
         modalParent.style.display = 'none';
         const
-            itemList = Array.from(idModalConfirm.querySelectorAll('p.list-group-item'))
+            itemList = Array.from(idModalConfirm.querySelectorAll('p.item-card'))
         if (itemList) {
             itemList.forEach(item => item.remove())
         }
