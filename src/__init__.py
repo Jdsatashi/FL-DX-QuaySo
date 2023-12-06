@@ -17,12 +17,12 @@ app.config.from_mapping(
 #
 bcrypt = Bcrypt(app)
 
-from src.requests.role import add_default_role, create_admin_account
+from .requests.role import add_default_role, create_admin_account
 
 add_default_role()
 create_admin_account()
 # Add all routes
-from src import routes
+from . import routes
 
 # Register prefix
 app.register_blueprint(routes.auth_route.auth, url_prefix='/auth')
