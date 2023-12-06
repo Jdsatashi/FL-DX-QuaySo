@@ -89,4 +89,16 @@
     .item-button2{
         @apply bg-gray-50 text-gray-500 rounded-md focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
     }
+    .table-1{
+        @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400
+    }
+    .table-1-h{
+        @apply text-xs text-gray-50 uppercase bg-[#04AA6D] dark:bg-gray-700 dark:text-gray-400
+    }
+    .table-1-b-even{
+        @apply odd:bg-yellow-50 odd:dark:bg-gray-900 even:bg-blue-50 even:dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+    }
+    .table-1-b{
+        @apply bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+    }
 }

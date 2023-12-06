@@ -3,79 +3,62 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 {% endblock header %}
 {% block content %}
-    <div class="container">
-        <div class="col-12">
-            <div class="row mt-4">
-                <div class="d-flex">
-                    <div class="">
-                        <h2>Account Management</h2>
-                    </div>
-                    <div class="ms-auto p-2">
-                        <form onsubmit="" action="" method="GET">
-                            <div class="input-group mb-3">
-                                <label for="datebook"></label>
-                                <select id="datebook" name="datebook" class="form-select">
-                                    <option value="" selected>Choose Booking Date</option>
-                                </select>
-                                <label for="type_search"></label>
-                                <select style="max-width: 7rem" id="type_search" name="type_search" class="form-select">
-                                    <option value="doctor">Doctor</option>
-                                    <option value="user_booking">User</option>
-                                    <option value="note">Notes</option>
-                                </select>
-                                <label for="query_search"></label>
-                                <input type="text" id="query_search"
-                                       name="query_search" placeholder="Search"
-                                       class="form-control">
-                                <button type="submit" class="btn btn-outline-dark">Search</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <div class="m-4 max-w-full">
+        <div class="flex my-8">
+            <div class="justify-start items-start">
+                <h2 class="text-2xl font-bold">Quản lý tài khoản</h2>
             </div>
-            <div class="row d-flex mb-2">
-
-            </div>
-            <table class="table-design mb-2">
-                <thead>
+        </div>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="table-1">
+                <thead class="table-1-h">
                 <tr>
-                    <th style="width: 7em; max-width: 9em;">Username</th>
-                    <th style="width: 8em; max-width: 10em;">Email</th>
-                    <th style="width: 8em; max-width: 10em;">Lượt quay</th>
-                    <th style="width: 8em; max-width: 10em;">Active</th>
-                    <th style="width: 4em; min-width: 6em;">Edit</th>
-                    <th style="width: 4em; min-width: 6em;">Password</th>
+                    <th scope="col" class="px-6 py-3">
+                        Tài khoản
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Email
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Lượt chọn
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Hoạt động
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Action
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for acc in accounts %}
-                    <tr>
-                        <td>{{ acc.username }}</td>
-                        <td>{{ acc.email }}</td>
-                        <td>{{ acc.turn_roll }}</td>
-                        <td>
+                    <tr class="table-1-b">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ acc.username }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ acc.email }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ acc.turn_roll }}
+                        </td>
+                        <td class="px-6 py-4">
                             {% if acc.is_active %}
                                 Active
                             {% else %}
                                 No Active
                             {% endif %}
                         </td>
-                        <td>
-                            <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#edit-{{ acc._id }}">
-                                <a href="{{ url_for('admin.account_edit', _id=acc._id) }}">
-                                    Edit
-                                </a>
-                            </button>
+                        <td class="px-6 py-4">
+                            <a href="{{ url_for('admin.account_edit', _id=acc._id) }}"
+                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                         </td>
-
-                        <td>
-                            <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#edit-{{ acc._id }}">
-                                <a href="{{ url_for('auth.reset_password', _id=acc._id) }}">
-                                    Edit
-                                </a>
-                            </button>
+                        <td class="flex items-center px-6 py-4">
+                            <a href="{{ url_for('auth.reset_password', _id=acc._id) }}"
+                               class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Reset
+                                password</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -83,4 +66,5 @@
             </table>
         </div>
     </div>
+
 {% endblock %}

@@ -2,14 +2,17 @@ from flask import render_template, request, redirect, url_for, flash
 from _datetime import datetime
 
 from src.forms import NumberSelectedForm
+from src.models import Models
 from src.mongodb import ROLL_TABLE
 from src import app
 from src.requests.authenticate import authorize_user
 
+roll_model = Models(table=ROLL_TABLE)
+
 
 def create_number_list():
     list_number = []
-    roll_data = ROLL_TABLE.find()
+    roll_data = roll_model.get_many()
     selected_number = list()
     all_number = []
     if roll_data:
@@ -42,7 +45,7 @@ def roll_number():
     if not user:
         flash(f"Bạn phải đăng nhập để quay số", 'warning')
         return redirect(url_for('home'))
-    roll_data = ROLL_TABLE.find_one({'user_id': user['_id']})
+    roll_data = roll_model.get_one({'user_id': user['_id']})
     if roll_data:
         roll_data['_id'] = str(roll_data['_id'])
     list_select_number = list()
@@ -72,7 +75,7 @@ def selecting_number():
             try:
                 number_list = number.split(',')
                 if len(number_list) <= int(user['turn_roll']):
-                    ROLL_TABLE.insert_one({
+                    roll_model.create({
                         'select_number': number,
                         'user_id': user['_id'],
                         'date_created': datetime.utcnow()
