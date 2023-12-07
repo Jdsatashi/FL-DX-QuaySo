@@ -2,9 +2,9 @@ from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
 from src.forms import LoginForm, UpdatePasswordForm
-from ..models import Models
-from ..mongodb import ACCOUNT_TABLE
-from ..utils.utilities import role_auth_id, role_admin_id
+from src.models import Models
+from src.mongodb import ACCOUNT_TABLE
+from src.utils.utilities import role_auth_id, role_admin_id
 
 auth = Blueprint('auth', __name__)
 account = Models(table=ACCOUNT_TABLE)

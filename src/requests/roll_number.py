@@ -4,7 +4,7 @@ from _datetime import datetime
 from src.forms import NumberSelectedForm
 from src.models import Models
 from src.mongodb import ROLL_TABLE
-from src import app
+from src.app import app
 from src.requests.authenticate import authorize_user
 
 roll_model = Models(table=ROLL_TABLE)

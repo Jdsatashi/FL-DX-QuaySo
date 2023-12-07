@@ -1,7 +1,7 @@
 from flask import render_template, session
 
-from src import app
-from .requests.authenticate import authorize_user
+from src.app import app
+from src.requests.authenticate import authorize_user
 
 
 # function to home page
@@ -44,8 +44,9 @@ def service_unavailable(e):
     return render_template('errors/error.html', error_code=503, error_message=str(e)), 503
 
 
-from .requests import authenticate, roll_number, administrator
+from src.requests import authenticate, roll_number, administrator, event
 
 auth_route = authenticate
 roll_number_route = roll_number
 admin_route = administrator
+event_route = event
