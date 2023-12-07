@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField, IntegerField, DateField
 from wtforms.validators import DataRequired, EqualTo, Length
 
 
@@ -35,4 +35,11 @@ class LoginForm(FlaskForm):
 
 class NumberSelectedForm(FlaskForm):
     number = StringField("", validators=[DataRequired()])
+    submit = SubmitField("Xác nhận")
+
+
+class EventForm(FlaskForm):
+    name = StringField("Tên sự kiện", validators=[DataRequired()])
+    date_close = DateField("Ngày kết thúc", validators=[DataRequired()])
+    repeat_limit = IntegerField("Giới hạn lặp số")
     submit = SubmitField("Xác nhận")

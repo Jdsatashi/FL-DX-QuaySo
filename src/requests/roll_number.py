@@ -46,12 +46,12 @@ def roll_number():
         flash(f"Bạn phải đăng nhập để quay số", 'warning')
         return redirect(url_for('home'))
     roll_data = roll_model.get_one({'user_id': user['_id']})
+    list_select_number = list()
     if roll_data:
         roll_data['_id'] = str(roll_data['_id'])
-    list_select_number = list()
-    if 'select_number' in roll_data:
-        select_number = roll_data['select_number']
-        list_select_number = select_number.split(',')
+        if 'select_number' in roll_data:
+            select_number = roll_data['select_number']
+            list_select_number = select_number.split(',')
         # select_number
     form = NumberSelectedForm()
     number_list = create_number_list()
