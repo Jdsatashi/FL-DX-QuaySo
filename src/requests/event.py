@@ -16,9 +16,10 @@ event_model = Models(table=EVENT_TABLE)
 @events.route('/')
 def index():
     data = event_model.get_many()
-    # for event in data:
-    #     event['_id'] = str(event['_id'])
-    return render_template('events/index.html', events=data)
+    data_list = list(data)
+    for event in data_list:
+        event['date_close'] = event['date_close'].strftime('%Y-%m-%d')
+    return render_template('events/index.html', events=data_list)
 
 
 @events.route('/create', methods=['POST', 'GET'])
@@ -28,7 +29,9 @@ def insert():
     if not is_admin:
         return redirect(url_for('home'))
     if request.method == 'GET':
-        return render_template('events/create.html', form=form)
+        now = datetime.now()
+        now = now.strftime('%Y-%m-%d')
+        return render_template('events/create.html', form=form, date_now=now)
     if request.method == 'POST':
         data_form = {
             'event_name': form.name.data,
@@ -54,8 +57,7 @@ def update(_id):
     if not is_admin:
         return redirect(url_for('home'))
     spec_event = event_model.get_one({'_id': ObjectId(_id)})
-    spec_event['date_close'] = spec_event['date_close'].strftime('%m-%d-%Y')
-    # spec_event['date_close'] = datetime.strptime(spec_event['date_close'], '%Y-%m-%d')
+    spec_event['date_close'] = spec_event['date_close'].strftime('%Y-%m-%d')
     form = EventForm()
     if spec_event:
         if request.method == 'GET':

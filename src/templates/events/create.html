@@ -33,7 +33,8 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc") }}
+                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc", value=date_now, min=date_now, max="2030-12-31") }}
+                                <p class="text-sm text-slate-700">Định dạng Tháng-Ngày-Năm</p>
                             {% endif %}
                         </div>
 

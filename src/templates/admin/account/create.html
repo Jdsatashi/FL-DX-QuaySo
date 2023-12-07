@@ -38,20 +38,6 @@
                         </div>
 
                         <div class="mb-3">
-                            {{ form.turn_roll.label(class="input-label") }}
-                            {% if form.turn_roll.errors %}
-                                {{ form.turn_roll(class="form-input is-invalid", id="turn-roll-input") }}
-                                {% for error in form.turn_roll.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.turn_roll(class="form-input", placeholder="Lượt chọn số") }}
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
                             {{ form.password.label(class="input-label") }}
                             {% if form.password.errors %}
                                 {{ form.password(class="form-input is-invalid") }}
@@ -79,6 +65,27 @@
                             {% endif %}
                         </div>
 
+                        <div id="checkbox-group">
+                            {% for event in events %}
+                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                    <div class="w-auto">
+                                        <input id="{{ event._id }}" type="checkbox"
+                                               value="{{ event['event_name'] }}"
+                                               name="event_name"
+                                               class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="{{ event.event_name }}"
+                                               class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}
+                                        </label>
+                                    </div>
+                                    <div class="w-auto">
+                                        <label for="turn-{{ event.event_name }}"></label>
+                                        <input id="turn-{{ event._id }}" type="number" value="0" min="0"
+                                               class="number-input ms-4 w-[64px] rounded-md">
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
                         <div class="mt-2 flex justify-center items-center">
                             {{ form.submit(class="btn-primary") }}
                         </div>
@@ -87,5 +94,18 @@
             </div>
         </div>
     </div>
+    <script>
+        const checkboxGroup = document.querySelectorAll('.checkbox-input')
+        const inputGroup = document.querySelectorAll('.number-input')
+        const btnSubmit = document.querySelector('#submit')
+        btnSubmit.addEventListener('click', submitValue)
+        const data = []
+        const eachData = {}
+        let value = ''
+        checkboxData = []
+        for( let i of checkboxGroup){
+            checkboxData.push(i.id)
+        }
 
+    </script>
 {% endblock %}

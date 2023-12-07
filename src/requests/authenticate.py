@@ -82,6 +82,9 @@ def reset_password(_id):
 def authorize_user():
     if 'username' in session:
         account_data = account.get_one({'username': session['username']})
+        if account_data is None:
+            session.pop('username')
+            return authorize_user()
         account_data['_id'] = str(account_data['_id'])
         data = account_data
         if 'password' in data:

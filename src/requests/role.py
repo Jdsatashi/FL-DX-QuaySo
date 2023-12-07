@@ -1,5 +1,7 @@
 from _datetime import datetime
 import bcrypt
+from bson import ObjectId
+
 from src.mongodb import ROLE_TABLE, ACCOUNT_TABLE
 from src.utils.utilities import role_admin_id
 
@@ -16,7 +18,8 @@ def add_default_role():
 
 
 def create_admin_account():
-    if not ACCOUNT_TABLE.find_one({'username': 'admin'}):
+    admin = ACCOUNT_TABLE.find_one({'username': 'admin'})
+    if not admin:
         password = 'dxAdministrator'.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
         ACCOUNT_TABLE.insert_one({

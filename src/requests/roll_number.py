@@ -3,9 +3,11 @@ from _datetime import datetime
 
 from src.forms import NumberSelectedForm
 from src.models import Models
-from src.mongodb import ROLL_TABLE
+from src.mongodb import ROLL_TABLE, EVENT_TABLE
 from src.app import app
 from src.requests.authenticate import authorize_user
+from src.requests.event import event_model
+
 
 roll_model = Models(table=ROLL_TABLE)
 
@@ -47,6 +49,7 @@ def roll_number():
         return redirect(url_for('home'))
     roll_data = roll_model.get_one({'user_id': user['_id']})
     list_select_number = list()
+    events = event_model.get_many()
     if roll_data:
         roll_data['_id'] = str(roll_data['_id'])
         if 'select_number' in roll_data:
@@ -61,7 +64,8 @@ def roll_number():
         number_list=number_list, title="Quay số",
         form=form,
         select_number=list_select_number,
-        user=user
+        user=user,
+        events=events
     )
 
 

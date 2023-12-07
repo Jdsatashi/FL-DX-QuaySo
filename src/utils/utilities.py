@@ -12,7 +12,7 @@ role_admin_id = str(role_admin['_id']) if role_admin else ROLE_TABLE.find_one(
     {'role': 'admin'})
 
 
-def validate_account_create(emails, username, turn_roll):
+def validate_account_create(emails, username):
     if not validators.email(emails):
         flash(f"Email was not valid.", "warning")
         return redirect(url_for('admin.account_create'))
@@ -21,7 +21,4 @@ def validate_account_create(emails, username, turn_roll):
         return redirect(url_for('admin.account_create'))
     if ACCOUNT_TABLE.find_one(emails):
         flash(f"Email {emails} was used.", "warning")
-        return redirect(url_for('admin.account_create'))
-    if not str(turn_roll).isnumeric():
-        flash(f"Lượt quay phải là số.", "warning")
         return redirect(url_for('admin.account_create'))

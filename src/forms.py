@@ -8,14 +8,13 @@ class CreateAccountForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired()])
     password = PasswordField("Mật khẩu", validators=[Length(min=2), DataRequired()])
     confirm_password = PasswordField("Xác nhận mật khẩu", validators=[EqualTo('password'), DataRequired()])
-    turn_roll = IntegerField("Lượt chọn")
+    join_event = StringField()
     submit = SubmitField("Tạo tài khoản")
 
 
 class UpdateAccountForm(FlaskForm):
     username = StringField("Username", validators=[Length(min=2), DataRequired()])
     email = EmailField("Email", validators=[DataRequired()])
-    turn_roll = IntegerField("Lượt chọn")
     is_active = BooleanField("Hoạt động")
     submit = SubmitField("Cập nhật tài khoản")
 

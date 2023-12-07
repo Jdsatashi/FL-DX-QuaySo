@@ -47,7 +47,7 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.repeat_limit(class="form-input", placeholder="Giới hạn", value=event.limit_repeat) }}
+                                {{ form.repeat_limit(class="form-input", placeholder="Giới hạn", pattern="YYYY-MM-DD", value=event.limit_repeat) }}
                             {% endif %}
                         </div>
 

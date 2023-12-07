@@ -6,6 +6,7 @@ from src.forms import CreateAccountForm, UpdateAccountForm
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
 from src.utils.utilities import role_auth_id, validate_account_create
+from src.requests.event import event_model
 
 import bcrypt
 
@@ -46,6 +47,7 @@ def account_create():
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
     form = CreateAccountForm()
+    events = list(event_model.get_many())
     if request.method == 'POST':
         password = form.password.data.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
@@ -54,28 +56,27 @@ def account_create():
             "username": form.username.data,
             "email": form.email.data,
             "password": hashed_password,
-            "turn_roll": form.turn_roll.data,
             "role_id": role_auth_id,
             "is_active": True,
             "date_created": datetime.utcnow()
         }
 
-        validate_account_create(form_data['email'], form_data['username'], form_data['turn_roll'])
-
-        if form.validate_on_submit():
-            try:
-                account.create(form_data)
-                # session auto login after register
-                # session["username"] = username
-                print(f"Created successfully {form_data['username']}.")
-                flash(f"Account '{form_data['username']}' creating successful.", "success")
-                return redirect(url_for('home'))
-            except Exception as e:
-                print(f"Error.\n{e}")
-                flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
-                return redirect(url_for('home'))
+        validate_account_create(form_data['email'], form_data['username'])
+        return redirect(url_for('admin.account_create'))
+        # if form.validate_on_submit():
+        #     try:
+        #         account.create(form_data)
+        #         # session auto login after register
+        #         # session["username"] = username
+        #         print(f"Created successfully {form_data['username']}.")
+        #         flash(f"Account '{form_data['username']}' creating successful.", "success")
+        #         return redirect(url_for('home'))
+        #     except Exception as e:
+        #         print(f"Error.\n{e}")
+        #         flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
+        #         return redirect(url_for('home'))
     else:
-        return render_template('admin/account/create.html', title='Create account', form=form)
+        return render_template('admin/account/create.html', title='Create account', form=form, events=events)
 
 
 @admin.route('account/<string:_id>', methods=['POST', 'GET'])
@@ -106,8 +107,6 @@ def account_edit(_id):
                 account.update(ObjectId(_id), {'date_updated': ''})
             try:
                 edit_account = account.update(ObjectId(_id), form_data)
-                print(f'{edit_account["date_updated"]}Successful editing account.')
-                print(edit_account)
                 flash(f'Update tài khoản "{edit_account["username"]}".', 'success')
                 return redirect(url_for('admin.account_manager'))
             except Exception as e:
