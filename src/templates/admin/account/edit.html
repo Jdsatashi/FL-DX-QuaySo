@@ -1,19 +1,12 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
-{#<div class="form-group">#}
-    {#                                <label for="is_active">Hoạt động:</label>#}
-    {#                                <input type="checkbox" id="is_active" name="is_active"#}
-    {#                                       {% if account.is_active == True %}checked{% endif %}>#}
-    {#                            </div>#}
-
     <div class="flex justify-center items-center">
         <div class="card-simple md-max:w-full w-[800px]">
             <div class="rounded mx-auto text-center text-4xl font-bold">
                 Tạo tài khoản
             </div>
             <div class="mt-2">
-                <form method="POST" action="{{ url_for('admin.account_edit', _id=account._id) }}"
-                      class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-sm mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="mb-3">
@@ -44,25 +37,32 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.turn_roll.label(class="input-label") }}
-                            {% if form.turn_roll.errors %}
-                                {{ form.turn_roll(class="form-input is-invalid", id="turn-roll-input") }}
-                                {% for error in form.turn_roll.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.turn_roll(class="form-input", placeholder="Lượt chọn số", value=account.turn_roll) }}
-                            {% endif %}
-                        </div>
-
                         <label class="relative inline-flex items-center mb-5 cursor-pointer">
                             <input type="checkbox" id="is_active" name="is_active" value="True" class="sr-only peer" {% if account.is_active == True %}checked{% endif %}>
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hoạt động</span>
                         </label>
+
+                        <div id="event-group">
+                            {% for event in events %}
+                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                    <div class="w-auto">
+                                        <input id="{{ event._id }}" type="checkbox"
+                                               value="{{ event['event_name'] }}"
+                                               name="event_name"
+                                               class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="{{ event._id }}"
+                                               class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}
+                                        </label>
+                                    </div>
+                                    <div class="w-auto">
+                                        <label for="num-{{ event._id }}"></label>
+                                        <input id="num-{{ event._id }}" type="number" value="0" min="0"
+                                               class="number-input ms-4 w-[64px] rounded-md">
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
 
                         <div class="mt-2 flex justify-center items-center">
                             {{ form.submit(class="btn-primary") }}
@@ -72,5 +72,31 @@
             </div>
         </div>
     </div>
+    <script>
+        const eventGroup = document.getElementById('event-group')
+        const checkboxGroup = eventGroup.querySelectorAll('.checkbox-input')
+        const inputGroup = eventGroup.querySelectorAll('.number-input')
+        const btnSubmit = document.querySelector('#submit')
+        let value = ''
+        data = []
 
+        btnSubmit.addEventListener('click', submitValue)
+        function submitValue(e) {
+            if (checkboxGroup.length === inputGroup.length) {
+                for (let i in checkboxGroup) {
+                    if (checkboxGroup[i].checked) {
+                        let data_string = checkboxGroup[i].id + ':' + inputGroup[i].value
+                        data.push(data_string)
+                    }
+                }
+                value = data.join('|')
+            }
+            let input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = 'join_event'
+            input.id = 'join_event'
+            input.value = value
+            eventGroup.appendChild(input)
+        }
+    </script>
 {% endblock %}

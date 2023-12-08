@@ -93,6 +93,8 @@ def account_create():
 @admin.route('account/<string:_id>', methods=['POST', 'GET'])
 def account_edit(_id):
     adm = admin_authorize()
+    events = list(event_model.get_all())
+
     if not adm:
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
@@ -102,13 +104,12 @@ def account_edit(_id):
         flash('Account not found.', 'warning')
         return redirect(url_for('home'))
     if request.method == 'GET':
-        return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'])
+        return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'], events=events)
     elif request.method == 'POST':
 
         form_data = {
             "username": form.username.data,
             "email": form.email.data,
-            "turn_roll": form.turn_roll.data,
             "is_active": form.is_active.data,
             "date_updated": datetime.utcnow()
         }

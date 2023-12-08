@@ -19,7 +19,10 @@ def index():
     data = event_model.get_all()
     data_list = list(data)
     for event in data_list:
-        event['date_close'] = event['date_close'].strftime('%Y-%m-%d')
+        try:
+            event['date_close'] = event['date_close'].strftime('%Y-%m-%d')
+        except AttributeError:
+            event['date_close'] = event['date_close']
     return render_template('events/index.html', events=data_list)
 
 
@@ -30,14 +33,13 @@ def insert():
     if not is_admin:
         return redirect(url_for('home'))
     if request.method == 'GET':
-        now = datetime.now()
-        now = now.strftime('%Y-%m-%d')
+        now = datetime.now().strftime('%Y-%m-%d')
         return render_template('events/create.html', form=form, date_now=now)
     if request.method == 'POST':
         data_form = {
             'event_name': form.name.data,
             'limit_repeat': form.repeat_limit.data,
-            'date_close': datetime.combine(form.date_close.data, datetime.min.time()),
+            'date_close': form.date_close.data,
             'date_created': datetime.utcnow()
         }
         if form.validate_on_submit():

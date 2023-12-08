@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField, IntegerField, DateField
+from wtforms import StringField, EmailField, PasswordField, HiddenField, SubmitField, BooleanField, IntegerField, DateField
 from wtforms.validators import DataRequired, EqualTo, Length
 
 
@@ -15,6 +15,7 @@ class CreateAccountForm(FlaskForm):
 class UpdateAccountForm(FlaskForm):
     username = StringField("Username", validators=[Length(min=2), DataRequired()])
     email = EmailField("Email", validators=[DataRequired()])
+    join_event = StringField()
     is_active = BooleanField("Hoạt động")
     submit = SubmitField("Cập nhật tài khoản")
 
@@ -33,8 +34,8 @@ class LoginForm(FlaskForm):
 
 
 class NumberSelectedForm(FlaskForm):
-    user_id = StringField()
-    event_id = StringField()
+    user_id = HiddenField()
+    event_id = HiddenField()
     number = StringField("", validators=[DataRequired()])
     submit = SubmitField("Xác nhận")
 

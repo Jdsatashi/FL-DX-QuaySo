@@ -67,52 +67,46 @@ def choose_event():
     )
 
 
-@app.route('/quay-so/<string:_id>')
+@app.route('/quay-so/<string:_id>', methods=['POST', 'GET'])
 def roll_number(_id):
     user = authorize_user()
     if not user:
         flash(f"Bạn phải đăng nhập để quay số", 'warning')
         return redirect(url_for('home'))
     events = event_model.get_one({'_id': ObjectId(_id)})
-    print(f'Event: {events}')
     user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
-    print(f'Get user roll: {user_joins}')
+    user['turn_roll'] = user_joins['turn_roll']
+    user['_id'] = str(user['_id'])
+    events['_id'] = str(events['_id'])
     form = NumberSelectedForm()
     number_list = create_number_list()
-    print('Refresh page.')
-    return redirect(url_for('home'))
-    # return render_template(
-    #     'roll_number.html',
-    #     number_list=number_list, title="Quay số",
-    #     form=form,
-    #     events=events,
-    # )
-
-
-@app.route('/quay-so/chon-so/', methods=['POST'])
-def selecting_number():
-    user = authorize_user()
-    form = NumberSelectedForm()
-    if user:
-        number = request.form.get('number')
-        if form.validate_on_submit():
-            try:
-                number_list = number.split(',')
-                if len(number_list) <= int(user['turn_roll']):
-                    roll_model.create({
-                        'select_number': number,
-                        'user_id': user['_id'],
-                        'date_created': datetime.utcnow()
-                    })
-                    print('Send data successful.')
-                    flash(f"Chọn thành công các số {number}.", "success")
-                    return redirect(url_for('home'))
-                print('Assign number failed.')
-                flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", "danger")
-                return redirect(url_for('roll_number'))
-            except Exception as e:
-                print(f'There some error while inserting to MongoDb.\n{e}')
-                flash(f"Máy chủ đang gặp sự cố, vui lòng thử lại sau.", "warning")
-                return redirect(url_for('selecting_number'))
-    flash(f"Bạn chưa đăng nhập.", "danger")
-    return redirect(url_for('home'))
+    if request.method == 'POST':
+        list_selected = form.number.data.split(',')
+        if len(list_selected) > int(user['turn_roll']):
+            flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'danger')
+            return redirect(url_for('roll_number', _id=_id))
+        try:
+            close_date = events['date_close'].strftime('%Y-%m-%d')
+        except AttributeError:
+            close_date = datetime.strptime(events['date_close'], '%Y-%m-%d')
+        print(close_date)
+        if events['date_close'] < datetime.now():
+            flash(f"Sự kiện đã kết thúc đầu ngày.", 'danger')
+            print('test 123')
+        form_data = {
+            'user_id': user['_id'],
+            'event_id': events['_id'],
+            'selected_number': form.number.data,
+            'date_created': datetime.utcnow()
+        }
+        print(form_data)
+        return redirect(url_for('choose_event'))
+    else:
+        return render_template(
+            'choose_number/choose_number.html',
+            number_list=number_list, title="Quay số",
+            form=form,
+            events=events,
+            user=user,
+            _id=_id
+        )
