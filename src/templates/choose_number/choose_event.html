@@ -1,0 +1,45 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+    <div class="element-center">
+        <div class="card-simple m-8 lg:w-[760px] md-max:w-full">
+            <div class="w-full h-full">
+                <div class="card-header mt-2">
+                    <h3 class="card-title text-center">Chọn sự kiện</h3>
+                </div>
+                <div class="bg-green-50 mt-4 w-full h-auto ring-1 ring-amber-100 ring-opacity-10">
+                    <div class="mt-3">
+                        <h3 class="mb-5 text-lg font-medium text-gray-900 dark:text-white">Chọn sự kiện:</h3>
+                        <ul id="group-event" class="grid w-full gap-6 md:grid-cols-3">
+                            {% for event in events %}
+                                {% if event['_id'] in event_joined %}
+                                    <li>
+                                        <a href="{{ url_for('roll_number', _id=event['_id']) }}" title="Click để chọn số.">
+                                            <div class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-blue-400 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 hover:border-blue-500 peer-checked:border-blue-600 hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                                <div class="block">
+                                                    <div class="w-full text-lg font-semibold">{{ event.event_name }}</div>
+                                                    <div class="w-full text-sm">{{ session['username'] }} được tham gia
+                                                        sự kiện này.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <div class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-blue-600 hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                            <div class="block">
+                                                <div class="w-full text-lg font-semibold">{{ event.event_name }}</div>
+                                                <div class="w-full text-sm">Bạn không được tham gia sự kiện này.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

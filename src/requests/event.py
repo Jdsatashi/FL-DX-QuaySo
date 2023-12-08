@@ -11,11 +11,12 @@ from src.requests.authenticate import admin_authorize, authorize_user
 
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
+join_event_model = Models(table=USER_JOIN_EVENT)
 
 
 @events.route('/')
 def index():
-    data = event_model.get_many()
+    data = event_model.get_all()
     data_list = list(data)
     for event in data_list:
         event['date_close'] = event['date_close'].strftime('%Y-%m-%d')

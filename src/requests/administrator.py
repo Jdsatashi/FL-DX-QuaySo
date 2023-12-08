@@ -6,7 +6,7 @@ from src.forms import CreateAccountForm, UpdateAccountForm
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
 from src.utils.utilities import role_auth_id, validate_account_create
-from src.requests.event import event_model
+from src.requests.event import event_model, join_event_model
 
 import bcrypt
 
@@ -20,7 +20,7 @@ def account_manager():
     if not adm:
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
-    account_data = account.get_many()
+    account_data = account.get_all()
     try:
         data_list = list(account_data)
         for data in data_list:
@@ -47,12 +47,12 @@ def account_create():
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
     form = CreateAccountForm()
-    events = list(event_model.get_many())
+    events = list(event_model.get_all())
     if request.method == 'POST':
         password = form.password.data.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
-        form_data = {
+        form_user = {
             "username": form.username.data,
             "email": form.email.data,
             "password": hashed_password,
@@ -60,21 +60,32 @@ def account_create():
             "is_active": True,
             "date_created": datetime.utcnow()
         }
+        events_join = form.join_event.data
 
-        validate_account_create(form_data['email'], form_data['username'])
-        return redirect(url_for('admin.account_create'))
-        # if form.validate_on_submit():
-        #     try:
-        #         account.create(form_data)
-        #         # session auto login after register
-        #         # session["username"] = username
-        #         print(f"Created successfully {form_data['username']}.")
-        #         flash(f"Account '{form_data['username']}' creating successful.", "success")
-        #         return redirect(url_for('home'))
-        #     except Exception as e:
-        #         print(f"Error.\n{e}")
-        #         flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
-        #         return redirect(url_for('home'))
+        validate_account_create(form_user['email'], form_user['username'])
+        if form.validate_on_submit():
+            try:
+                account.create(form_user)
+
+                user = account.get_one({"username": form.username.data, "email": form.email.data})
+                user['_id'] = str(user['_id'])
+                events_join = events_join.split('|')
+                for event in events_join:
+                    event = event.split(':')
+                    input_data = {
+                        'user_id': user['_id'],
+                        'event_id': event[0],
+                        'turn_roll': event[1]
+                    }
+                    join_event_model.create(input_data)
+
+                print(f"Created successfully {form_user['username']}.")
+                flash(f"Account '{form_user['username']}' creating successful.", "success")
+                return redirect(url_for('home'))
+            except Exception as e:
+                print(f"Error.\n{e}")
+                flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
+                return redirect(url_for('home'))
     else:
         return render_template('admin/account/create.html', title='Create account', form=form, events=events)
 

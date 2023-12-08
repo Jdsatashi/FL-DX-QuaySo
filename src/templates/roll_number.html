@@ -47,6 +47,17 @@
                         <h2 class="card-title">Chọn số may mắn</h2>
                     </div>
                     <div class="card-content bg-green-50 mt-4 w-full h-auto ring-1 ring-amber-100 ring-opacity-10">
+                        <div class="py-2 element-center">
+                            <label for="event-selector" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+                            <select id="event-selector"
+                                    class="select-input">
+                                <option selected>Chọn sự kiện</option>
+                                {% for event in events %}
+                                    <option value="{{ event['_id'] }}"
+                                        {% if event['_id'] not in list_joined  %} disabled {% endif %}>{{ event['event_name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <div class="element-center">
                             <p class="w-auto text-xl md-max:text-2xl">Player '{{ session['username'] }}' được chọn
                                 <strong>{{ user['turn_roll'] }}</strong> số.</p>
@@ -72,6 +83,7 @@
                                 Xác nhận
                             </button>
                         </div>
+                        <div id="user-id" class="hidden">{{ user['_id'] }}</div>
                     </div>
                 </div>
             </div>

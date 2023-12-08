@@ -12,7 +12,7 @@
         @apply w-full shadow-sm border-b-2 border-green-300 border-opacity-50 rounded
     }
     .card-title{
-        @apply md:text-3xl md-max:text-4xl px-3 py-2 font-bold text-center
+        @apply md:text-3xl md-max:text-4xl px-3 py-2 font-bold
     }
     .button-gradient {
         @apply transform rounded-lg bg-gradient-to-r from-purple-400 to-blue-500 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:from-purple-500 hover:to-blue-500 focus:outline-none focus:ring focus:ring-purple-300 active:bg-blue-700
@@ -100,5 +100,8 @@
     }
     .table-1-b{
         @apply bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+    }
+    .select-input{
+        @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[400px] md-max:w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
     }
 }

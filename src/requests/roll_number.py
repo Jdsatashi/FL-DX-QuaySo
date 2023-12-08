@@ -1,72 +1,92 @@
+from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash
 from _datetime import datetime
 
 from src.forms import NumberSelectedForm
 from src.models import Models
-from src.mongodb import ROLL_TABLE, EVENT_TABLE
+from src.mongodb import ROLL_TABLE
 from src.app import app
 from src.requests.authenticate import authorize_user
-from src.requests.event import event_model
-
+from src.requests.event import event_model, join_event_model
 
 roll_model = Models(table=ROLL_TABLE)
+# roll table saving: user_id, event_id and number
 
 
 def create_number_list():
     list_number = []
-    roll_data = roll_model.get_many()
-    selected_number = list()
-    all_number = []
-    if roll_data:
-        for roll in roll_data:
-            roll['_id'] = str(roll['_id'])
-            selected_number.append(roll['select_number'])
-    for number in selected_number:
-        arr = number.split(',')
-        for i in arr:
-            all_number.append(int(i))
-    all_number.sort()
-    print(all_number)
+    # roll_data = roll_model.get_all()
+    # selected_number = list()
+    # all_number = []
+    # if roll_data:
+    #     for roll in roll_data:
+    #         roll['_id'] = str(roll['_id'])
+    #         selected_number.append(roll['select_number'])
+    # for number in selected_number:
+    #     arr = number.split(',')
+    #     for i in arr:
+    #         all_number.append(int(i))
+    # all_number.sort()
+    # print(all_number)
+    # for i in range(1000):
+    #     if i in all_number:
+    #         count = 0
+    #         while i in all_number:
+    #             count += 1
+    #             all_number.remove(i)
+    #         print(f'remove {i}')
+    #     elif i == 0:
+    #         pass
+    #     else:
+    #         list_number.append(i)
     for i in range(1000):
-        if i in all_number:
-            count = 0
-            while i in all_number:
-                count += 1
-                all_number.remove(i)
-            print(f'remove {i}')
-        elif i == 0:
-            pass
-        else:
-            list_number.append(i)
+        list_number.append(i+1)
     return list_number
 
 
-@app.route('/quay-so/')
-def roll_number():
+@app.route('/chon-su-kien')
+def choose_event():
+    user = authorize_user()
+    if not user:
+        flash(f"Bạn phải đăng nhập để chọn sự kiện quay số", 'warning')
+        return redirect(url_for('home'))
+    events = list(event_model.get_all())
+    for event in events:
+        event['_id'] = str(event['_id'])
+    user_joins = join_event_model.get_many({'user_id': user['_id']})
+    list_joined = list()
+    if user_joins:
+        for user in user_joins:
+            list_joined.append(user['event_id'])
+    # number_list = create_number_list()
+    return render_template(
+        'choose_number/choose_event.html',
+        user=user,
+        events=events,
+        event_joined=list_joined
+    )
+
+
+@app.route('/quay-so/<string:_id>')
+def roll_number(_id):
     user = authorize_user()
     if not user:
         flash(f"Bạn phải đăng nhập để quay số", 'warning')
         return redirect(url_for('home'))
-    roll_data = roll_model.get_one({'user_id': user['_id']})
-    list_select_number = list()
-    events = event_model.get_many()
-    if roll_data:
-        roll_data['_id'] = str(roll_data['_id'])
-        if 'select_number' in roll_data:
-            select_number = roll_data['select_number']
-            list_select_number = select_number.split(',')
-        # select_number
+    events = event_model.get_one({'_id': ObjectId(_id)})
+    print(f'Event: {events}')
+    user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    print(f'Get user roll: {user_joins}')
     form = NumberSelectedForm()
     number_list = create_number_list()
     print('Refresh page.')
-    return render_template(
-        'roll_number.html',
-        number_list=number_list, title="Quay số",
-        form=form,
-        select_number=list_select_number,
-        user=user,
-        events=events
-    )
+    return redirect(url_for('home'))
+    # return render_template(
+    #     'roll_number.html',
+    #     number_list=number_list, title="Quay số",
+    #     form=form,
+    #     events=events,
+    # )
 
 
 @app.route('/quay-so/chon-so/', methods=['POST'])

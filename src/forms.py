@@ -27,12 +27,14 @@ class UpdatePasswordForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[Length(min=1), DataRequired()])
-    password = PasswordField("Mật khẩu", validators=[Length(min=8), DataRequired()])
+    password = PasswordField("Mật khẩu", validators=[Length(min=2), DataRequired()])
     remember_me = BooleanField("Lưu đăng nhập")
     submit = SubmitField("Đăng nhập")
 
 
 class NumberSelectedForm(FlaskForm):
+    user_id = StringField()
+    event_id = StringField()
     number = StringField("", validators=[DataRequired()])
     submit = SubmitField("Xác nhận")
 

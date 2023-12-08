@@ -65,7 +65,7 @@
                             {% endif %}
                         </div>
 
-                        <div id="checkbox-group">
+                        <div id="event-group">
                             {% for event in events %}
                                 <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
                                     <div class="w-auto">
@@ -73,13 +73,13 @@
                                                value="{{ event['event_name'] }}"
                                                name="event_name"
                                                class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="{{ event.event_name }}"
+                                        <label for="{{ event._id }}"
                                                class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}
                                         </label>
                                     </div>
                                     <div class="w-auto">
-                                        <label for="turn-{{ event.event_name }}"></label>
-                                        <input id="turn-{{ event._id }}" type="number" value="0" min="0"
+                                        <label for="num-{{ event._id }}"></label>
+                                        <input id="num-{{ event._id }}" type="number" value="0" min="0"
                                                class="number-input ms-4 w-[64px] rounded-md">
                                     </div>
                                 </div>
@@ -95,17 +95,30 @@
         </div>
     </div>
     <script>
-        const checkboxGroup = document.querySelectorAll('.checkbox-input')
-        const inputGroup = document.querySelectorAll('.number-input')
+        const eventGroup = document.getElementById('event-group')
+        const checkboxGroup = eventGroup.querySelectorAll('.checkbox-input')
+        const inputGroup = eventGroup.querySelectorAll('.number-input')
         const btnSubmit = document.querySelector('#submit')
-        btnSubmit.addEventListener('click', submitValue)
-        const data = []
-        const eachData = {}
         let value = ''
-        checkboxData = []
-        for( let i of checkboxGroup){
-            checkboxData.push(i.id)
-        }
+        data = []
 
+        btnSubmit.addEventListener('click', submitValue)
+        function submitValue(e) {
+            if (checkboxGroup.length === inputGroup.length) {
+                for (let i in checkboxGroup) {
+                    if (checkboxGroup[i].checked) {
+                        let data_string = checkboxGroup[i].id + ':' + inputGroup[i].value
+                        data.push(data_string)
+                    }
+                }
+                value = data.join('|')
+            }
+            let input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = 'join_event'
+            input.id = 'join_event'
+            input.value = value
+            eventGroup.appendChild(input)
+        }
     </script>
 {% endblock %}
