@@ -14,33 +14,16 @@ roll_model = Models(table=ROLL_TABLE)
 
 def create_number_list():
     list_number = []
-    # roll_data = roll_model.get_all()
-    # selected_number = list()
-    # all_number = []
-    # if roll_data:
-    #     for roll in roll_data:
-    #         roll['_id'] = str(roll['_id'])
-    #         selected_number.append(roll['select_number'])
-    # for number in selected_number:
-    #     arr = number.split(',')
-    #     for i in arr:
-    #         all_number.append(int(i))
-    # all_number.sort()
-    # print(all_number)
-    # for i in range(1000):
-    #     if i in all_number:
-    #         count = 0
-    #         while i in all_number:
-    #             count += 1
-    #             all_number.remove(i)
-    #         print(f'remove {i}')
-    #     elif i == 0:
-    #         pass
-    #     else:
-    #         list_number.append(i)
+    available_number = {}
+    rolled = roll_model.get_all()
+    for roll in rolled:
+        rolled_number = roll['selected_number'].split(',')
+        list_number.append(rolled_number)
+    print(list_number)
+    list_number2 = []
     for i in range(1000):
-        list_number.append(i+1)
-    return list_number
+        list_number2.append(i+1)
+    return list_number2
 
 
 @app.route('/chon-su-kien')
@@ -78,10 +61,20 @@ def roll_number(_id):
     # Get turn of choice number
     user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     # Assign turn choice for user
-    user['turn_roll'] = user_joins['turn_roll']
+    user['turn_roll'] = int(user_joins['turn_roll'])
     # To string _id for compare
     user['_id'] = str(user['_id'])
     events['_id'] = str(events['_id'])
+
+    rolled = roll_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    turn_chosen = 0
+    number_rolled = []
+    if rolled:
+        number_rolled = rolled['selected_number'].split(',')
+        if 'number_choices' not in rolled:
+            rolled['number_choices'] = len(number_rolled)
+        turn_chosen = rolled['number_choices']
+    print("Rolled: ", rolled)
     # Get the form values
     form = NumberSelectedForm()
     number_list = create_number_list()
@@ -107,16 +100,27 @@ def roll_number(_id):
             'user_id': user['_id'],
             'event_id': events['_id'],
             'selected_number': form.number.data,
+            'number_choices': len(list_selected),
             'date_created': datetime.utcnow()
         }
-        try:
-            roll_model.create(form_data)
-            flash(f"Chọn số cho sự kiện {events['event_name']} thành công.", "success")
-            return redirect(url_for('choose_event'))
-        except Exception as e:
-            print("Error when select number. ", e)
-            flash("Lỗi server, vui lòng thử lại.")
-            return redirect(url_for('choose_event'))
+        if not rolled:
+            try:
+                roll_model.create(form_data)
+                flash(f"Chọn số cho sự kiện {events['event_name']} thành công.", "success")
+                return redirect(url_for('choose_event'))
+            except Exception as e:
+                print("Error when select number. ", e)
+                flash("Lỗi server, vui lòng thử lại.")
+                return redirect(url_for('choose_event'))
+        else:
+            try:
+                roll_model.update(_id, form_data)
+                flash(f"Chọn số cho sự kiện {events['event_name']} thành công.", "success")
+                return redirect(url_for('choose_event'))
+            except Exception as e:
+                print("Error when select number. ", e)
+                flash("Lỗi server, vui lòng thử lại.")
+                return redirect(url_for('choose_event'))
     else:
         return render_template(
             'choose_number/choose_number.html',
@@ -124,5 +128,12 @@ def roll_number(_id):
             form=form,
             events=events,
             user=user,
-            _id=_id
+            _id=_id,
+            turn_chosen=turn_chosen,
+            number_rolled=number_rolled,
         )
+
+
+@app.route('/thong-tin')
+def info():
+    pass

@@ -73,6 +73,7 @@ function clickAddItem(item, item_value, showListSelected) {
         evn.preventDefault()
         addItem.remove()
         removeButton.remove()
+        item.style.display = 'block'
     }
-    item.remove()
+    item.style.display = 'none'
 }

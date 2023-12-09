@@ -34,8 +34,6 @@ class LoginForm(FlaskForm):
 
 
 class NumberSelectedForm(FlaskForm):
-    user_id = HiddenField()
-    event_id = HiddenField()
     number = StringField("", validators=[DataRequired()])
     submit = SubmitField("Xác nhận")
 

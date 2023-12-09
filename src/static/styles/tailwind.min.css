@@ -2026,6 +2026,11 @@ input:checked + .toggle-bg {
   margin-right: 2.5rem;
 }
 
+.mx-20 {
+  margin-left: 5rem;
+  margin-right: 5rem;
+}
+
 .mx-32 {
   margin-left: 8rem;
   margin-right: 8rem;
@@ -3754,12 +3759,12 @@ input:checked + .toggle-bg {
 }
 
 @media (max-width: 767px) {
-  .sm-max\:mt-28 {
-    margin-top: 7rem;
-  }
-
   .sm-max\:mb-2 {
     margin-bottom: 0.5rem;
+  }
+
+  .sm-max\:mt-28 {
+    margin-top: 7rem;
   }
 
   .sm-max\:text-2xl {
@@ -3781,12 +3786,13 @@ input:checked + .toggle-bg {
     margin: 0.25rem;
   }
 
-  .md-max\:mt-24 {
-    margin-top: 6rem;
+  .md-max\:mx-4 {
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 
-  .md-max\:mb-2 {
-    margin-bottom: 0.5rem;
+  .md-max\:mt-24 {
+    margin-top: 6rem;
   }
 
   .md-max\:w-auto {

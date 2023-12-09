@@ -7,11 +7,6 @@ function JdModal(info) {
     const formModal = document.querySelector(`#${info.idModalForm}`)
     const inputModalForm = formModal.querySelector(`#${info.idModalInput}`)
     const idModalConfirm = mainModal.querySelector(`#${info.idModalConfirm}`)
-    console.log(modalParent.firstElementChild)
-
-    window.addEventListener('click', (e) => {
-        console.log(e.target)
-    })
 
     function preventDefault(event) {
         event.preventDefault();
