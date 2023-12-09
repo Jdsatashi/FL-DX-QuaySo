@@ -2061,6 +2061,36 @@ input:checked + .toggle-bg {
   margin-bottom: 2rem;
 }
 
+.mx-24 {
+  margin-left: 6rem;
+  margin-right: 6rem;
+}
+
+.mx-8 {
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.my-12 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.mx-6 {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.mx-16 {
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -2217,6 +2247,10 @@ input:checked + .toggle-bg {
   height: 100%;
 }
 
+.h-\[40px\] {
+  height: 40px;
+}
+
 .w-1 {
   width: 0.25rem;
 }
@@ -2291,6 +2325,14 @@ input:checked + .toggle-bg {
 
 .w-full {
   width: 100%;
+}
+
+.w-\[500px\] {
+  width: 500px;
+}
+
+.w-\[600px\] {
+  width: 600px;
 }
 
 .max-w-full {
@@ -2393,6 +2435,14 @@ input:checked + .toggle-bg {
 
 .grid-cols-7 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -2510,6 +2560,10 @@ input:checked + .toggle-bg {
   border-radius: 0.125rem;
 }
 
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
 .rounded-e-lg {
   border-start-end-radius: 0.5rem;
   border-end-end-radius: 0.5rem;
@@ -2602,6 +2656,11 @@ input:checked + .toggle-bg {
 .border-yellow-300 {
   --tw-border-opacity: 1;
   border-color: rgb(250 202 21 / var(--tw-border-opacity));
+}
+
+.border-blue-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(195 221 253 / var(--tw-border-opacity));
 }
 
 .border-opacity-50 {
@@ -3006,6 +3065,11 @@ input:checked + .toggle-bg {
 .text-yellow-800 {
   --tw-text-opacity: 1;
   color: rgb(114 59 19 / var(--tw-text-opacity));
+}
+
+.text-slate-800 {
+  --tw-text-opacity: 1;
+  color: rgb(30 41 59 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -3791,6 +3855,16 @@ input:checked + .toggle-bg {
     margin-right: 1rem;
   }
 
+  .md-max\:mx-6 {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+
+  .md-max\:my-3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
   .md-max\:mt-24 {
     margin-top: 6rem;
   }
@@ -3809,6 +3883,10 @@ input:checked + .toggle-bg {
 
   .md-max\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .md-max\:grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .md-max\:text-2xl {
@@ -3838,8 +3916,26 @@ input:checked + .toggle-bg {
     margin-right: 1rem;
   }
 
+  .lg-max\:mx-6 {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+
+  .lg-max\:my-3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .lg-max\:w-auto {
+    width: auto;
+  }
+
   .lg-max\:grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .lg-max\:grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 

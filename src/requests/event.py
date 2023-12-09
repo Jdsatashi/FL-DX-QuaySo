@@ -38,8 +38,9 @@ def insert():
     if request.method == 'POST':
         data_form = {
             'event_name': form.name.data,
-            'limit_repeat': form.repeat_limit.data,
-            'date_close': form.date_close.data,
+            'limit_repeat': int(form.repeat_limit.data),
+            'date_close': form.date_close.data.strftime('%Y-%m-%d'),
+            'is_active': True,
             'date_created': datetime.utcnow()
         }
         if form.validate_on_submit():

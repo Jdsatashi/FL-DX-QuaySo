@@ -66,18 +66,18 @@ def account_create():
         if form.validate_on_submit():
             try:
                 account.create(form_user)
-
                 user = account.get_one({"username": form.username.data, "email": form.email.data})
                 user['_id'] = str(user['_id'])
-                events_join = events_join.split('|')
-                for event in events_join:
-                    event = event.split(':')
-                    input_data = {
-                        'user_id': user['_id'],
-                        'event_id': event[0],
-                        'turn_roll': event[1]
-                    }
-                    join_event_model.create(input_data)
+                if events_join:
+                    events_join = events_join.split('|')
+                    for event in events_join:
+                        event = event.split(':')
+                        input_data = {
+                            'user_id': user['_id'],
+                            'event_id': event[0],
+                            'turn_roll': int(event[1])
+                        }
+                        join_event_model.create(input_data)
 
                 print(f"Created successfully {form_user['username']}.")
                 flash(f"Account '{form_user['username']}' creating successful.", "success")

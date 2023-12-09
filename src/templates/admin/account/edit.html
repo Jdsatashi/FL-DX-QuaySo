@@ -46,7 +46,7 @@
 
                         <div id="event-group">
                             {% for event in event_join %}
-                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                <div class="flex justify-between items-center ps-4 border-2 border-blue-300 rounded dark:border-gray-700">
                                     <div class="w-auto">
                                         <input id="{{ event }}" type="checkbox"
                                                value="{{ event_join[event]['event_name'] }}"
@@ -64,12 +64,9 @@
                                                class="number-input ms-4 w-[64px] rounded-md">
                                     </div>
                                 </div>
-                                <p>
-                                    {{ event['event_name'] }}
-                                </p>
                             {% endfor %}
                             {% for event in events %}
-                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
                                     <div class="w-auto">
                                         <input id="{{ event._id }}" type="checkbox"
                                                value="{{ event['event_name'] }}"
