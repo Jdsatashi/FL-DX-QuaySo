@@ -94,6 +94,22 @@ def account_create():
 def account_edit(_id):
     adm = admin_authorize()
     events = list(event_model.get_all())
+    user_joins = list(join_event_model.get_many({'user_id': _id}))
+    event_not_join = list()
+    event_join = dict()
+
+    for event in user_joins:
+        event_join.update({event['event_id']: {}})
+    for event in events:
+        event['_id'] = str(event['_id'])
+        if event['_id'] not in event_join:
+            event_not_join.append(event)
+        else:
+            event_join.pop(event['_id'])
+            event_join.update({event['_id']: {'event_name': event['event_name']}})
+    for event in user_joins:
+        if event['event_id'] in event_join:
+            event_join[event['event_id']].update({'turn_roll': event['turn_roll']})
 
     if not adm:
         flash("You're not allow to access this page.", 'danger')
@@ -103,10 +119,8 @@ def account_edit(_id):
     if not user:
         flash('Account not found.', 'warning')
         return redirect(url_for('home'))
-    if request.method == 'GET':
-        return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'], events=events)
-    elif request.method == 'POST':
-
+    if request.method == 'POST':
+        events_join = form.join_event.data
         form_data = {
             "username": form.username.data,
             "email": form.email.data,
@@ -119,6 +133,15 @@ def account_edit(_id):
                 account.update(ObjectId(_id), {'date_updated': ''})
             try:
                 edit_account = account.update(ObjectId(_id), form_data)
+                events_join = events_join.split('|')
+                for event in events_join:
+                    event = event.split(':')
+                    input_data = {
+                        'user_id': _id,
+                        'event_id': event[0],
+                        'turn_roll': event[1]
+                    }
+                    join_event_model.create(input_data)
                 flash(f'Update tài khoản "{edit_account["username"]}".', 'success')
                 return redirect(url_for('admin.account_manager'))
             except Exception as e:
@@ -126,6 +149,11 @@ def account_edit(_id):
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('admin.account_manager'))
         flash('Một số thông tin bị lỗi, vui lòng kiểm tra.', 'warning')
-        return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'])
-    flash('Method not allowed.', 'danger')
-    return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'])
+        return redirect(url_for('admin.account_edit'))
+    return render_template(
+        'admin/account/edit.html',
+        form=form, account=user,
+        _id=user['_id'],
+        events=event_not_join,
+        event_join=event_join
+    )
