@@ -10,7 +10,6 @@ from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
 
 roll_model = Models(table=ROLL_TABLE)
-# roll table saving: user_id, event_id and number
 
 
 def create_number_list():
@@ -69,38 +68,55 @@ def choose_event():
 
 @app.route('/quay-so/<string:_id>', methods=['POST', 'GET'])
 def roll_number(_id):
+    # authorize user
     user = authorize_user()
     if not user:
         flash(f"Bạn phải đăng nhập để quay số", 'warning')
         return redirect(url_for('home'))
+    # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})
+    # Get turn of choice number
     user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    # Assign turn choice for user
     user['turn_roll'] = user_joins['turn_roll']
+    # To string _id for compare
     user['_id'] = str(user['_id'])
     events['_id'] = str(events['_id'])
+    # Get the form values
     form = NumberSelectedForm()
     number_list = create_number_list()
     if request.method == 'POST':
+        # Get the list of number selected
         list_selected = form.number.data.split(',')
+        # Validate if number selected more than turn choices
         if len(list_selected) > int(user['turn_roll']):
             flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'danger')
             return redirect(url_for('roll_number', _id=_id))
+        # Change data type of close_date value to datetime
         try:
             close_date = events['date_close'].strftime('%Y-%m-%d')
+            close_date = datetime.strptime(close_date, '%Y-%m-%d')
         except AttributeError:
             close_date = datetime.strptime(events['date_close'], '%Y-%m-%d')
-        print(close_date)
-        if events['date_close'] < datetime.now():
-            flash(f"Sự kiện đã kết thúc đầu ngày.", 'danger')
-            print('test 123')
+        # Validate if current date > closure date
+        if close_date < datetime.now():
+            flash(f"Sự kiện đã kết thúc 0h ngày {events['date_close'].strftime('%Y-%m-%d')}.", 'danger')
+            return redirect(url_for('choose_event'))
+
         form_data = {
             'user_id': user['_id'],
             'event_id': events['_id'],
             'selected_number': form.number.data,
             'date_created': datetime.utcnow()
         }
-        print(form_data)
-        return redirect(url_for('choose_event'))
+        try:
+            roll_model.create(form_data)
+            flash(f"Chọn số cho sự kiện {events['event_name']} thành công.", "success")
+            return redirect(url_for('choose_event'))
+        except Exception as e:
+            print("Error when select number. ", e)
+            flash("Lỗi server, vui lòng thử lại.")
+            return redirect(url_for('choose_event'))
     else:
         return render_template(
             'choose_number/choose_number.html',
