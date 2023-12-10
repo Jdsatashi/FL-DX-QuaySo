@@ -23,14 +23,13 @@
                        class="block items-center py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                        aria-current="page">Home</a>
                 </li>
-
                 <li>
-                    <a href="{{ url_for('roll_number') }}"
-                       class="nav-item">Chọn
-                        số</a>
+                    <a href="{{ url_for('choose_event') }}"
+                       class="nav-item">Chọn sự kiện
+                    </a>
                 </li>
                 <li>
-                    <a href=""
+                    <a href="{{ url_for('information') }}"
                        class="nav-item">Thông
                         tin</a>
                 </li>
@@ -61,10 +60,18 @@
                                     tài khoản</a>
                             </li>
                         </ul>
-                        <div class="py-1">
-                            <a href=""
-                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">123456</a>
-                        </div>
+                        <ul class="block py-2 text-sm text-gray-700">
+                            <li>
+                                <a href="{{ url_for('event.index') }}"
+                                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Quản
+                                    lý sự kiện</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('event.insert') }}"
+                                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Thêm
+                                    sự kiện</a>
+                            </li>
+                        </ul>
                     </div>
                 </li>
                 {% if 'username' in session %}

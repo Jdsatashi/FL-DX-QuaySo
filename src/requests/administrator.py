@@ -1,11 +1,12 @@
 from _datetime import datetime
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
-from .authenticate import admin_authorize, authorize_user
-from ..forms import CreateAccountForm, UpdateAccountForm
-from ..models import Models
-from ..mongodb import ACCOUNT_TABLE
-from ..utils.utilities import role_auth_id, validate_account_create
+from src.requests.authenticate import admin_authorize, authorize_user
+from src.forms import CreateAccountForm, UpdateAccountForm
+from src.models import Models
+from src.mongodb import ACCOUNT_TABLE
+from src.utils.utilities import role_auth_id, validate_account_create
+from src.requests.event import event_model, join_event_model
 
 import bcrypt
 
@@ -19,7 +20,7 @@ def account_manager():
     if not adm:
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
-    account_data = account.get_many()
+    account_data = account.get_all()
     try:
         data_list = list(account_data)
         for data in data_list:
@@ -46,41 +47,70 @@ def account_create():
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
     form = CreateAccountForm()
+    events = list(event_model.get_all())
     if request.method == 'POST':
         password = form.password.data.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
-        form_data = {
+        form_user = {
             "username": form.username.data,
             "email": form.email.data,
             "password": hashed_password,
-            "turn_roll": form.turn_roll.data,
             "role_id": role_auth_id,
             "is_active": True,
             "date_created": datetime.utcnow()
         }
+        events_join = form.join_event.data
 
-        validate_account_create(form_data['email'], form_data['username'], form_data['turn_roll'])
-
+        validate_account_create(form_user['email'], form_user['username'])
         if form.validate_on_submit():
             try:
-                account.create(form_data)
-                # session auto login after register
-                # session["username"] = username
-                print(f"Created successfully {form_data['username']}.")
-                flash(f"Account '{form_data['username']}' creating successful.", "success")
+                account.create(form_user)
+                user = account.get_one({"username": form.username.data, "email": form.email.data})
+                user['_id'] = str(user['_id'])
+                if events_join:
+                    events_join = events_join.split('|')
+                    for event in events_join:
+                        event = event.split(':')
+                        input_data = {
+                            'user_id': user['_id'],
+                            'event_id': event[0],
+                            'turn_roll': int(event[1])
+                        }
+                        join_event_model.create(input_data)
+
+                print(f"Created successfully {form_user['username']}.")
+                flash(f"Account '{form_user['username']}' creating successful.", "success")
                 return redirect(url_for('home'))
             except Exception as e:
                 print(f"Error.\n{e}")
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('home'))
     else:
-        return render_template('admin/account/create.html', title='Create account', form=form)
+        return render_template('admin/account/create.html', title='Create account', form=form, events=events)
 
 
 @admin.route('account/<string:_id>', methods=['POST', 'GET'])
 def account_edit(_id):
     adm = admin_authorize()
+    events = list(event_model.get_all())
+    user_joins = list(join_event_model.get_many({'user_id': _id}))
+    event_not_join = list()
+    event_join = dict()
+
+    for event in user_joins:
+        event_join.update({event['event_id']: {}})
+    for event in events:
+        event['_id'] = str(event['_id'])
+        if event['_id'] not in event_join:
+            event_not_join.append(event)
+        else:
+            event_join.pop(event['_id'])
+            event_join.update({event['_id']: {'event_name': event['event_name']}})
+    for event in user_joins:
+        if event['event_id'] in event_join:
+            event_join[event['event_id']].update({'turn_roll': event['turn_roll']})
+
     if not adm:
         flash("You're not allow to access this page.", 'danger')
         return redirect(url_for('home'))
@@ -89,14 +119,11 @@ def account_edit(_id):
     if not user:
         flash('Account not found.', 'warning')
         return redirect(url_for('home'))
-    if request.method == 'GET':
-        return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'])
-    elif request.method == 'POST':
-
+    if request.method == 'POST':
+        events_join = form.join_event.data
         form_data = {
             "username": form.username.data,
             "email": form.email.data,
-            "turn_roll": form.turn_roll.data,
             "is_active": form.is_active.data,
             "date_updated": datetime.utcnow()
         }
@@ -106,8 +133,15 @@ def account_edit(_id):
                 account.update(ObjectId(_id), {'date_updated': ''})
             try:
                 edit_account = account.update(ObjectId(_id), form_data)
-                print(f'{edit_account["date_updated"]}Successful editing account.')
-                print(edit_account)
+                events_join = events_join.split('|')
+                for event in events_join:
+                    event = event.split(':')
+                    input_data = {
+                        'user_id': _id,
+                        'event_id': event[0],
+                        'turn_roll': event[1]
+                    }
+                    join_event_model.create(input_data)
                 flash(f'Update tài khoản "{edit_account["username"]}".', 'success')
                 return redirect(url_for('admin.account_manager'))
             except Exception as e:
@@ -115,6 +149,11 @@ def account_edit(_id):
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('admin.account_manager'))
         flash('Một số thông tin bị lỗi, vui lòng kiểm tra.', 'warning')
-        return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'])
-    flash('Method not allowed.', 'danger')
-    return render_template('admin/account/edit.html', form=form, account=user, _id=user['_id'])
+        return redirect(url_for('admin.account_edit'))
+    return render_template(
+        'admin/account/edit.html',
+        form=form, account=user,
+        _id=user['_id'],
+        events=event_not_join,
+        event_join=event_join
+    )

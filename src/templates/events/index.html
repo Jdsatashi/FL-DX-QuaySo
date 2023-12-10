@@ -1,7 +1,4 @@
 {% extends 'layouts/layout.html' %}
-{% block header %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-{% endblock header %}
 {% block content %}
     <div class="m-4 max-w-full">
         <div class="flex my-8">
@@ -14,13 +11,13 @@
                 <thead class="table-1-h">
                 <tr>
                     <th scope="col" class="px-6 py-3">
-                        Tài khoản
+                        Sự kiện
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Email
+                        Ngày hết hạn
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Lượt chọn
+                        Lặp số
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Hoạt động
@@ -29,41 +26,43 @@
                         Action
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <a href="{{ url_for('admin.account_create') }}">
-                            <span class="text-base font-bold">+</span> Thêm tài khoản
+                        <a href="{{ url_for('event.insert') }}">
+                            <span class="text-base font-bold">+</span> Thêm sự kiện
                         </a>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for acc in accounts %}
+                {% for event in events %}
                     <tr class="table-1-b">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ acc.username }}
+                            {{ event.event_name }}
                         </th>
-                        <td class="px-6 py-4">
-                            {{ acc.email }}
+                        <td class="px-6 py-4 ms-2">
+                            {{ event.date_close }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ acc.turn_roll }}
+                            {{ event.limit_repeat }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 ms-2">
                             <div class="flex items-center">
-                                {% if acc.is_active %}
+                                {% if event['is_active'] %}
                                     <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                                    Đang hoạt động
+                                    Đang diễn ra
                                 {% else %}
                                     <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
-                                    Dừng hoạt động
+                                    Kết thúc
                                 {% endif %}
                             </div>
                         </td>
-                        <td class="px-6 py-4">
-                            <a href="{{ url_for('admin.account_edit', _id=acc._id) }}"
+                        <td class="px-6 py-4 ms-2">
+                            <a href="{{ url_for('event.update', _id=event['_id']) }}"
+                               data-modal-target="authentication-modal" data-modal-toggle="authentication-modal"
+                               type="button" data-modal-
                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                         </td>
-                        <td class="flex items-center px-6 py-4">
-                            <a href="{{ url_for('auth.reset_password', _id=acc._id) }}"
+                        <td class="flex items-center px-6 py-4 ms-2">
+                            <a href=""
                                class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Reset
                                 password</a>
                         </td>
@@ -73,5 +72,4 @@
             </table>
         </div>
     </div>
-
 {% endblock %}

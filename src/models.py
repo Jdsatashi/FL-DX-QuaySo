@@ -6,8 +6,12 @@ class Models:
         data = self.table.find_one(data_dict)
         return data
 
-    def get_many(self):
+    def get_all(self):
         data_list = self.table.find()
+        return data_list
+
+    def get_many(self, data):
+        data_list = self.table.find(data)
         return data_list
 
     def create(self, data_dict):

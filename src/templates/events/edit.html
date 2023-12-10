@@ -1,0 +1,69 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+    <div class="flex justify-center items-center">
+        <div class="card-simple md-max:w-full w-[800px]">
+            <div class="rounded mx-auto text-center text-4xl font-bold">
+                Chỉnh sửa sự kiện {{ event['date_close'] }}
+            </div>
+            <div class="mt-2">
+                <form method="POST" class="max-w-sm mx-auto">
+                    {{ form.csrf_token() }}
+                    <fieldset>
+                        <div class="mb-3">
+                            {{ form.name.label(class="input-label") }}
+                            {% if form.name.errors %}
+                                {{ form.name(class="form-input is-invalid") }}
+                                {% for error in form.name.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.name(class="form-input", placeholder="Tên sự kiện", value=event.event_name) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.date_close.label(class="input-label") }}
+                            {% if form.date_close.errors %}
+                                {{ form.date_close(class="form-input is-invalid") }}
+                                {% for error in form.date_close.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc", value=event['date_close']) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.repeat_limit.label(class="input-label") }}
+                            {% if form.repeat_limit.errors %}
+                                {{ form.repeat_limit(class="form-input is-invalid") }}
+                                {% for error in form.repeat_limit.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.repeat_limit(class="form-input", placeholder="Giới hạn", pattern="YYYY-MM-DD", value=event.limit_repeat) }}
+                            {% endif %}
+                        </div>
+
+                        <label class="relative inline-flex items-center mb-3 cursor-pointer">
+                            <input type="checkbox" id="is_active" name="is_active" value="True" class="sr-only peer"
+                                   {% if event.is_active == True %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hoạt động</span>
+                        </label>
+
+                        <div class="mt-2 flex justify-center items-center">
+                            {{ form.submit(class="btn-primary") }}
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

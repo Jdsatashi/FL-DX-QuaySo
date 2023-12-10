@@ -1,6 +1,6 @@
 import os
 
-from src import app
+from src.app import app
 
 
 FLASK_PORT = os.environ.get('FLASK_RUN_PORT')

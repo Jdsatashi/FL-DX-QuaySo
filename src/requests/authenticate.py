@@ -2,9 +2,9 @@ from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
 from src.forms import LoginForm, UpdatePasswordForm
-from ..models import Models
-from ..mongodb import ACCOUNT_TABLE
-from ..utils.utilities import role_auth_id, role_admin_id
+from src.models import Models
+from src.mongodb import ACCOUNT_TABLE
+from src.utils.utilities import role_auth_id, role_admin_id
 
 auth = Blueprint('auth', __name__)
 account = Models(table=ACCOUNT_TABLE)
@@ -53,17 +53,15 @@ def reset_password(_id):
     form = UpdatePasswordForm()
     print("Reset password function")
     if user['_id'] == _id:
-        print(f'User edit: {user}')
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-            account.update(ObjectId(_id), {'password', hash_password})
+            account.update(ObjectId(_id), {'password': hash_password})
             flash(f"Successfully update password'.", "success")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
     elif is_admin:
         user = account.get_one(ObjectId(_id))
-        print(f'Admin edit: {user}')
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
@@ -82,6 +80,9 @@ def reset_password(_id):
 def authorize_user():
     if 'username' in session:
         account_data = account.get_one({'username': session['username']})
+        if account_data is None:
+            session.pop('username')
+            return authorize_user()
         account_data['_id'] = str(account_data['_id'])
         data = account_data
         if 'password' in data:

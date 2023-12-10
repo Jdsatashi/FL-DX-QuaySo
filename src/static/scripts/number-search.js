@@ -3,6 +3,8 @@ const inputSearch = document.querySelector('#input-search-number');
 const showListSelected = document.querySelector('#show-selected-number')
 const groupData = document.querySelector('#group-data')
 let listItem = groupData.querySelectorAll('.group-item')
+const userId = document.getElementById('user-id')
+
 // Live searching
 let inputSearchEvent = (e) => {
     liveSearch(e, listItem, showListSelected)
@@ -71,6 +73,7 @@ function clickAddItem(item, item_value, showListSelected) {
         evn.preventDefault()
         addItem.remove()
         removeButton.remove()
+        item.style.display = 'block'
     }
-    item.remove()
+    item.style.display = 'none'
 }
