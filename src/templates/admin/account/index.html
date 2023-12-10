@@ -29,6 +29,9 @@
                         Action
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        <a href="{{ url_for('admin.account_create') }}">
+                            <span class="text-base font-bold">+</span> Thêm tài khoản
+                        </a>
                     </th>
                 </tr>
                 </thead>
@@ -45,11 +48,15 @@
                             {{ acc.turn_roll }}
                         </td>
                         <td class="px-6 py-4">
-                            {% if acc.is_active %}
-                                Active
-                            {% else %}
-                                No Active
-                            {% endif %}
+                            <div class="flex items-center">
+                                {% if acc.is_active %}
+                                    <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                                    Đang hoạt động
+                                {% else %}
+                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
+                                    Dừng hoạt động
+                                {% endif %}
+                            </div>
                         </td>
                         <td class="px-6 py-4">
                             <a href="{{ url_for('admin.account_edit', _id=acc._id) }}"

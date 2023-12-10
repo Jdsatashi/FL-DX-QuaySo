@@ -3,12 +3,11 @@ from flask import render_template, session
 from src.app import app
 from src.requests.authenticate import authorize_user
 
-
 # function to home page
 @app.route('/')
 def home():
     user = authorize_user()
-    if 'username' in session or user:
+    if user:
         if '_id' in session:
             session['_id'] = str(user['_id'])
     return render_template('home.html', title='Home page')
