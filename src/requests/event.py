@@ -16,6 +16,9 @@ join_event_model = Models(table=USER_JOIN_EVENT)
 
 @events.route('/')
 def index():
+    is_admin = admin_authorize()
+    if not is_admin:
+        return redirect(url_for('home'))
     data = event_model.get_all()
     data_list = list(data)
     for event in data_list:
@@ -29,9 +32,9 @@ def index():
 @events.route('/create', methods=['POST', 'GET'])
 def insert():
     is_admin = admin_authorize()
-    form = EventForm()
     if not is_admin:
         return redirect(url_for('home'))
+    form = EventForm()
     if request.method == 'GET':
         now = datetime.now().strftime('%Y-%m-%d')
         return render_template('events/create.html', form=form, date_now=now)

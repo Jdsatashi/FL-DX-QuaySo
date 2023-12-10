@@ -164,8 +164,8 @@ def information():
         list_event_joined.append(event['event_id'])
         if 'selected_number' in event and 'number_choices' in event:
             data[event['event_id']] = {
-                'turn_roll': event['turn_roll'],
-                'number_choices': event['number_choices'],
+                'turn_roll': int(event['turn_roll']),
+                'number_choices': int(event['number_choices']),
                 'selected_number': event['selected_number']
             }
     for id_event in list_event_joined:

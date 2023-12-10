@@ -4,6 +4,9 @@
 {% endblock header %}
 
 {% block content %}
+    <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
+        <img src="{{ url_for('static', filename='assets/background.jpg')}}" alt="Background">
+    </div>
     <!-- Card modal -->
     <div id="overlay" tabindex="-1"
          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
@@ -39,7 +42,7 @@
     </div>
 
     <!-- Main content -->
-    <div class="w-auto">
+    <div class="w-auto sm-max:mt-2 -mt-40">
         <div class="element-center">
             <div class="card-simple lg:w-[760px] md-max:w-full">
                 <div class="w-full h-full">
@@ -87,7 +90,7 @@
             </div>
         </div>
         <div id="group-data">
-            <div class="mx-32 w-full md-max:mx-4">
+            <div class="mx-32 w-full md-max:mx-0">
                 {% if number_rolled %}
                     <h2 class="text-2xl">Các số đã chọn. Click chọn lại hoặc chọn số khác</h2>
                     <div class="w-auto grid grid-cols-5">

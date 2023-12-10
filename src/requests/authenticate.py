@@ -53,17 +53,15 @@ def reset_password(_id):
     form = UpdatePasswordForm()
     print("Reset password function")
     if user['_id'] == _id:
-        print(f'User edit: {user}')
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-            account.update(ObjectId(_id), {'password', hash_password})
+            account.update(ObjectId(_id), {'password': hash_password})
             flash(f"Successfully update password'.", "success")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
     elif is_admin:
         user = account.get_one(ObjectId(_id))
-        print(f'Admin edit: {user}')
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
