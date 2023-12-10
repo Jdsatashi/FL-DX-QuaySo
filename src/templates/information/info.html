@@ -2,15 +2,15 @@
 {% block content %}
     <div class="w-full h-full">
         <h1 class="text-3xl my-4 mx-8">Các sự kiện bạn được tham gia.</h1>
-        <div class="grid grid-cols-2 mx-16 my-8 lg-max:mx-6 lg-max:my-3 lg-max:grid-cols-1">
+        <div class="grid grid-cols-2 mx-16 my-8 lg-max:mx-6 gap-3 lg-max:my-3 lg-max:grid-cols-1">
             {% for id in infos %}
-                <div class="card-simple w-[600px] lg-max:w-auto my-4 mx-8 rounded-xl">
+                <div class="card-simple w-auto my-4 mx-8 rounded-xl">
                     <div class="card-header">
                         <h3 class="card-title">
                             {{ infos[id]['event_name'] }}
                         </h3>
                     </div>
-                    <div class="my-4 w-full">
+                    <div class="my-4 w-full mx-8 md-max:w-auto">
                         <div class="mb-4">
                             <h4 class="text-lg">Thông tin sự kiện: </h4>
                             <p class="text-base text-slate-800">Ngày kết thúc: {{ infos[id]['date_close'] }}</p>
@@ -24,16 +24,21 @@
                         </div>
                         <div class="mb-4">
                             {% if 'selected_number' in infos[id] and 'turn_roll' in infos[id] and 'number_choices' in infos[id] %}
-                                <p class="text-base text-slate-800">Bạn <span class="text-green-600 font-bold">đã tham gia</span> sự kiện này</p>
+                                <p class="text-base text-slate-800">Bạn <span class="text-green-600 font-bold">đã tham gia</span>
+                                    sự kiện này</p>
                                 <p class="text-base text-slate-800">Bạn đã chọn các
                                     số: <span class="font-bold">{{ infos[id]['selected_number'] }}</span></p>
                                 <p class="text-base text-slate-800">
                                     Bạn đã chọn {{ infos[id]['number_choices'] }} số, bạn còn
-                                    <strong class="text-red-600">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</strong> lượt
+                                    <strong class="text-red-600">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</strong>
+                                    lượt
                                     chọn.
                                 </p>
                             {% else %}
-                                <p class="text-base text-slate-800">Bạn <span class="text-red-600 font-bold">chưa tham gia</span> sự kiện này</p>
+                                <p class="text-base text-slate-800">Bạn <span class="text-red-600 font-bold">chưa tham gia</span>
+                                    sự kiện này</p>
+                                <p class="text-base text-slate-800">Bạn có <span class="text-red-600 font-bold">{{ infos[id]['turn_roll'] }}</span>
+                                    lượt chọn cho sự kiện này</p>
                             {% endif %}
                         </div>
                     </div>

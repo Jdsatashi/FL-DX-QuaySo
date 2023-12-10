@@ -6,10 +6,10 @@
                 <div class="card-header mt-2">
                     <h3 class="card-title text-center">Chọn sự kiện</h3>
                 </div>
-                <div class="bg-green-50 mt-4 w-full h-auto ring-1 ring-amber-100 ring-opacity-10">
+                <div class="card-content bg-green-50 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
                     <div class="mt-3">
                         <h3 class="mb-5 text-lg font-medium text-gray-900 dark:text-white">Chọn sự kiện:</h3>
-                        <ul id="group-event" class="grid w-full gap-6 md:grid-cols-3">
+                        <ul id="group-event" class="grid w-full gap-4 md:grid-cols-3 md-max:gap-2">
                             {% for event in events %}
                                 {% if event['_id'] in event_joined %}
                                     <li>

@@ -1,4 +1,54 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
-    <h1>This is the home page and layout.</h1>
+    <div class="w-auto h-full m-8">
+        <div class="card-simple rounded-md">
+            <div class="bg-emerald-700 rounded-t-md">
+                <h1 class="font-bold text-3xl md-max:text-4xl text-white py-4 ms-4">Trang chủ</h1>
+            </div>
+            <div class="card-content w-auto grid grid-cols-2 gap-4 md-max:grid-cols-1 md-max:gap-2">
+                <a href="">
+                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
+                        <div class="bg-slate-300 rounded-t-md">
+                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Sự kiện</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="text-md">Xem các sự kiện đang diễn ra.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('choose_event') }}">
+                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
+                        <div class="bg-slate-300 rounded-t-md">
+                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Chọn số may mắn</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="text-md">Chọn số cho các sự kiện bạn được tham gia.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="">
+                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
+                        <div class="bg-slate-300 rounded-t-md">
+                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Kết quả</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="text-md">Xem các kết quả giải thưởng của các sự kiện.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('information') }}">
+                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
+                        <div class="bg-slate-300 rounded-t-md">
+                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Thông tin</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="text-md">Xem các thông tin về các sự kiện bạn đã tham gia, các số may mắn bạn đ
+                                lựa
+                                chọn cho các sự kiện.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

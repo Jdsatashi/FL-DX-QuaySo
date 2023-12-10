@@ -12,12 +12,12 @@
          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
          style="display: none;">
         <div class="grid place-items-center mt-40 sm-max:mt-28">
-            <div class="card-simple lg:w-[760px] md-max:w-full" id="main-modal">
+            <div class="card-simple lg:w-[760px] md-max:w-auto" id="main-modal">
                 <div class="w-full h-full">
                     <div class="card-header bg-green-100 mb-1">
                         <h2 class="card-title">Xác nhận lựa chọn.</h2>
                     </div>
-                    <div class="card-content bg-green-50 mt-4 w-full h-auto ring-1 ring-amber-100 ring-opacity-10">
+                    <div class="card-content bg-green-50 mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
                         <div class="element-center">
                             <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
                         </div>
@@ -42,14 +42,14 @@
     </div>
 
     <!-- Main content -->
-    <div class="w-auto sm-max:mt-2 -mt-40">
+    <div class="w-auto sm-max:mt-2 -mt-72">
         <div class="element-center">
             <div class="card-simple lg:w-[760px] md-max:w-full">
                 <div class="w-full h-full">
                     <div class="card-header bg-green-100 mb-1">
                         <h2 class="card-title">Chọn số may mắn</h2>
                     </div>
-                    <div class="card-content bg-green-50 mt-4 w-full mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
+                    <div class="card-content bg-green-50 mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
                         <div class="element-center flex-wrap">
                             <h3 class="w-auto text-xl md-max:text-2xl font-bold me-4 sm-max:mb-2">Sự kiện:
                                 "{{ events['event_name'] }}"</h3>
@@ -90,7 +90,7 @@
             </div>
         </div>
         <div id="group-data">
-            <div class="mx-32 w-full md-max:mx-0">
+            <div class="mx-32 w-auto md-max:mx-4">
                 {% if number_rolled %}
                     <h2 class="text-2xl">Các số đã chọn. Click chọn lại hoặc chọn số khác</h2>
                     <div class="w-auto grid grid-cols-5">
