@@ -42,4 +42,5 @@ class EventForm(FlaskForm):
     name = StringField("Tên sự kiện", validators=[DataRequired()])
     date_close = DateField("Ngày kết thúc", validators=[DataRequired()])
     repeat_limit = IntegerField("Giới hạn lặp số")
+    is_active = BooleanField("Hoạt động")
     submit = SubmitField("Xác nhận")

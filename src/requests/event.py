@@ -64,7 +64,10 @@ def update(_id):
     if not is_admin:
         return redirect(url_for('home'))
     spec_event = event_model.get_one({'_id': ObjectId(_id)})
-    spec_event['date_close'] = spec_event['date_close'].strftime('%Y-%m-%d')
+    try:
+        spec_event['date_close'] = spec_event['date_close'].strftime('%Y-%m-%d')
+    except AttributeError:
+        spec_event['date_close'] = spec_event['date_close']
     form = EventForm()
     if spec_event:
         if request.method == 'GET':
@@ -74,6 +77,7 @@ def update(_id):
                 'event_name': form.name.data,
                 'limit_repeat': form.repeat_limit.data,
                 'date_close': datetime.combine(form.date_close.data, datetime.min.time()),
+                'is_active': form.is_active.data,
                 'date_created': datetime.utcnow()
             }
             if form.validate_on_submit():

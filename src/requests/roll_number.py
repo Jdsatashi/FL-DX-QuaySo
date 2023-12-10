@@ -8,18 +8,21 @@ from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
 
 
-def create_number_list(limit, event_id):
+def create_number_list(limit, event_id, user_id):
     list_selected = []
     all_number_selected = []
     unavailable_number = {}
+    user_selected = []
+    user_rolled = join_event_model.get_one({'event_id': event_id, 'user_id': user_id})
+    if 'selected_number' in user_rolled and 'number_choices' in user_rolled:
+        number_selected = user_rolled['selected_number'].split(',')
+        for number in number_selected:
+            user_selected.append(number)
     rolled = join_event_model.get_all()
     if rolled:
         for roll in rolled:
-            print(roll)
             if 'selected_number' in roll and 'number_choices' in roll and roll['event_id'] == event_id:
-                print(roll)
                 list_selected.append(roll['selected_number'])
-    print("List selected: ", list_selected)
     for number in list_selected:
         arr = number.split(',')
         for i in arr:
@@ -27,9 +30,10 @@ def create_number_list(limit, event_id):
     for num in all_number_selected:
         if num not in unavailable_number:
             unavailable_number[num] = 1
+        elif num in user_selected:
+            unavailable_number[num] = 0
         else:
             unavailable_number[num] += 1
-    print('Test here: ', unavailable_number)
     list_number = {}
     for i in range(1000):
         if i > 0:
@@ -90,7 +94,7 @@ def roll_number(_id):
         turn_chosen = rolled['number_choices']
     # Get the form values
     form = NumberSelectedForm()
-    number_list = create_number_list(events['limit_repeat'], _id)
+    number_list = create_number_list(events['limit_repeat'], _id, user['_id'])
     if request.method == 'POST':
         # Get the list of number selected
         list_selected = form.number.data.split(',')
@@ -168,18 +172,16 @@ def information():
                 'number_choices': int(event['number_choices']),
                 'selected_number': event['selected_number']
             }
+        else:
+            data[event['event_id']] = {
+                'turn_roll': int(event['turn_roll'])
+            }
     for id_event in list_event_joined:
         event = event_model.get_one(ObjectId(id_event))
-        if id_event in data:
-            data[id_event].update({
-                'event_name': event['event_name'],
-                'date_close': event['date_close'],
-                'event_active': event['is_active']
-            })
-        else:
-            data[id_event] = {
-                'event_name': event['event_name'],
-                'date_close': event['date_close'],
-                'event_active': event['is_active']
-            }
+        data[id_event].update({
+            'event_name': event['event_name'],
+            'date_close': event['date_close'],
+            'event_active': event['is_active']
+        })
+
     return render_template('information/info.html', infos=data)
