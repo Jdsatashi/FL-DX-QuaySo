@@ -18,5 +18,3 @@ message_log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(messa
 message_logger.setLevel(logging.INFO)
 message_log_handler.setFormatter(message_log_formatter)
 message_logger.addHandler(message_log_handler)
-message_logger.info("This is a custom message log entry.")
-message_logger.warning("This is another custom message log entry with a warning level.")
