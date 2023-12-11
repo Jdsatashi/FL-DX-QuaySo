@@ -2,6 +2,8 @@ from flask import render_template, session
 
 from src.app import app
 from src.requests.authenticate import authorize_user
+from src.utils.utilities import print_log
+
 
 # function to home page
 @app.route('/')
@@ -10,6 +12,7 @@ def home():
     if user:
         if '_id' in session:
             session['_id'] = str(user['_id'])
+        print_log(f"{user['username']} access to home page")
     return render_template('home.html', title='Home page')
 
 

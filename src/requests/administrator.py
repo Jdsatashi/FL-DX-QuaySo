@@ -1,7 +1,7 @@
 from _datetime import datetime
 from bson import ObjectId
-from flask import render_template, redirect, request, flash, url_for, Blueprint, session
-from src.requests.authenticate import admin_authorize, authorize_user
+from flask import render_template, redirect, request, flash, url_for, Blueprint
+from src.requests.authenticate import admin_authorize
 from src.forms import CreateAccountForm, UpdateAccountForm
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
@@ -18,7 +18,7 @@ account = Models(table=ACCOUNT_TABLE)
 def account_manager():
     adm = admin_authorize()
     if not adm:
-        flash("You're not allow to access this page.", 'danger')
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     account_data = account.get_all()
     try:
@@ -44,7 +44,7 @@ def account_manager():
 def account_create():
     adm = admin_authorize()
     if not adm:
-        flash("You're not allow to access this page.", 'danger')
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     form = CreateAccountForm()
     events = list(event_model.get_all())
@@ -53,7 +53,7 @@ def account_create():
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
         form_user = {
-            "username": form.username.data,
+            "username": str(form.username.data).lower(),
             "email": form.email.data,
             "password": hashed_password,
             "role_id": role_auth_id,
@@ -80,7 +80,7 @@ def account_create():
                         join_event_model.create(input_data)
 
                 print(f"Created successfully {form_user['username']}.")
-                flash(f"Account '{form_user['username']}' creating successful.", "success")
+                flash(f"Tạo thành công tài khoản '{form_user['username']}'.", "success")
                 return redirect(url_for('home'))
             except Exception as e:
                 print(f"Error.\n{e}")
@@ -112,17 +112,17 @@ def account_edit(_id):
             event_join[event['event_id']].update({'turn_roll': event['turn_roll']})
 
     if not adm:
-        flash("You're not allow to access this page.", 'danger')
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     form = UpdateAccountForm()
     user = account.get_one({'_id': ObjectId(_id)})
     if not user:
-        flash('Account not found.', 'warning')
+        flash('Không tìm thấy tài khoản.', 'warning')
         return redirect(url_for('home'))
     if request.method == 'POST':
         events_join = form.join_event.data
         form_data = {
-            "username": form.username.data,
+            "username": str(form.username.data).lower(),
             "email": form.email.data,
             "is_active": form.is_active.data,
             "date_updated": datetime.utcnow()
@@ -142,13 +142,13 @@ def account_edit(_id):
                         'turn_roll': event[1]
                     }
                     join_event_model.create(input_data)
-                flash(f'Update tài khoản "{edit_account["username"]}".', 'success')
+                flash(f'Cập nhật tài khoản "{edit_account["username"]}".', 'success')
                 return redirect(url_for('admin.account_manager'))
             except Exception as e:
                 print('Error when editing account.', e)
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('admin.account_manager'))
-        flash('Một số thông tin bị lỗi, vui lòng kiểm tra.', 'warning')
+        flash('Một số thông tin bị lỗi, vui lòng kiểm tra lại.', 'warning')
         return redirect(url_for('admin.account_edit'))
     return render_template(
         'admin/account/edit.html',

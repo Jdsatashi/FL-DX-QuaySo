@@ -5,6 +5,8 @@ from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
+from src import logs
+
 app = Flask(__name__)
 # csrf = CSRFProtect(app)
 

@@ -12,14 +12,14 @@
                         <div class="mb-5">
                             {{ form.username.label(class="input-label") }}
                             {% if form.username.errors %}
-                                {{ form.username(class="form-control is-invalid") }}
+                                {{ form.username(class="form-control is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.username.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.username(class="form-input", placeholder="account") }}
+                                {{ form.username(class="form-input", placeholder="account", style="text-transform:uppercase") }}
                             {% endif %}
                         </div>
 

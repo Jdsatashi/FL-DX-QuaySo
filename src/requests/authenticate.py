@@ -14,12 +14,12 @@ account = Models(table=ACCOUNT_TABLE)
 def login():
     form = LoginForm()
     if request.method == 'POST':
-        username = form.username.data
+        username = str(form.username.data).lower()
         password = form.password.data.encode("utf-8")
         user = account.get_one({'username': username})
         if form.validate_on_submit():
             if not user:
-                flash(f"Username '{username}' is not found.", "warning")
+                flash(f"Tài khoản '{username}' không tồn tại.", "warning")
                 return redirect(url_for('auth.login'))
             if user and bcrypt.checkpw(password, user["password"]):
                 is_role = user["role_id"]
@@ -29,10 +29,10 @@ def login():
                 session["username"] = username
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
-                flash(f"Successfully Login! Welcome '{username}'.", "success")
+                flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
                 return redirect(url_for('home'))
             else:
-                flash(f"Password was incorrect.", "danger")
+                flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
                 return redirect(url_for('auth.login'))
     else:
         return render_template('auth/login.html', title='Login', form=form)
@@ -57,7 +57,7 @@ def reset_password(_id):
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
             account.update(ObjectId(_id), {'password': hash_password})
-            flash(f"Successfully update password'.", "success")
+            flash(f"Cập nhật ật khẩu mới thành công.", "success")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
     elif is_admin:
@@ -69,7 +69,7 @@ def reset_password(_id):
                 'password': hash_password
             }
             account.update(ObjectId(_id), update_data)
-            flash(f"Successfully update password for {user['username']}.", "success")
+            flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', form=form, account=user)
     else:

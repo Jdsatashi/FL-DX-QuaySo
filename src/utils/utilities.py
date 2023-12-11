@@ -1,6 +1,7 @@
 from flask import flash, redirect, url_for
 import validators
 
+from src.logs import message_logger
 from src.mongodb import ROLE_TABLE, ACCOUNT_TABLE
 
 role = ROLE_TABLE.find_one({'role': 'auth_user'})
@@ -22,3 +23,10 @@ def validate_account_create(emails, username):
     if ACCOUNT_TABLE.find_one(emails):
         flash(f"Email {emails} was used.", "warning")
         return redirect(url_for('admin.account_create'))
+
+
+def logInfo(message):
+    message_logger.info(message)
+
+def logDebug(message):
+    message_logger.debug(message)
