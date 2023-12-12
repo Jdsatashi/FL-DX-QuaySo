@@ -10,7 +10,7 @@
     <!-- Card modal -->
     <div id="overlay" tabindex="-1"
          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
-         style="display: none;">
+    >
         <div class="grid place-items-center mt-40 sm-max:mt-28">
             <div class="card-simple lg:w-[760px] md-max:w-auto" id="main-modal">
                 <div class="w-full h-full">
@@ -91,17 +91,19 @@
         </div>
         <div id="group-data">
             <div class="mx-32 w-auto md-max:mx-4">
-                {% if number_rolled %}
-                    <h2 class="text-2xl">Các số đã chọn. Click chọn lại hoặc chọn số khác</h2>
-                    <div class="w-auto grid grid-cols-5">
-                        {% for number in number_rolled %}
-                            <p id="li-{{ number }}"
-                               class="group-item"
-                               title="Nhấn để chọn số"
-                            >{{ number }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <div id="item-selecting" style="display: none">
+                    {% if number_rolled %}
+                        <h2 class="text-2xl">Các số đã chọn. Click chọn lại hoặc chọn số khác</h2>
+                        <div class="w-auto grid grid-cols-5">
+                            {% for number in number_rolled %}
+                                <p id="li-{{ number }}"
+                                   class="group-item"
+                                   title="Nhấn để chọn số"
+                                >{{ number }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
                 <h3 class="text-2xl">Các số khả dụng:</h3>
             </div>
             <div class="w-auto mx-32 my-4 grid grid-cols-10 lg-max:mx-4 lg-max:grid-cols-6 ">
@@ -115,7 +117,7 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/modal.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/modal-confirm.js') }}"></script>
     <script type="module">
         import addElement from "../../static/scripts/helper.js";
 
@@ -146,6 +148,14 @@
             }
         })
 
+        const placeSelecting = document.getElementById('item-selecting')
+        const selecting = placeSelecting.querySelectorAll('.group-item')
+
+        selecting.forEach(item => {
+            let item_value = item.textContent.trim()
+            clickAddItem(item, item_value, showListSelected)
+        })
+
         function liveSearch(e, listItem, showListSelected) {
             let value = e.target.value.toLowerCase()
             listItem.forEach((item) => {
@@ -167,7 +177,17 @@
             })
         }
 
+        function updatePlaceSelectingDisplay() {
+            let hasDisplayedItem = false;
 
+            selecting.forEach(item => {
+                if (item.style.display === 'block') {
+                    hasDisplayedItem = true;
+                }
+            });
+
+            placeSelecting.style.display = hasDisplayedItem ? 'block' : 'none';
+        }
 
         function clickAddItem(item, item_value, showListSelected) {
             let addItem = addElement(showListSelected, {
@@ -195,12 +215,14 @@
                 addItem.remove()
                 removeButton.remove()
                 item.style.display = 'block'
+                updatePlaceSelectingDisplay()
             }
             item.style.display = 'none'
+            updatePlaceSelectingDisplay()
         }
     </script>
     <script type="text/javascript">
-        JdModal({
+        JdFormModal({
             idOpenModal: 'open-modal-btn',
             idCloseModal: 'close-modal-btn',
             idModalParent: 'overlay',

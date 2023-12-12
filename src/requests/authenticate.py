@@ -4,7 +4,7 @@ import bcrypt
 from src.forms import LoginForm, UpdatePasswordForm
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
-from src.utils.utilities import role_auth_id, role_admin_id
+from src.utils.utilities import role_auth_id, role_admin_id, log_info
 
 auth = Blueprint('auth', __name__)
 account = Models(table=ACCOUNT_TABLE)
@@ -24,12 +24,12 @@ def login():
             if user and bcrypt.checkpw(password, user["password"]):
                 is_role = user["role_id"]
                 if is_role is None or is_role == '':
-                    print('update role')
                     account.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 session["username"] = username
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
                 flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
+                log_info(f"User '{username.upper()}' đã đăng nhập.")
                 return redirect(url_for('home'))
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
@@ -58,6 +58,7 @@ def reset_password(_id):
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
             account.update(ObjectId(_id), {'password': hash_password})
             flash(f"Cập nhật ật khẩu mới thành công.", "success")
+            log_info(f"User '{user['username']}' đã thay đổi password.")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
     elif is_admin:
@@ -70,11 +71,12 @@ def reset_password(_id):
             }
             account.update(ObjectId(_id), update_data)
             flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
+            log_info(f"Admin đã thay đổi password cho user '{user['username']}'.")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', form=form, account=user)
     else:
         print('Not access able.')
-    return redirect(url_for('admin.account_manager'))
+        return redirect(url_for('home'))
 
 
 def authorize_user():

@@ -6,6 +6,7 @@ from src.forms import NumberSelectedForm
 from src.app import app
 from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
+from src.utils.utilities import log_info, log_debug
 
 
 def create_number_list(limit, event_id, user_id):
@@ -17,7 +18,7 @@ def create_number_list(limit, event_id, user_id):
     if 'selected_number' in user_rolled and 'number_choices' in user_rolled:
         number_selected = user_rolled['selected_number'].split(',')
         for number in number_selected:
-            user_selected.append(number)
+            user_selected.append(int(number))
     rolled = join_event_model.get_all()
     if rolled:
         for roll in rolled:
@@ -30,15 +31,15 @@ def create_number_list(limit, event_id, user_id):
     for num in all_number_selected:
         if num not in unavailable_number:
             unavailable_number[num] = 1
-        elif num in user_selected:
-            unavailable_number[num] = 0
         else:
             unavailable_number[num] += 1
+        if num in user_selected:
+            unavailable_number[num] = 0
     list_number = {}
     for i in range(1000):
         if i > 0:
             if i in unavailable_number:
-                if limit - unavailable_number[i] > 0:
+                if limit - unavailable_number[i] > 0 and unavailable_number[i] > 0:
                     list_number[i] = limit - unavailable_number[i]
             else:
                 list_number[i] = limit
@@ -100,7 +101,7 @@ def roll_number(_id):
         list_selected = form.number.data.split(',')
         # Validate if number selected more than turn choices
         if len(list_selected) > int(user['turn_roll']):
-            flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'danger')
+            flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'warning')
             return redirect(url_for('roll_number', _id=_id))
         # Change data type of close_date value to datetime
         try:
@@ -110,7 +111,7 @@ def roll_number(_id):
             close_date = datetime.strptime(events['date_close'], '%Y-%m-%d')
         # Validate if current date > closure date
         if close_date < datetime.now():
-            flash(f"Sự kiện đã kết thúc 0h ngày {events['date_close'].strftime('%Y-%m-%d')}.", 'danger')
+            flash(f"Sự kiện đã kết thúc 0h ngày {events['date_close'].strftime('%Y-%m-%d')}.", 'warning')
             return redirect(url_for('choose_event'))
 
         form_data = {
@@ -122,10 +123,11 @@ def roll_number(_id):
             try:
                 id_roll = str(rolled['_id'])
                 join_event_model.update(ObjectId(id_roll), form_data)
-                flash(f"Chọn số cho sự kiện {events['event_name']} thành công.", "success")
-                return redirect(url_for('choose_event'))
+                log_info(f"User '{user['username'].upper()}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
+                flash(f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.", "success")
+                return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
-                print("Error when select number. ", e)
+                log_debug(f"Error when choosing number.\n{e}")
                 flash("Lỗi server, vui lòng thử lại.")
                 return redirect(url_for('choose_event'))
         else:
@@ -134,10 +136,11 @@ def roll_number(_id):
                 form_data.update({'date_updated': datetime.utcnow()})
                 id_roll = str(rolled['_id'])
                 join_event_model.update(ObjectId(id_roll), form_data)
-                flash(f"Chọn số cho sự kiện {events['event_name']} thành công.", "success")
-                return redirect(url_for('choose_event'))
+                log_info(f"User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
+                flash(f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.", "success")
+                return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
-                print("Error when select number. ", e)
+                log_debug(f"Error when re choosing number.\n{e}")
                 flash("Lỗi server, vui lòng thử lại.")
                 return redirect(url_for('choose_event'))
     else:

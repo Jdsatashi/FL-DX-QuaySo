@@ -1,7 +1,7 @@
 from flask import flash, redirect, url_for
 import validators
 
-from src.logs import message_logger
+from src.logs import message_logger, fileHandler
 from src.mongodb import ROLE_TABLE, ACCOUNT_TABLE
 
 role = ROLE_TABLE.find_one({'role': 'auth_user'})
@@ -30,4 +30,4 @@ def log_info(message):
 
 
 def log_debug(message):
-    message_logger.debug(message)
+    fileHandler.debug(message)
