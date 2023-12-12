@@ -1,8 +1,8 @@
 from flask import render_template, session
 
 from src.app import app
+from src.logs import message_logger
 from src.requests.authenticate import authorize_user
-from src.utils.utilities import log_info
 
 
 # function to home page
@@ -12,7 +12,7 @@ def home():
     if user:
         if '_id' in session:
             session['_id'] = str(user['_id'])
-        log_info(f"{user['username']} access to home page")
+        message_logger.info(f"{user['username']} access to home page")
     return render_template('home.html', title='Home page')
 
 

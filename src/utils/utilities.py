@@ -25,9 +25,9 @@ def validate_account_create(emails, username):
         return redirect(url_for('admin.account_create'))
 
 
-def log_info(message):
-    message_logger.info(message)
-
-
-def log_debug(message):
-    fileHandler.debug(message)
+# def log_info(message):
+#     message_logger.info(message)
+#
+#
+# def log_debug(message):
+#     fileHandler.debug(message)

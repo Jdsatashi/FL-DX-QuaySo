@@ -2,9 +2,10 @@ from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
 from src.forms import LoginForm, UpdatePasswordForm
+from src.logs import message_logger
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
-from src.utils.utilities import role_auth_id, role_admin_id, log_info
+from src.utils.utilities import role_auth_id, role_admin_id
 
 auth = Blueprint('auth', __name__)
 account = Models(table=ACCOUNT_TABLE)
@@ -29,7 +30,7 @@ def login():
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
                 flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
-                log_info(f"User '{username.upper()}' đã đăng nhập.")
+                message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
                 return redirect(url_for('home'))
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
@@ -58,7 +59,7 @@ def reset_password(_id):
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
             account.update(ObjectId(_id), {'password': hash_password})
             flash(f"Cập nhật ật khẩu mới thành công.", "success")
-            log_info(f"User '{user['username']}' đã thay đổi password.")
+            message_logger.info(f"User '{user['username']}' đã thay đổi password.")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
     elif is_admin:
@@ -71,7 +72,7 @@ def reset_password(_id):
             }
             account.update(ObjectId(_id), update_data)
             flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
-            log_info(f"Admin đã thay đổi password cho user '{user['username']}'.")
+            message_logger.info(f"Admin đã thay đổi password cho user '{user['username']}'.")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', form=form, account=user)
     else:

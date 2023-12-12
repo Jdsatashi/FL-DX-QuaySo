@@ -4,9 +4,9 @@ from _datetime import datetime
 
 from src.forms import NumberSelectedForm
 from src.app import app
+from src.logs import message_logger
 from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
-from src.utils.utilities import log_info, log_debug
 
 
 def create_number_list(limit, event_id, user_id):
@@ -123,12 +123,15 @@ def roll_number(_id):
             try:
                 id_roll = str(rolled['_id'])
                 join_event_model.update(ObjectId(id_roll), form_data)
-                log_info(f"User '{user['username'].upper()}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
-                flash(f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.", "success")
+                flash(
+                    f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.",
+                    "success")
+                message_logger.info(
+                    f"User '{user['username']}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
-                log_debug(f"Error when choosing number.\n{e}")
                 flash("Lỗi server, vui lòng thử lại.")
+                log_debug(f"Error when choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
         else:
             try:
@@ -136,14 +139,18 @@ def roll_number(_id):
                 form_data.update({'date_updated': datetime.utcnow()})
                 id_roll = str(rolled['_id'])
                 join_event_model.update(ObjectId(id_roll), form_data)
-                log_info(f"User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
-                flash(f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.", "success")
+                flash(
+                    f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.",
+                    "success")
+                message_logger.info(
+                    f"User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
-                log_debug(f"Error when re choosing number.\n{e}")
                 flash("Lỗi server, vui lòng thử lại.")
+                log_debug(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
+        message_logger.info(f"{user['username']} vào trang chọn số.")
         return render_template(
             'choose_number/choose_number.html',
             number_list=number_list, title="Quay số",
