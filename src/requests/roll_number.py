@@ -2,9 +2,11 @@ from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash
 from _datetime import datetime
 
+from markupsafe import Markup
+
 from src.forms import NumberSelectedForm
 from src.app import app
-from src.logs import message_logger
+from src.logs import message_logger, logger
 from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
 
@@ -50,7 +52,7 @@ def create_number_list(limit, event_id, user_id):
 def choose_event():
     user = authorize_user()
     if not user:
-        flash(f"Bạn phải đăng nhập để chọn sự kiện quay số", 'warning')
+        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
     events = list(event_model.get_all())
     for event in events:
@@ -73,7 +75,7 @@ def roll_number(_id):
     # authorize user
     user = authorize_user()
     if not user:
-        flash(f"Bạn phải đăng nhập để quay số", 'warning')
+        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
     # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})
@@ -131,7 +133,7 @@ def roll_number(_id):
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
-                log_debug(f"Error when choosing number.\n{e}")
+                logger.debug(f"Error when choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
         else:
             try:
@@ -147,7 +149,7 @@ def roll_number(_id):
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
-                log_debug(f"Error when re choosing number.\n{e}")
+                logger.debug(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
         message_logger.info(f"{user['username']} vào trang chọn số.")
@@ -168,7 +170,7 @@ def information():
     # authorize user
     user = authorize_user()
     if not user:
-        flash(f"Bạn phải đăng nhập để xem thông tin", 'warning')
+        flash(Markup('Bạn phải đăng nhập để xem thông tin. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
     data = {}
     list_event_joined = list()

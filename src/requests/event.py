@@ -1,8 +1,10 @@
+import os
 from _datetime import datetime
 
 from bson import ObjectId
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
+from src.app import app
 from src.forms import EventForm
 from src.models import Models
 from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT
@@ -12,6 +14,17 @@ from src.requests.authenticate import admin_authorize, authorize_user
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
 join_event_model = Models(table=USER_JOIN_EVENT)
+
+
+def create_folder(event_name):
+    year = datetime.utcnow().year
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], str(year), event_name)
+
+    # Kiểm tra xem thư mục đã tồn tại chưa, nếu chưa thì tạo mới
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    return folder_path
 
 
 @events.route('/')
@@ -43,18 +56,25 @@ def insert():
             'event_name': form.name.data,
             'limit_repeat': int(form.repeat_limit.data),
             'date_close': form.date_close.data.strftime('%Y-%m-%d'),
+            'file_desc': request.files.getlist('desc_files'),
+            'images': request.files.getlist('images'),
             'is_active': True,
             'date_created': datetime.utcnow()
         }
-        if form.validate_on_submit():
-            try:
-                event_model.create(data_form)
-                flash(f'Tạo thành công "{data_form["event_name"]}".', 'success')
-                return redirect(url_for('event.index'))
-            except Exception as e:
-                print("Error.", e)
-                flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
-                return redirect(url_for('event.index'))
+        for file in data_form['file_desc']:
+            print("Uploading file", file.filename)
+        for file in data_form['images']:
+            print("Uploading image", file.filename)
+        print(data_form)
+        # if form.validate_on_submit():
+        #     try:
+        #         event_model.create(data_form)
+        #         flash(f'Tạo thành công "{data_form["event_name"]}".', 'success')
+        #         return redirect(url_for('event.index'))
+        #     except Exception as e:
+        #         print("Error.", e)
+        #         flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
+        #         return redirect(url_for('event.index'))
         return redirect(url_for('home'))
 
 

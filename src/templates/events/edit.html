@@ -6,7 +6,7 @@
                 Chỉnh sửa sự kiện {{ event['date_close'] }}
             </div>
             <div class="mt-2">
-                <form method="POST" class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-sm mx-auto" enctype="multipart/form-data">
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="mb-3">

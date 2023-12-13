@@ -23,10 +23,14 @@ def create_admin_account():
             add_default_role()
         password = 'dxAdministrator'.encode("utf-8")
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-        ACCOUNT_TABLE.insert_one({
-            "username": 'admin',
-            "email": 'vdt1073@gmail.com',
-            "password": hashed_password,
-            "role_id": role_admin_id,
-            "date_created": datetime.utcnow()
-        })
+        try:
+            ACCOUNT_TABLE.insert_one({
+                "username": 'admin',
+                "email": 'vdt1073@gmail.com',
+                "password": hashed_password,
+                "role_id": role_admin_id,
+                "date_created": datetime.utcnow()
+            })
+            print("Added admin account.")
+        except Exception as e:
+            print("Create admin errors. ", e)

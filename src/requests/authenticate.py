@@ -58,7 +58,7 @@ def reset_password(_id):
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
             account.update(ObjectId(_id), {'password': hash_password})
-            flash(f"Cập nhật ật khẩu mới thành công.", "success")
+            flash(f"Cập nhật nhật khẩu mới thành công.", "success")
             message_logger.info(f"User '{user['username']}' đã thay đổi password.")
             return redirect(url_for('home'))
         return render_template('auth/reset_password.html', account=user, form=form)
