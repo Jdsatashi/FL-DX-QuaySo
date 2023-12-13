@@ -53,6 +53,7 @@
                         <div class="element-center flex-wrap">
                             <h3 class="w-auto text-xl md-max:text-2xl font-bold me-4 sm-max:mb-2">Sự kiện:
                                 "{{ events['event_name'] }}"</h3>
+                            <p class="hidden" id="turn_choose">{{ user['turn_roll'] }}</p>
                             {% if number_rolled %}
                                 <p class="w-auto text-xl md-max:text-2xl sm-max:mb-2">Tài khoản "{{ user['username'] }}"
                                     đã chọn {{ turn_chosen }} lần, bạn còn
@@ -133,14 +134,16 @@
                               stroke-width="2"
                               d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
                     </svg>`
+        const turnChoose = parseInt(document.getElementById('turn_choose').innerText)
+        let groupChosen = showListSelected.querySelectorAll('.item-card')
 
-        // Live searching
+        // Live searching navigate function
         let inputSearchEvent = (e) => {
             liveSearch(e, listItem, showListSelected)
         }
-
+        // Live search Event
         inputSearch.addEventListener('input', inputSearchEvent)
-
+        // Live search main function
         listItem.forEach((item) => {
             item.onclick = () => {
                 let item_value = item.textContent.trim()
@@ -148,14 +151,15 @@
             }
         })
 
+        // Get selected number
         const placeSelecting = document.getElementById('item-selecting')
         const selecting = placeSelecting.querySelectorAll('.group-item')
-
+        // Show selected number to chosen place function
         selecting.forEach(item => {
             let item_value = item.textContent.trim()
             clickAddItem(item, item_value, showListSelected)
         })
-
+        // Function handling search item
         function liveSearch(e, listItem, showListSelected) {
             let value = e.target.value.toLowerCase()
             listItem.forEach((item) => {
@@ -189,6 +193,7 @@
             placeSelecting.style.display = hasDisplayedItem ? 'block' : 'none';
         }
 
+        // Function handle clicking to add item to place showing selected item
         function clickAddItem(item, item_value, showListSelected) {
             let addItem = addElement(showListSelected, {
                 createTag: 'p',

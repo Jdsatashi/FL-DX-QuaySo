@@ -4,27 +4,17 @@ from _datetime import datetime
 from bson import ObjectId
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
-from src.app import app
+from src.app import create_folder
 from src.forms import EventForm
 from src.models import Models
 from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT
 from src.requests.authenticate import admin_authorize, authorize_user
+from werkzeug.utils import secure_filename
 
 
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
 join_event_model = Models(table=USER_JOIN_EVENT)
-
-
-def create_folder(event_name):
-    year = datetime.utcnow().year
-    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], str(year), event_name)
-
-    # Kiểm tra xem thư mục đã tồn tại chưa, nếu chưa thì tạo mới
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-
-    return folder_path
 
 
 @events.route('/')
@@ -34,6 +24,7 @@ def index():
         return redirect(url_for('home'))
     data = event_model.get_all()
     data_list = list(data)
+    create_folder("test1234")
     for event in data_list:
         try:
             event['date_close'] = event['date_close'].strftime('%Y-%m-%d')
@@ -56,8 +47,8 @@ def insert():
             'event_name': form.name.data,
             'limit_repeat': int(form.repeat_limit.data),
             'date_close': form.date_close.data.strftime('%Y-%m-%d'),
-            'file_desc': request.files.getlist('desc_files'),
-            'images': request.files.getlist('images'),
+            'file_desc': request.files.get('desc_file'),
+            'images': request.files.get('image'),
             'is_active': True,
             'date_created': datetime.utcnow()
         }

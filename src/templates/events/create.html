@@ -55,28 +55,28 @@
                         <div class="mb-3">
                             {{ form.desc_files.label(class="input-label") }}
                             {% if form.desc_files.errors %}
-                                <input id="desc_files" name="desc_files" type="file" class="form-input-file" multiple>
+                                <input id="desc_files" name="desc_files" type="file" class="form-input-file">
                                 {% for error in form.desc_files.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <input id="desc_files" name="desc_files" type="file" class="form-input-file" multiple>
+                                <input id="desc_files" name="desc_files" type="file" class="form-input-file">
                             {% endif %}
                         </div>
 
                         <div class="mb-3">
-                            {{ form.images.label(class="input-label") }}
-                            {% if form.images.errors %}
-                                <input id="images" name="images" type="file" class="form-input-file is-invalid" multiple>
-                                {% for error in form.images.errors %}
+                            {{ form.desc_image.label(class="input-label") }}
+                            {% if form.desc_image.errors %}
+                                <input id="desc_image" name="desc_image" type="file" class="form-input-file is-invalid">
+                                {% for error in form.desc_image.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <input id="images" name="images" type="file" class="form-input-file" multiple>
+                                <input id="desc_image" name="desc_image" type="file" class="form-input-file">
                             {% endif %}
                         </div>
 
