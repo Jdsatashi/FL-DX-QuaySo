@@ -86,6 +86,11 @@ def roll_number(_id):
     # To string _id for compare
     user['_id'] = str(user['_id'])
     events['_id'] = str(events['_id'])
+    events.update({
+        'event_year': events['date_created'].year,
+        'folder_path': str('uploads/' + str(events['date_created'].year) + '/' + events['event_name'])
+    })
+    events.pop('date_created')
 
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     turn_chosen = 0
@@ -101,6 +106,8 @@ def roll_number(_id):
     if request.method == 'POST':
         # Get the list of number selected
         list_selected = form.number.data.split(',')
+        unique_set = set(list_selected)
+        list_selected = list(unique_set)
         # Validate if number selected more than turn choices
         if len(list_selected) > int(user['turn_roll']):
             flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'warning')
@@ -118,7 +125,7 @@ def roll_number(_id):
 
         form_data = {
             'selected_number': form.number.data,
-            'number_choices': len(list_selected),
+            'number_choices': len(unique_set),
             'date_created': datetime.utcnow()
         }
         if 'selected_number' not in rolled and 'number_choices' not in rolled:

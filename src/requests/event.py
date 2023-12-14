@@ -43,29 +43,33 @@ def insert():
         now = datetime.now().strftime('%Y-%m-%d')
         return render_template('events/create.html', form=form, date_now=now)
     if request.method == 'POST':
+        file_doc = request.files.get('desc_file')
+        file_image = request.files.get('desc_image')
         data_form = {
             'event_name': form.name.data,
             'limit_repeat': int(form.repeat_limit.data),
             'date_close': form.date_close.data.strftime('%Y-%m-%d'),
-            'file_desc': request.files.get('desc_file'),
-            'images': request.files.get('image'),
             'is_active': True,
             'date_created': datetime.utcnow()
         }
-        for file in data_form['file_desc']:
-            print("Uploading file", file.filename)
-        for file in data_form['images']:
-            print("Uploading image", file.filename)
-        print(data_form)
-        # if form.validate_on_submit():
-        #     try:
-        #         event_model.create(data_form)
-        #         flash(f'Tạo thành công "{data_form["event_name"]}".', 'success')
-        #         return redirect(url_for('event.index'))
-        #     except Exception as e:
-        #         print("Error.", e)
-        #         flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
-        #         return redirect(url_for('event.index'))
+        if form.validate_on_submit():
+            try:
+                event_folder = create_folder(data_form['event_name'])
+                doc_name = secure_filename(file_doc.filename)
+                img_name = secure_filename(file_image.filename)
+                file_doc.save(os.path.join(event_folder, doc_name))
+                file_image.save(os.path.join(event_folder, img_name))
+                data_form.update({
+                    'file_pdf_doc': doc_name,
+                    'file_image_doc': img_name
+                })
+                event_model.create(data_form)
+                flash(f'Tạo thành công "{data_form["event_name"]}".', 'success')
+                return redirect(url_for('event.index'))
+            except Exception as e:
+                print("Error.", e)
+                flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
+                return redirect(url_for('event.index'))
         return redirect(url_for('home'))
 
 

@@ -12,7 +12,7 @@ def home():
     if user:
         if '_id' in session:
             session['_id'] = str(user['_id'])
-        message_logger.info(f"{user['username']} access to home page")
+        message_logger.info(f"{user['username']} đã tiến vào trang chủ.")
     return render_template('home.html', title='Home page')
 
 

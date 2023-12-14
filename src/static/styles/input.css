@@ -19,7 +19,7 @@
     }
 
     .card-title {
-        @apply md:text-3xl md-max:text-4xl px-3 py-2 font-bold
+        @apply md:text-xl md-max:text-2xl px-6 py-2 font-medium
     }
 
     .card-content {

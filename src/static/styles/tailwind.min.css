@@ -1092,24 +1092,24 @@ input:checked + .toggle-bg {
 }
 
 .card-title {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 @media (min-width: 768px) {
   .card-title {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
   }
 }
 
 @media (max-width: 1023px) {
   .card-title {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
   }
 }
 
@@ -2163,6 +2163,11 @@ input:checked + .toggle-bg {
   margin-bottom: 0px;
 }
 
+.my-1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
 .my-2 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -2674,6 +2679,11 @@ input:checked + .toggle-bg {
 .rounded-s-lg {
   border-start-start-radius: 0.5rem;
   border-end-start-radius: 0.5rem;
+}
+
+.rounded-t-lg {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
 }
 
 .rounded-t-md {
@@ -3920,9 +3930,9 @@ input:checked + .toggle-bg {
     line-height: 2rem;
   }
 
-  .md\:text-3xl {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
+  .md\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 
   .md\:text-xl {
@@ -3973,6 +3983,10 @@ input:checked + .toggle-bg {
     margin: 2rem;
   }
 
+  .lg\:block {
+    display: block;
+  }
+
   .lg\:w-\[760px\] {
     width: 760px;
   }
@@ -3989,6 +4003,10 @@ input:checked + .toggle-bg {
 
   .sm-max\:mt-28 {
     margin-top: 7rem;
+  }
+
+  .sm-max\:hidden {
+    display: none;
   }
 
   .sm-max\:h-full {
@@ -4045,6 +4063,10 @@ input:checked + .toggle-bg {
 
   .md-max\:mt-24 {
     margin-top: 6rem;
+  }
+
+  .md-max\:hidden {
+    display: none;
   }
 
   .md-max\:w-auto {

@@ -53,16 +53,16 @@
                         </div>
 
                         <div class="mb-3">
-                            {{ form.desc_files.label(class="input-label") }}
-                            {% if form.desc_files.errors %}
-                                <input id="desc_files" name="desc_files" type="file" class="form-input-file">
-                                {% for error in form.desc_files.errors %}
+                            {{ form.desc_file.label(class="input-label") }}
+                            {% if form.desc_file.errors %}
+                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">
+                                {% for error in form.desc_file.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <input id="desc_files" name="desc_files" type="file" class="form-input-file">
+                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">
                             {% endif %}
                         </div>
 

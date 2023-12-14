@@ -4,6 +4,9 @@
 {% endblock header %}
 
 {% block content %}
+    <p class="hidden">{{ events }}</p>
+    <iframe class="hidden" width="300" height="300" src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_pdf_doc'])}}">Thể lệ</iframe>
+    <img class="hidden" src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_image_doc'])}}" alt="test"></img>
     <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
         <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
     </div>
@@ -12,10 +15,10 @@
          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
     >
         <div class="grid place-items-center mt-40 sm-max:mt-28">
-            <div class="card-simple lg:w-[760px] md-max:w-auto" id="main-modal">
+            <div class="card-simple rounded-lg lg:w-[760px] md-max:w-auto" id="main-modal">
                 <div class="w-full h-full">
-                    <div class="card-header bg-green-100 mb-1">
-                        <h2 class="card-title">Xác nhận lựa chọn.</h2>
+                    <div class="card-header rounded-t-lg bg-green-500 mb-1">
+                        <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
                     </div>
                     <div class="card-content bg-green-50 mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
                         <div class="element-center">
@@ -66,7 +69,9 @@
                         </div>
                         <div class="element-center max-w-sm mx-auto">
                             <div class="mb-3 mt-3">
-                                <label for="input-search-number"></label>
+                                <label for="input-search-number"
+                                       class="block mb-2 text-sm font-medium md:text-base md-max:text-xl text-gray-900 dark:text-white text-center">Nhập
+                                    số cần tìm</label>
                                 <input type="text" id="input-search-number"
                                        class="input-e w-[300px] md-max:w-full md-max:text-xl xl-max:text-xl"
                                        placeholder="Tìm số"
@@ -74,11 +79,18 @@
                                 >
                             </div>
                         </div>
-                        <div class="flex justify-center mt-3 w-auto">
-                            <div id="show-selected-number"
-                                 class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+
+                        <div class="mt-3">
+                            <div class="my-1">
+                                <h4 class="text-base text-center" style="display: none;">Các số đã chọn</h4>
+                            </div>
+                            <div class="flex justify-center w-auto">
+                                <div id="show-selected-number"
+                                     class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+                                </div>
                             </div>
                         </div>
+
                         <div class="element-center mb-3">
                             <button type="button" class="button-simple-green" id="open-modal-btn"
                                     title="Xác nhận chọn số">
@@ -90,6 +102,7 @@
                 </div>
             </div>
         </div>
+        <div id="hidden-selected"></div>
         <div id="group-data">
             <div class="mx-32 w-auto md-max:mx-4">
                 <div id="item-selecting" style="display: none">
@@ -115,6 +128,7 @@
                     >{{ number }}</p>
                 {% endfor %}
             </div>
+
         </div>
     </div>
 
@@ -135,7 +149,7 @@
                               d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
                     </svg>`
         const turnChoose = parseInt(document.getElementById('turn_choose').innerText)
-        let groupChosen = showListSelected.querySelectorAll('.item-card')
+        const hiddenPlace = document.getElementById('hidden-selected')
 
         // Live searching navigate function
         let inputSearchEvent = (e) => {
@@ -147,7 +161,12 @@
         listItem.forEach((item) => {
             item.onclick = () => {
                 let item_value = item.textContent.trim()
-                clickAddItem(item, item_value, showListSelected)
+                let limit = checkLimit()
+                if (limit) {
+                    alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+                } else {
+                    clickAddItem(item, item_value, showListSelected)
+                }
             }
         })
 
@@ -159,21 +178,35 @@
             let item_value = item.textContent.trim()
             clickAddItem(item, item_value, showListSelected)
         })
+
         // Function handling search item
         function liveSearch(e, listItem, showListSelected) {
             let value = e.target.value.toLowerCase()
             listItem.forEach((item) => {
                 let item_value = item.textContent.trim()
                 if (item_value.includes(value)) {
-                    item.style.display = 'block'
+                    let arrCurrent = currentSelecting()
+                    if(!arrCurrent.includes(item_value)){
+                        item.style.display = 'block'
+                    }
                     item.onclick = function () {
-                        clickAddItem(item, item_value, showListSelected)
-                        setTimeout(() => {
-                            e.target.value = ''
-                            listItem.forEach(item => {
-                                item.style.display = 'block'
-                            })
-                        }, 100)
+                        let limit = checkLimit()
+                        if (limit) {
+                            alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+                        } else {
+                            clickAddItem(item, item_value, showListSelected)
+                        }
+                        e.target.value = ''
+                        listItem.forEach(item => {
+                            let arrResult = currentSelecting()
+                            if (arrResult.includes(item.innerText.trim())) {
+                                arrResult.splice(arrResult.indexOf(item.innerText.trim()), 1)
+                            } else {
+                                setTimeout(() => {
+                                    item.style.display = 'block'
+                                }, 50)
+                            }
+                        })
                     }
                 } else {
                     item.style.display = 'none'
@@ -181,49 +214,72 @@
             })
         }
 
+        // Show item selected place at choosing position
         function updatePlaceSelectingDisplay() {
             let hasDisplayedItem = false;
-
             selecting.forEach(item => {
                 if (item.style.display === 'block') {
                     hasDisplayedItem = true;
                 }
             });
-
             placeSelecting.style.display = hasDisplayedItem ? 'block' : 'none';
         }
 
         // Function handle clicking to add item to place showing selected item
         function clickAddItem(item, item_value, showListSelected) {
-            let addItem = addElement(showListSelected, {
-                createTag: 'p',
-                options: {
-                    id: `li-result-${item_value}`,
-                    className: 'item-card',
-                    title: `Số ${item_value.toString()}`,
-                    innerHTML: `<span class="item-list">${item_value.toString()}</span>`
-                }
-            })
+            item.style.display = 'none'
+            let arrResult = currentSelecting()
+            if (arrResult.includes(item_value)) {
+                alert(`Không thể chọn số ${item_value}`)
+            } else {
+                let addItem = addElement(showListSelected, {
+                    createTag: 'p',
+                    options: {
+                        id: `li-result-${item_value}`,
+                        className: 'item-card',
+                        title: `Số ${item_value.toString()}`,
+                        innerHTML: `<span class="item-list">${item_value.toString()}</span>`
+                    }
+                })
 
-            let removeButton = addElement(addItem, {
-                createTag: 'button',
-                options: {
-                    id: `btn-remove-${item_value}`,
-                    className: 'item-button',
-                    title: `Bỏ chọn số ${item_value.toString()}`,
-                    innerHTML: xButton
+                let removeButton = addElement(addItem, {
+                    createTag: 'button',
+                    options: {
+                        id: `btn-remove-${item_value}`,
+                        className: 'item-button',
+                        title: `Bỏ chọn số ${item_value.toString()}`,
+                        innerHTML: xButton
+                    }
+                })
+                const removeBtnE = document.getElementById(removeButton.id)
+                removeBtnE.onclick = function (evn) {
+                    evn.preventDefault()
+                    addItem.remove()
+                    removeButton.remove()
+                    item.style.display = 'block'
+                    updatePlaceSelectingDisplay()
                 }
-            })
-            const removeBtnE = document.getElementById(removeButton.id)
-            removeBtnE.onclick = function (evn) {
-                evn.preventDefault()
-                addItem.remove()
-                removeButton.remove()
-                item.style.display = 'block'
                 updatePlaceSelectingDisplay()
             }
-            item.style.display = 'none'
-            updatePlaceSelectingDisplay()
+        }
+
+        function checkLimit() {
+            let limit = false
+            let numberChosen = showListSelected.querySelectorAll("p.item-card")
+            numberChosen = Array.from(numberChosen).length
+            if (numberChosen >= turnChoose) {
+                limit = true
+            }
+            return limit
+        }
+
+        function currentSelecting() {
+            let groupChosen = showListSelected.querySelectorAll('.item-card')
+            let arrResult = []
+            for (let i of groupChosen) {
+                arrResult.push(i.innerText.trim())
+            }
+            return arrResult
         }
     </script>
     <script type="text/javascript">
