@@ -6,7 +6,7 @@
                 <h1 class="font-bold text-3xl md-max:text-4xl text-white py-4 ms-4">Trang chủ</h1>
             </div>
             <div class="card-content w-auto grid grid-cols-2 gap-4 md-max:grid-cols-1 md-max:gap-2">
-                <a href="">
+                <a href="" class="hidden">
                     <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
                         <div class="bg-slate-300 rounded-t-md">
                             <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Sự kiện</h3>
@@ -16,6 +16,18 @@
                         </div>
                     </div>
                 </a>
+                {% if 'username' not in session %}
+                <a href="{{ url_for('auth.login') }}">
+                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
+                        <div class="bg-slate-300 rounded-t-md">
+                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Đăng nhập</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="text-md">Đăng nhập để tham gia chọn số.</p>
+                        </div>
+                    </div>
+                </a>
+                {% endif %}
                 <a href="{{ url_for('choose_event') }}">
                     <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
                         <div class="bg-slate-300 rounded-t-md">
@@ -26,7 +38,7 @@
                         </div>
                     </div>
                 </a>
-                <a href="">
+                <a href="" class="hidden">
                     <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
                         <div class="bg-slate-300 rounded-t-md">
                             <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Kết quả</h3>

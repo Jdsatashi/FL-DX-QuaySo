@@ -85,13 +85,18 @@ def roll_number(_id):
     user['turn_roll'] = int(user_joins['turn_roll'])
     # To string _id for compare
     user['_id'] = str(user['_id'])
+    # Edit element and add new element to event
     events['_id'] = str(events['_id'])
     events.update({
         'event_year': events['date_created'].year,
         'folder_path': str('uploads/' + str(events['date_created'].year) + '/' + events['event_name'])
     })
+    if 'file_pdf_doc' not in events:
+        events.update({'file_pdf_doc': ''})
+    if 'file_image_doc' not in events:
+        events.update({'file_image_doc': ''})
     events.pop('date_created')
-
+    # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     turn_chosen = 0
     number_rolled = []
@@ -102,7 +107,9 @@ def roll_number(_id):
         turn_chosen = rolled['number_choices']
     # Get the form values
     form = NumberSelectedForm()
+    # Create a number list for user can choose
     number_list = create_number_list(events['limit_repeat'], _id, user['_id'])
+    # Post method
     if request.method == 'POST':
         # Get the list of number selected
         list_selected = form.number.data.split(',')
@@ -122,12 +129,13 @@ def roll_number(_id):
         if close_date < datetime.now():
             flash(f"Sự kiện đã kết thúc 0h ngày {events['date_close'].strftime('%Y-%m-%d')}.", 'warning')
             return redirect(url_for('choose_event'))
-
+        # Get data from form
         form_data = {
             'selected_number': form.number.data,
-            'number_choices': len(unique_set),
+            'number_choices': len(list_selected),
             'date_created': datetime.utcnow()
         }
+        # Case first time choose number
         if 'selected_number' not in rolled and 'number_choices' not in rolled:
             try:
                 id_roll = str(rolled['_id'])
@@ -142,6 +150,7 @@ def roll_number(_id):
                 flash("Lỗi server, vui lòng thử lại.")
                 logger.debug(f"Error when choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
+        # Case re-choice number
         else:
             try:
                 form_data.pop('date_created')
