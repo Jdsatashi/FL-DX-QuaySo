@@ -2,9 +2,9 @@
 {% block content %}
     <div class="w-full h-full">
         <h1 class="text-3xl my-4 mx-8">Các sự kiện bạn tham gia.</h1>
-        <div class="grid grid-cols-2 mx-16 my-8 lg-max:mx-6 gap-3 lg-max:my-3 lg-max:grid-cols-1">
+        <div class="grid grid-cols-2 mx-16 my-8 md-max:mx-2 gap-3 md-max:my-3 md-max:grid-cols-1">
             {% for id in infos %}
-                <div class="card-simple w-auto my-4 mx-8 rounded-xl">
+                <div class="card-simple w-auto my-4 mx-8 md-max:mx-4 rounded-xl">
                     <div class="card-header">
                         <h3 class="card-title">
                             {{ infos[id]['event_name'] }}
@@ -31,15 +31,20 @@
                                 <p class="text-base text-slate-800">
                                     Bạn đã chọn {{ infos[id]['number_choices'] }} số, bạn còn
                                     <strong class="text-red-600">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</strong>
-                                    lượt
-                                    chọn.
+                                    lượt chọn.
                                 </p>
                             {% else %}
                                 <p class="text-base text-slate-800">Bạn <span class="text-red-600 font-bold">chưa tham gia</span>
                                     sự kiện này</p>
-                                <p class="text-base text-slate-800">Bạn có <span class="text-red-600 font-bold">{{ infos[id]['turn_roll'] }}</span>
+                                <p class="text-base text-slate-800">Bạn có <span
+                                        class="text-red-600 font-bold">{{ infos[id]['turn_roll'] }}</span>
                                     lượt chọn cho sự kiện này</p>
                             {% endif %}
+                        </div>
+                        <div class="mb-4">
+                            <a href="{{ url_for('roll_number', _id=id) }}"
+                               class="font-medium text-base text-sky-700 border-b-2 border-sky-600 hover:text-blue-500 hover:border-blue-500">Nhấn
+                                để tham gia chọn số.</a>
                         </div>
                     </div>
                 </div>

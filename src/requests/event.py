@@ -91,7 +91,7 @@ def update(_id):
             data_form = {
                 'event_name': form.name.data,
                 'limit_repeat': form.repeat_limit.data,
-                'date_close': datetime.combine(form.date_close.data, datetime.min.time()),
+                'date_close': form.date_close.data.strftime('%Y-%m-%d'),
                 'is_active': form.is_active.data,
                 'date_created': datetime.utcnow()
             }

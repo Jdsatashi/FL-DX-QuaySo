@@ -141,7 +141,11 @@ def account_edit(_id):
                         'event_id': event[0],
                         'turn_roll': event[1]
                     }
-                    join_event_model.create(input_data)
+                    has_exists = join_event_model.get_one({'event_id': event[0], 'user_id': _id})
+                    if has_exists is None:
+                        join_event_model.create(input_data)
+                    else:
+                        join_event_model.update(has_exists['_id'], input_data)
                 flash(f'Cập nhật tài khoản "{edit_account["username"]}".', 'success')
                 return redirect(url_for('admin.account_manager'))
             except Exception as e:

@@ -4,12 +4,16 @@
 {% endblock header %}
 
 {% block content %}
-    <p class="hidden">{{ events }}</p>
-    <iframe class="hidden" width="300" height="300"
-            src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_pdf_doc']) }}">Thể lệ
+    <iframe src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_pdf_doc']) }}" height="600"
+            class="w-full hidden">
     </iframe>
-    <img class="hidden" src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_image_doc']) }}"
-         alt="test"></img>
+    <div id="giftRuleImage" style="display: none"
+         class="fixed top-0 z-30 bg-slate-700 bg-opacity-75 justify-center items-center w-auto h-auto">
+        <img
+                src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_image_doc']) }}"
+                alt="Cơ cấu giải thưởng">
+    </div>
+
     <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
         <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
     </div>
@@ -23,7 +27,7 @@
                     <div class="card-header rounded-t-lg bg-green-500 mb-1">
                         <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
                     </div>
-                    <div class="card-content bg-green-50 mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
+                    <div class="card-content bg-white mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
                         <div class="element-center">
                             <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
                         </div>
@@ -55,17 +59,27 @@
                     <div class="card-header bg-green-100 mb-1">
                         <h2 class="card-title">Chọn số may mắn</h2>
                     </div>
-                    <div class="card-content bg-green-50 mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
-                        <div class="element-center flex-wrap">
-                            <h3 class="w-auto text-xl md-max:text-2xl font-bold me-4 sm-max:mb-2">Sự kiện:
-                                "{{ events['event_name'] }}"</h3>
+                    <div class="card-content bg-white mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
+                        <div class="mb-4">
+                            <div class="flex justify-center items-center">
+                                <h3 class="w-auto text-xl md-max:text-2xl font-bold me-4 sm-max:mb-2">Sự
+                                    kiện:
+                                    "{{ events['event_name'] }}"</h3>
+                                <button type="button" id="giftRule" title="Xem giải thưởng"
+                                        class="hidden font-normal text-base text-green-500 hover:text-green-700">(Giải
+                                    thưởng)
+                                </button>
+                            </div>
+
                             <p class="hidden" id="turn_choose">{{ user['turn_roll'] }}</p>
                             {% if number_rolled %}
-                                <p class="w-auto text-xl md-max:text-2xl sm-max:mb-2">Tài khoản "{{ user['username'] }}"
+                                <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
+                                    "{{ user['username'] }}"
                                     đã chọn {{ turn_chosen }} số, bạn còn
                                     <strong>{{ user['turn_roll'] - turn_chosen }}</strong> lượt chọn số.</p>
                             {% else %}
-                                <p class="w-auto text-xl md-max:text-2xl sm-max:mb-2">Tài khoản "{{ user['username'] }}"
+                                <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
+                                    "{{ user['username'] }}"
                                     được chọn
                                     <strong>{{ user['turn_roll'] }}</strong> số.</p>
                             {% endif %}
@@ -98,6 +112,10 @@
                             <button type="button" class="button-simple-green" id="open-modal-btn"
                                     title="Xác nhận chọn số">
                                 Xác nhận
+                            </button>
+                            <button type="button" id="randNum"
+                                    class="mt-2 rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-400 hover:ring-1 hover:ring-slate-400 ms-2 md-max:ms-1 md-max:px-2 md-max:w-auto">
+                                Ngẫu nhiên
                             </button>
                         </div>
                         <div id="user-id" class="hidden">{{ user['_id'] }}</div>
@@ -147,6 +165,15 @@
         const userId = document.getElementById('user-id')
         const turnChoose = parseInt(document.getElementById('turn_choose').innerText)
         const hiddenPlace = document.getElementById('hidden-selected')
+        const giftRuleBtn = document.getElementById('giftRule')
+        const randomNumber = document.getElementById('randNum')
+
+        giftRuleBtn.onclick = function () {
+            let giftRuleImg = document.getElementById('giftRuleImage')
+            giftRuleImg.style.display = 'block'
+        }
+
+        randomNumber.onclick = RandomChoice
 
         // Live searching navigate function
         let inputSearchEvent = (e) => {
@@ -193,6 +220,33 @@
                     }, 50)
                 }
             })
+        }
+
+        function RandomChoice(e) {
+            let min = 1;
+            let max = 20;
+            let random = Math.floor(Math.random() * (max - min + 1) + min)
+            let arrResult = currentSelecting()
+            if (arrResult.includes(random.toString())) {
+                if(arrResult.length < max) {
+                    console.log("Trùng số: " + random + " rerandom")
+                    return RandomChoice(e)
+                } else {
+                    alert("Không thể chọn ngẫu nhiên")
+                }
+            } else  {
+                let limit = checkLimit(e)
+                if (limit) {
+                    alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+                } else {
+                    let item = document.getElementById(`li-${random.toString()}`)
+                    if(item === null){
+                        return RandomChoice(e)
+                    }
+                    let item_value = item.textContent.trim()
+                    clickAddItem(item, item_value, showListSelected)
+                }
+            }
         }
 
         function onClickLiveSearch(e) {

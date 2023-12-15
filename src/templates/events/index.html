@@ -3,7 +3,7 @@
     <div class="m-4 max-w-full">
         <div class="flex my-8">
             <div class="justify-start items-start">
-                <h2 class="text-2xl font-bold">Quản lý tài khoản</h2>
+                <h2 class="text-2xl font-bold">Quản lý sự kiện</h2>
             </div>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -47,18 +47,16 @@
                         <td class="px-6 py-4 ms-2">
                             <div class="flex items-center">
                                 {% if event['is_active'] %}
-                                    <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                                    <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-3 sm-max:max-h-1.5 sm-max:max-w-3 rounded-full bg-green-500 me-2"></div>
                                     Đang diễn ra
                                 {% else %}
-                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
+                                    <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-2 sm-max:max-h-1.5 sm-max:max-w-2 rounded-full bg-red-500 me-2"></div>
                                     Kết thúc
                                 {% endif %}
                             </div>
                         </td>
                         <td class="px-6 py-4 ms-2">
                             <a href="{{ url_for('event.update', _id=event['_id']) }}"
-                               data-modal-target="authentication-modal" data-modal-toggle="authentication-modal"
-                               type="button" data-modal-
                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                         </td>
                         <td class="flex items-center px-6 py-4 ms-2">
