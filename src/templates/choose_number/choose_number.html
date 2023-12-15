@@ -114,7 +114,7 @@
                                 Xác nhận
                             </button>
                             <button type="button" id="randNum"
-                                    class="mt-2 rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-400 hover:ring-1 hover:ring-slate-400 ms-2 md-max:ms-1 md-max:px-2 md-max:w-auto">
+                                    class="mt-2 rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-300 hover:ring-1 hover:ring-slate-400 ms-2 md-max:ms-1 md-max:px-2 md-max:w-auto">
                                 Ngẫu nhiên
                             </button>
                         </div>
@@ -167,6 +167,7 @@
         const hiddenPlace = document.getElementById('hidden-selected')
         const giftRuleBtn = document.getElementById('giftRule')
         const randomNumber = document.getElementById('randNum')
+        let randomLoop = 0
 
         giftRuleBtn.onclick = function () {
             let giftRuleImg = document.getElementById('giftRuleImage')
@@ -223,28 +224,33 @@
         }
 
         function RandomChoice(e) {
+            randomLoop++
             let min = 1;
-            let max = 20;
+            let max = Array.from(listItem).length;
             let random = Math.floor(Math.random() * (max - min + 1) + min)
             let arrResult = currentSelecting()
             if (arrResult.includes(random.toString())) {
-                if(arrResult.length < max) {
+                if (arrResult.length < max) {
                     console.log("Trùng số: " + random + " rerandom")
                     return RandomChoice(e)
                 } else {
-                    alert("Không thể chọn ngẫu nhiên")
+                    randomLoop = 0
+                    alert("Không thể chọn ngẫu nhiên, vui lòng thử lại")
                 }
-            } else  {
+            } else {
                 let limit = checkLimit(e)
                 if (limit) {
                     alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
                 } else {
-                    let item = document.getElementById(`li-${random.toString()}`)
-                    if(item === null){
-                        return RandomChoice(e)
+                    let item = Array.from(listItem)[random]
+                    try {
+                        let item_value = item.textContent.trim()
+                        clickAddItem(item, item_value, showListSelected)
+                    } catch (e) {
+                        randomLoop = 0
+                        alert("Không thể chọn ngẫu nhiên, vui lòng thử lại")
                     }
-                    let item_value = item.textContent.trim()
-                    clickAddItem(item, item_value, showListSelected)
+
                 }
             }
         }
