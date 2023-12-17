@@ -4,15 +4,15 @@
 {% endblock header %}
 
 {% block content %}
-{#    <iframe src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_pdf_doc']) }}" height="600"#}
-{#            class="w-full hidden">#}
-{#    </iframe>#}
-{#    <div id="giftRuleImage" style="display: none"#}
-{#         class="fixed top-0 z-30 bg-slate-700 bg-opacity-75 justify-center items-center w-auto h-auto">#}
-{#        <img#}
-{#                src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_image_doc']) }}"#}
-{#                alt="Cơ cấu giải thưởng">#}
-{#    </div>#}
+    {#    <iframe src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_pdf_doc']) }}" height="600"#}
+    {#            class="w-full hidden">#}
+    {#    </iframe>#}
+    {#    <div id="giftRuleImage" style="display: none"#}
+    {#         class="fixed top-0 z-30 bg-slate-700 bg-opacity-75 justify-center items-center w-auto h-auto">#}
+    {#        <img#}
+    {#                src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_image_doc']) }}"#}
+    {#                alt="Cơ cấu giải thưởng">#}
+    {#    </div>#}
 
     <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
         <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
@@ -70,19 +70,16 @@
                                     thưởng)
                                 </button>
                             </div>
-
                             <p class="hidden" id="turn_choose">{{ user['turn_roll'] }}</p>
-                            {% if number_rolled %}
-                                <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
-                                    "{{ user['username'] }}"
-                                    đã chọn {{ turn_chosen }} số, bạn còn
-                                    <strong>{{ user['turn_roll'] - turn_chosen }}</strong> lượt chọn số.</p>
-                            {% else %}
-                                <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
-                                    "{{ user['username'] }}"
-                                    được chọn
-                                    <strong>{{ user['turn_roll'] }}</strong> số.</p>
-                            {% endif %}
+                            <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
+                                "{{ user['username'] }}"</p>
+                            <ul class="flex justify-center md-max:block">
+                                <li class="mx-1">Tổng lượt chọn: <span class="text-red-500 font-bold">{{ user['turn_roll'] }}</span>.</li>
+                                {% if number_rolled %}
+                                    <li class="mx-1">Đã chọn: <span class="text-red-500 font-bold">{{ turn_chosen }}</span> số.</li>
+                                    <li class="mx-1">Lượt chọn còn dư: <span class="text-red-500 font-bold">{{ user['turn_roll'] - turn_chosen }}</span>.</li>
+                                {% endif %}
+                            </ul>
                         </div>
                         <div class="element-center max-w-sm mx-auto">
                             <div class="mb-3 mt-3">

@@ -33,12 +33,14 @@
                                     <strong class="text-red-600">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</strong>
                                     lượt chọn.
                                 </p>
+                                <p class="text-base text-slate-800">Bạn có:</p>
+                                <ul></ul>
                             {% else %}
                                 <p class="text-base text-slate-800">Bạn <span class="text-red-600 font-bold">chưa tham gia</span>
                                     sự kiện này</p>
-                                <p class="text-base text-slate-800">Bạn có <span
+                                <p class="text-base text-slate-800">Bạn có: <span
                                         class="text-red-600 font-bold">{{ infos[id]['turn_roll'] }}</span>
-                                    lượt chọn cho sự kiện này</p>
+                                    lượt chọn.</p>
                             {% endif %}
                         </div>
                         <div class="mb-4">
