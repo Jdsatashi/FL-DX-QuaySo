@@ -52,7 +52,9 @@ def create_number_list(limit, event_id, user_id):
 def choose_event():
     user = authorize_user()
     if not user:
-        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        flash(Markup(
+            'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'),
+              'warning')
         return redirect(url_for('home'))
     events = list(event_model.get_all())
     for event in events:
@@ -75,7 +77,8 @@ def roll_number(_id):
     # authorize user
     user = authorize_user()
     if not user:
-        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: '
+                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
     # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})
@@ -186,7 +189,9 @@ def information():
     # authorize user
     user = authorize_user()
     if not user:
-        flash(Markup('Bạn phải đăng nhập để xem thông tin. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        flash(Markup(
+            'Bạn phải đăng nhập để xem thông tin. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'),
+              'warning')
         return redirect(url_for('home'))
     data = {}
     list_event_joined = list()
@@ -213,3 +218,41 @@ def information():
         })
 
     return render_template('information/info.html', infos=data)
+
+
+@app.route('/thong-tin/prints/<string:_id>')
+def print_info(_id):
+    # authorize user
+    user = authorize_user()
+    if not user:
+        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: '
+                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        return redirect(url_for('home'))
+    # Get current event to choose number
+    events = event_model.get_one({'_id': ObjectId(_id)})
+    # Get turn of choice number
+    user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    # Assign turn choice for user
+    user['turn_roll'] = int(user_joins['turn_roll'])
+    # Edit element and add new element to event
+    events['_id'] = str(events['_id'])
+    events.pop('date_created')
+    # Get data rolled if user has joined event
+    rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    turn_chosen = 0
+    number_rolled = []
+    number_rolled_str = ''
+    if 'selected_number' in rolled and 'number_choices' in rolled:
+        number_rolled = rolled['selected_number'].split(',')
+        number_rolled_str = ', '.join(number_rolled)
+        turn_chosen = len(number_rolled)
+        return render_template(
+            'template/pdf_output.html',
+            events=events,
+            user=user,
+            turn_chosen=turn_chosen,
+            number_rolled_str=number_rolled_str,
+            number_rolled=number_rolled
+        )
+    else:
+        return redirect(url_for('information'))

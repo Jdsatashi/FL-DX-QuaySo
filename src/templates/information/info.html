@@ -26,21 +26,31 @@
                             {% if 'selected_number' in infos[id] and 'turn_roll' in infos[id] and 'number_choices' in infos[id] %}
                                 <p class="text-base text-slate-800">Bạn <span class="text-green-600 font-bold">đã tham gia</span>
                                     sự kiện này</p>
-                                <p class="text-base text-slate-800">Bạn đã chọn các
-                                    số: <span class="font-bold">{{ infos[id]['selected_number'] }}</span></p>
-                                <p class="text-base text-slate-800">
-                                    Bạn đã chọn {{ infos[id]['number_choices'] }} số, bạn còn
-                                    <strong class="text-red-600">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</strong>
-                                    lượt chọn.
-                                </p>
-                                <p class="text-base text-slate-800">Bạn có:</p>
-                                <ul></ul>
+                                <p class="text-base text-slate-800 font-bold">Bạn có:</p>
+                                <ul class="mt-1 ms-4 md-max:ms-2">
+                                    <li class="li-item">Tổng lượt chọn: <span
+                                            class="font-bold text-red-500">{{ infos[id]['turn_roll'] }}</span></li>
+                                    <li class="li-item">Lượt đã chọn: <span
+                                            class="font-bold text-red-500">{{ infos[id]['number_choices'] }}</span>
+                                    </li>
+                                    <li class="li-item">Lượt còn dư: <span
+                                            class="font-bold text-red-500">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</span>
+                                    </li>
+                                    <li class="li-item">Các số đã chọn: [<span
+                                            class="font-medium text-orange-500">{{ infos[id]['selected_number'] }}</span>]
+                                    </li>
+                                </ul>
+                                <div class="mb-4 mt-1">
+                                    <a href="{{ url_for('print_info', _id=id) }}"
+                                       class="font-medium text-base text-green-600 border-b-2 border-green-500 hover:text-emerald-500 hover:border-emerald-300">Nhấn
+                                        để xem bản in trước.</a>
+                                </div>
                             {% else %}
                                 <p class="text-base text-slate-800">Bạn <span class="text-red-600 font-bold">chưa tham gia</span>
                                     sự kiện này</p>
-                                <p class="text-base text-slate-800">Bạn có: <span
+                                <p class="text-base text-slate-800 font-bold">Bạn có: <span
                                         class="text-red-600 font-bold">{{ infos[id]['turn_roll'] }}</span>
-                                    lượt chọn.</p>
+                                    <span class="font-normal">lượt chọn.</span></p>
                             {% endif %}
                         </div>
                         <div class="mb-4">

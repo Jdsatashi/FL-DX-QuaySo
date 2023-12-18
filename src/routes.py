@@ -16,6 +16,17 @@ def home():
     return render_template('home.html', title='Home page')
 
 
+@app.route('/test')
+def test():
+    numbers = list()
+    numbers_str = list()
+    for i in range(1, 50):
+        numbers.append(i)
+        numbers_str.append(str(i))
+    selected_number = ", ".join(numbers_str)
+    return render_template('template/pdf_output.html', numbers=numbers, selected_number=selected_number)
+
+
 # function handle error 404
 @app.errorhandler(404)
 def page_not_found(e):

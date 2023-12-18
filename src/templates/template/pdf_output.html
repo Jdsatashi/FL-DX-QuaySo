@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/tailwind.min.css') }}">
+</head>
+<body>
+<div class="w-auto mt-8 mx-32 md-max:mx-4">
+    <div class="my-8 md-max:my-4">
+        <h2 class="text-center text-3xl md-max:text-4xl font-bold">Test title</h2>
+    </div>
+    <div class="my-4 mx-8 pb-4 md-max:my-2 md-max:mx-4 border-b-4 border-b-green-800">
+        <table class="mx-6 md-max:mx-4">
+            <tbody>
+            <tr class="td-item">
+                <td>Tên sự kiện:</td>
+                <td class="text-slate-800 font-semibold py-1 px-2">{{ events['event_name'] }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Tài khoản:</td>
+                <td class="text-slate-800 font-semibold py-1 px-2">{{ user['username'] }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Mã KH:</td>
+                <td class="text-slate-800 font-semibold py-1 px-2">{{ user['username'] }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Tổng lượt chọn:</td>
+                <td class="text-green-500 font-bold py-1 px-2">{{ user['turn_roll'] }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Lượt đã chọn:</td>
+                <td class="text-green-500 font-bold py-1 px-2">{{ turn_chosen }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Lượt còn dư:</td>
+                <td class="text-green-500 font-bold py-1 px-2">{{ user['turn_roll'] - turn_chosen }}</td>
+            </tr>
+            <tr class="td-item">
+                <td class="w-[180px] flex items-start mt-1">Các số đã chọn:</td>
+                <td class="text-green-600 font-semibold py-1 px-2">{{ number_rolled_str }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="w-auto mx-32 mt-8 mb-4 grid grid-cols-10 gap-2 md-max:gap-1 lg-max:mx-4 md-max:grid-cols-5">
+        {% for number in number_rolled %}
+            <p class="text-center text-lg font-medium text-white m-1 md-max:text-3xl bg-gradient-to-r from-green-400 via-green-600 to-green-400 shadow-sm py-2 ring-1 ring-gray-400 rounded-md">
+                {{ number }}
+            </p>
+        {% endfor %}
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+</html>
