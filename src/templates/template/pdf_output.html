@@ -74,18 +74,18 @@
             padding: 0.625rem 0;
             background: linear-gradient(to right, #22c55e, #15803d, #22c55e);
         }
+
+        .text-red {
+            color: rgba(224, 36, 36, 0.85);
+        }
     </style>
 </head>
 <body>
 <div class="w-auto" style="margin-top: -2rem;">
-    <h2 class="text-center text-4xl">Test title</h2>
+    <h2 class="text-center text-4xl text-red">{{ events['event_name'] }}</h2>
     <div class="border-b">
         <table class="table">
             <tbody>
-            <tr class="td-item">
-                <td>Tên sự kiện:</td>
-                <td class="item-data">{{ events['event_name'] }}</td>
-            </tr>
             <tr class="td-item">
                 <td>Tài khoản:</td>
                 <td class="item-data">{{ user['username'] }}</td>

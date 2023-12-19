@@ -11,7 +11,6 @@ from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT
 from src.requests.authenticate import admin_authorize, authorize_user
 from werkzeug.utils import secure_filename
 
-
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
 join_event_model = Models(table=USER_JOIN_EVENT)
@@ -19,12 +18,14 @@ join_event_model = Models(table=USER_JOIN_EVENT)
 
 @events.route('/')
 def index():
+    # Authorize is admin
     is_admin = admin_authorize()
     if not is_admin:
         return redirect(url_for('home'))
+    # Get all data events
     data = event_model.get_all()
     data_list = list(data)
-    create_folder("test1234")
+    # Format date data for each event
     for event in data_list:
         try:
             event['date_close'] = event['date_close'].strftime('%Y-%m-%d')
@@ -43,26 +44,16 @@ def insert():
         now = datetime.now().strftime('%Y-%m-%d')
         return render_template('events/create.html', form=form, date_now=now)
     if request.method == 'POST':
-        file_doc = request.files.get('desc_file')
-        file_image = request.files.get('desc_image')
         data_form = {
             'event_name': form.name.data,
             'limit_repeat': int(form.repeat_limit.data),
+            'point_exchange': int(form.point_exchange.data),
             'date_close': form.date_close.data.strftime('%Y-%m-%d'),
             'is_active': True,
             'date_created': datetime.utcnow()
         }
         if form.validate_on_submit():
             try:
-                event_folder = create_folder(data_form['event_name'])
-                doc_name = secure_filename(file_doc.filename)
-                img_name = secure_filename(file_image.filename)
-                file_doc.save(os.path.join(event_folder, doc_name))
-                file_image.save(os.path.join(event_folder, img_name))
-                data_form.update({
-                    'file_pdf_doc': doc_name,
-                    'file_image_doc': img_name
-                })
                 event_model.create(data_form)
                 flash(f'Tạo thành công "{data_form["event_name"]}".', 'success')
                 return redirect(url_for('event.index'))
@@ -90,7 +81,8 @@ def update(_id):
         elif request.method == 'POST':
             data_form = {
                 'event_name': form.name.data,
-                'limit_repeat': form.repeat_limit.data,
+                'limit_repeat': int(form.repeat_limit.data),
+                'point_exchange': int(form.point_exchange.data),
                 'date_close': form.date_close.data.strftime('%Y-%m-%d'),
                 'is_active': form.is_active.data,
                 'date_created': datetime.utcnow()
@@ -106,3 +98,17 @@ def update(_id):
             return render_template('events/edit.html', form=form, event=spec_event)
     flash(f'Không tìm thấy sự kiện.', 'warning')
     return redirect(url_for('event.index'))
+
+
+# def saveFile():
+# file_doc = request.files.get('desc_file')
+# file_image = request.files.get('desc_image')
+# event_folder = create_folder(data_form['event_name'])
+# doc_name = secure_filename(file_doc.filename)
+# img_name = secure_filename(file_image.filename)
+# file_doc.save(os.path.join(event_folder, doc_name))
+# file_image.save(os.path.join(event_folder, img_name))
+# data_form.update({
+#     'file_pdf_doc': doc_name,
+#     'file_image_doc': img_name
+# })

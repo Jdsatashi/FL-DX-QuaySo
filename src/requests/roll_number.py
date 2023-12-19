@@ -217,7 +217,6 @@ def information():
             'date_close': event['date_close'],
             'event_active': event['is_active']
         })
-
     return render_template('information/info.html', infos=data)
 
 

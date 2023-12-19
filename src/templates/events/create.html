@@ -53,30 +53,16 @@
                         </div>
 
                         <div class="mb-3">
-                            {{ form.desc_file.label(class="input-label") }}
-                            {% if form.desc_file.errors %}
-                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">
-                                {% for error in form.desc_file.errors %}
+                            {{ form.point_exchange.label(class="input-label") }}
+                            {% if form.point_exchange.errors %}
+                                {{ form.point_exchange(class="form-input is-invalid") }}
+                                {% for error in form.point_exchange.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.desc_image.label(class="input-label") }}
-                            {% if form.desc_image.errors %}
-                                <input id="desc_image" name="desc_image" type="file" class="form-input-file is-invalid">
-                                {% for error in form.desc_image.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <input id="desc_image" name="desc_image" type="file" class="form-input-file">
+                                {{ form.point_exchange(class="form-input", placeholder="Điểm quy đổi") }}
                             {% endif %}
                         </div>
 
@@ -89,3 +75,31 @@
         </div>
     </div>
 {% endblock %}
+
+{#                        <div class="mb-3">#}
+{#                            {{ form.desc_file.label(class="input-label") }}#}
+{#                            {% if form.desc_file.errors %}#}
+{#                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">#}
+{#                                {% for error in form.desc_file.errors %}#}
+{#                                    <div class="invalid-feedback">#}
+{#                                        <span>{{ error }}</span>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                            {% else %}#}
+{#                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{##}
+{#                        <div class="mb-3">#}
+{#                            {{ form.desc_image.label(class="input-label") }}#}
+{#                            {% if form.desc_image.errors %}#}
+{#                                <input id="desc_image" name="desc_image" type="file" class="form-input-file is-invalid">#}
+{#                                {% for error in form.desc_image.errors %}#}
+{#                                    <div class="invalid-feedback">#}
+{#                                        <span>{{ error }}</span>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                            {% else %}#}
+{#                                <input id="desc_image" name="desc_image" type="file" class="form-input-file">#}
+{#                            {% endif %}#}
+{#                        </div>#}
