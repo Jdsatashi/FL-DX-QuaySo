@@ -167,6 +167,6 @@
     }
 
     .li-item {
-        @apply text-slate-500 text-base md-max:text-xl font-medium mb-2
+        @apply text-slate-500 text-base md-max:text-lg font-medium
     }
 }

@@ -4,6 +4,11 @@ from src.app import app
 from src.logs import message_logger
 from src.requests.authenticate import authorize_user
 
+import os
+
+
+from flask_weasyprint import HTML, render_pdf
+
 
 # function to home page
 @app.route('/')

@@ -4,7 +4,7 @@
         <h1 class="text-3xl my-4 mx-8">Các sự kiện bạn tham gia.</h1>
         <div class="grid grid-cols-2 mx-16 my-8 md-max:mx-2 gap-3 md-max:my-3 md-max:grid-cols-1">
             {% for id in infos %}
-                <div class="card-simple w-auto my-4 mx-8 md-max:mx-4 rounded-xl">
+                <div class="card-simple w-auto h-auto my-4 mx-8 md-max:mx-4 rounded-xl">
                     <div class="card-header">
                         <h3 class="card-title">
                             {{ infos[id]['event_name'] }}
@@ -27,27 +27,38 @@
                                 <p class="text-base text-slate-800">Bạn <span class="text-green-600 font-bold">đã tham gia</span>
                                     sự kiện này</p>
                                 <p class="text-base text-slate-800 font-bold">Bạn có:</p>
-                                <ul class="mt-1 ms-4 md-max:ms-2">
-                                    <li class="li-item">Tổng lượt chọn: <span
-                                            class="font-bold text-red-500">{{ infos[id]['turn_roll'] }}</span></li>
-                                    <li class="li-item">Lượt đã chọn: <span
-                                            class="font-bold text-red-500">{{ infos[id]['number_choices'] }}</span>
-                                    </li>
-                                    <li class="li-item">Lượt còn dư: <span
-                                            class="font-bold text-red-500">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</span>
-                                    </li>
-                                    <li class="li-item">Các số đã chọn: [<span
-                                            class="font-medium text-orange-500 flex flex-wrap">{{ infos[id]['selected_number'] }}</span>]
-                                    </li>
-                                </ul>
+                                <table class="me-8 md-max:me-4">
+                                    <tbody>
+                                    <tr class="li-item">
+                                        <td>Tổng lượt chọn:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2">{{ infos[id]['turn_roll'] }}</td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Lượt đã chọn:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2">{{ infos[id]['number_choices'] }}</td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Lượt còn dư:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td class="w-[120px] md-max:w-[148px] flex items-start mt-1">Các số đã chọn:
+                                        </td>
+                                        <td class="text-green-600 font-semibold py-1 px-2">{{ infos[id]['selected_number'] }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                                 <div class="mb-4 mt-1">
                                     <a href="{{ url_for('print_info', _id=id) }}"
-                                       class="font-medium text-base text-green-600 border-b-2 border-green-500 hover:text-emerald-500 hover:border-emerald-300">Nhấn
-                                        để xem bản in trước.</a>
-                                </div>
-                                <div class="mb-4 mt-1">
-                                    <a href="{{ url_for('test', _id=id) }}"
-                                       class="font-medium text-base text-green-600 border-b-2 border-green-500 hover:text-emerald-500 hover:border-emerald-300">Template.</a>
+                                       class="flex font-medium text-base text-green-600 hover:text-emerald-500"
+                                       title="File pdf">
+                                        <svg class="w-4 h-4 mt-1 me-1 text-green-600 hover:text-emerald-500 dark:text-white"
+                                             aria-hidden="true"
+                                             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"></path>
+                                            <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"></path>
+                                        </svg>
+                                        <span>Nhấn xem bản in trước.</span></a>
                                 </div>
                             {% else %}
                                 <p class="text-base text-slate-800">Bạn <span class="text-red-600 font-bold">chưa tham gia</span>
@@ -59,8 +70,13 @@
                         </div>
                         <div class="mb-4">
                             <a href="{{ url_for('roll_number', _id=id) }}"
-                               class="font-medium text-base text-sky-700 border-b-2 border-sky-600 hover:text-blue-500 hover:border-blue-500">Nhấn
-                                để tham gia chọn số.</a>
+                               class="font-medium text-base text-sky-700 hover:text-blue-500 flex">
+                                <svg class="w-4 h-4 mt-1 me-1 text-sky-700 hover:text-red-500 dark:text-gray-400 group-hover:text-red-500 dark:group-hover:text-blue-500"
+                                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                     fill="currentColor" viewBox="0 0 21 21">
+                                    <path d="m5.4 2.736 3.429 3.429A5.046 5.046 0 0 1 10.134 6c.356.01.71.06 1.056.147l3.41-3.412c.136-.133.287-.248.45-.344A9.889 9.889 0 0 0 10.269 1c-1.87-.041-3.713.44-5.322 1.392a2.3 2.3 0 0 1 .454.344Zm11.45 1.54-.126-.127a.5.5 0 0 0-.706 0l-2.932 2.932c.029.023.049.054.078.077.236.194.454.41.65.645.034.038.078.067.11.107l2.927-2.927a.5.5 0 0 0 0-.707Zm-2.931 9.81c-.024.03-.057.052-.081.082a4.963 4.963 0 0 1-.633.639c-.041.036-.072.083-.115.117l2.927 2.927a.5.5 0 0 0 .707 0l.127-.127a.5.5 0 0 0 0-.707l-2.932-2.931Zm-1.442-4.763a3.036 3.036 0 0 0-1.383-1.1l-.012-.007a2.955 2.955 0 0 0-1-.213H10a2.964 2.964 0 0 0-2.122.893c-.285.29-.509.634-.657 1.013l-.01.016a2.96 2.96 0 0 0-.21 1 2.99 2.99 0 0 0 .489 1.716c.009.014.022.026.032.04a3.04 3.04 0 0 0 1.384 1.1l.012.007c.318.129.657.2 1 .213.392.015.784-.05 1.15-.192.012-.005.02-.013.033-.018a3.011 3.011 0 0 0 1.676-1.7v-.007a2.89 2.89 0 0 0 0-2.207 2.868 2.868 0 0 0-.27-.515c-.007-.012-.02-.025-.03-.039Zm6.137-3.373a2.53 2.53 0 0 1-.35.447L14.84 9.823c.112.428.166.869.16 1.311-.01.356-.06.709-.147 1.054l3.413 3.412c.132.134.249.283.347.444A9.88 9.88 0 0 0 20 11.269a9.912 9.912 0 0 0-1.386-5.319ZM14.6 19.264l-3.421-3.421c-.385.1-.781.152-1.18.157h-.134c-.356-.01-.71-.06-1.056-.147l-3.41 3.412a2.503 2.503 0 0 1-.443.347A9.884 9.884 0 0 0 9.732 21H10a9.9 9.9 0 0 0 5.044-1.388 2.519 2.519 0 0 1-.444-.348ZM1.735 15.6l3.426-3.426a4.608 4.608 0 0 1-.013-2.367L1.735 6.4a2.507 2.507 0 0 1-.35-.447 9.889 9.889 0 0 0 0 10.1c.1-.164.217-.316.35-.453Zm5.101-.758a4.957 4.957 0 0 1-.651-.645c-.033-.038-.077-.067-.11-.107L3.15 17.017a.5.5 0 0 0 0 .707l.127.127a.5.5 0 0 0 .706 0l2.932-2.933c-.03-.018-.05-.053-.078-.076ZM6.08 7.914c.03-.037.07-.063.1-.1.183-.22.384-.423.6-.609.047-.04.082-.092.129-.13L3.983 4.149a.5.5 0 0 0-.707 0l-.127.127a.5.5 0 0 0 0 .707L6.08 7.914Z"></path>
+                                </svg>
+                                <span>Nhấn để tham gia chọn số.</span></a>
                         </div>
                     </div>
                 </div>

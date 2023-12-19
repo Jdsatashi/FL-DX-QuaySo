@@ -1,8 +1,8 @@
-import pdfkit
 from bson import ObjectId
-from flask import render_template, request, redirect, url_for, flash, make_response
+from flask import render_template, request, redirect, url_for, flash
 from _datetime import datetime
 
+from flask_weasyprint import render_pdf, HTML
 from markupsafe import Markup
 
 from src.forms import NumberSelectedForm
@@ -55,7 +55,7 @@ def choose_event():
     if not user:
         flash(Markup(
             'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'),
-            'warning')
+              'warning')
         return redirect(url_for('home'))
     events = list(event_model.get_all())
     for event in events:
@@ -192,7 +192,7 @@ def information():
     if not user:
         flash(Markup(
             'Bạn phải đăng nhập để xem thông tin. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'),
-            'warning')
+              'warning')
         return redirect(url_for('home'))
     data = {}
     list_event_joined = list()
@@ -204,7 +204,7 @@ def information():
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
                 'number_choices': int(event['number_choices']),
-                'selected_number': event['selected_number']
+                'selected_number': ', '.join(sorted(event['selected_number'].split(','), key=int))
             }
         else:
             data[event['event_id']] = {
@@ -227,7 +227,7 @@ def print_info(_id):
     user = authorize_user()
     if not user:
         flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: '
-                     '#3a47a7">Click để đăng nhập</a></strong>'), 'warning')
+                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
     # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})
@@ -240,60 +240,12 @@ def print_info(_id):
     events.pop('date_created')
     # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
-    # Handle print information when have data
     if 'selected_number' in rolled and 'number_choices' in rolled:
-        # Get list() selected number
         number_rolled = rolled['selected_number'].split(',')
-        # To string the selected number
+        number_rolled = sorted(number_rolled, key=int)
         number_rolled_str = ', '.join(number_rolled)
-        # The turn roll was used
         turn_chosen = len(number_rolled)
-        pdf_template = render_template(
-            'template/print_pdf.html',
-            events=events,
-            user=user,
-            turn_chosen=turn_chosen,
-            number_rolled_str=number_rolled_str,
-            number_rolled=number_rolled
-        )
-        info_pdf = pdfkit.from_string(pdf_template, False)
-        response = make_response(info_pdf)
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = 'inline: filename=' + user['username'] + '.pdf'
-        return response
-        # return pdf_template
-    else:
-        return redirect(url_for('information'))
-
-
-@app.route('/test/<string:_id>')
-def test(_id):
-    # authorize user
-    user = authorize_user()
-    if not user:
-        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: '
-                     '#3a47a7">Click để đăng nhập</a></strong>'), 'warning')
-        return redirect(url_for('home'))
-    # Get current event to choose number
-    events = event_model.get_one({'_id': ObjectId(_id)})
-    # Get turn of choice number
-    user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
-    # Assign turn choice for user
-    user['turn_roll'] = int(user_joins['turn_roll'])
-    # Edit element and add new element to event
-    events['_id'] = str(events['_id'])
-    events.pop('date_created')
-    # Get data rolled if user has joined event
-    rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
-    # Handle print information when have data
-    if 'selected_number' in rolled and 'number_choices' in rolled:
-        # Get list() selected number
-        number_rolled = rolled['selected_number'].split(',')
-        # To string the selected number
-        number_rolled_str = ', '.join(number_rolled)
-        # The turn roll was used
-        turn_chosen = len(number_rolled)
-        return render_template(
+        template = render_template(
             'template/pdf_output.html',
             events=events,
             user=user,
@@ -301,3 +253,7 @@ def test(_id):
             number_rolled_str=number_rolled_str,
             number_rolled=number_rolled
         )
+        # return template
+        return render_pdf(HTML(string=template))
+    else:
+        return redirect(url_for('information'))
