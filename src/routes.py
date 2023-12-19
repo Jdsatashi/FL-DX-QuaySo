@@ -4,6 +4,11 @@ from src.app import app
 from src.logs import message_logger
 from src.requests.authenticate import authorize_user
 
+import os
+
+
+from flask_weasyprint import HTML, render_pdf
+
 
 # function to home page
 @app.route('/')
@@ -14,17 +19,6 @@ def home():
             session['_id'] = str(user['_id'])
         message_logger.info(f"{user['username']} đã tiến vào trang chủ.")
     return render_template('home.html', title='Home page')
-
-
-@app.route('/test')
-def test():
-    numbers = list()
-    numbers_str = list()
-    for i in range(1, 50):
-        numbers.append(i)
-        numbers_str.append(str(i))
-    selected_number = ", ".join(numbers_str)
-    return render_template('template/pdf_output.html', numbers=numbers, selected_number=selected_number)
 
 
 # function handle error 404

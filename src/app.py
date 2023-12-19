@@ -6,6 +6,8 @@ from _datetime import datetime
 # Loading environment variables
 load_dotenv()
 
+# os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
+
 # Create logs folder
 if not os.path.exists("logs"):
     os.makedirs("logs")

@@ -2,6 +2,7 @@ from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash
 from _datetime import datetime
 
+from flask_weasyprint import render_pdf, HTML
 from markupsafe import Markup
 
 from src.forms import NumberSelectedForm
@@ -203,7 +204,7 @@ def information():
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
                 'number_choices': int(event['number_choices']),
-                'selected_number': event['selected_number']
+                'selected_number': ', '.join(sorted(event['selected_number'].split(','), key=int))
             }
         else:
             data[event['event_id']] = {
@@ -239,14 +240,12 @@ def print_info(_id):
     events.pop('date_created')
     # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
-    turn_chosen = 0
-    number_rolled = []
-    number_rolled_str = ''
     if 'selected_number' in rolled and 'number_choices' in rolled:
         number_rolled = rolled['selected_number'].split(',')
+        number_rolled = sorted(number_rolled, key=int)
         number_rolled_str = ', '.join(number_rolled)
         turn_chosen = len(number_rolled)
-        return render_template(
+        template = render_template(
             'template/pdf_output.html',
             events=events,
             user=user,
@@ -254,5 +253,7 @@ def print_info(_id):
             number_rolled_str=number_rolled_str,
             number_rolled=number_rolled
         )
+        # return template
+        return render_pdf(HTML(string=template))
     else:
         return redirect(url_for('information'))
