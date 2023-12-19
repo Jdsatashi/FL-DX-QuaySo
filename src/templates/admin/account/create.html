@@ -24,16 +24,30 @@
                         </div>
 
                         <div class="mb-3">
-                            {{ form.email.label(class="input-label") }}
-                            {% if form.email.errors %}
-                                {{ form.email(class="form-input is-invalid") }}
-                                {% for error in form.email.errors %}
+                            {{ form.usercode.label(class="input-label") }}
+                            {% if form.usercode.errors %}
+                                {{ form.usercode(class="form-input is-invalid") }}
+                                {% for error in form.usercode.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.email(class="form-input", placeholder="Địa chỉ mail") }}
+                                {{ form.usercode(class="form-input", placeholder="Mã khách hàng") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.point.label(class="input-label") }}
+                            {% if form.point.errors %}
+                                {{ form.point(class="form-input is-invalid") }}
+                                {% for error in form.point.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.point(class="form-input", placeholder="Điểm mua hàng") }}
                             {% endif %}
                         </div>
 
@@ -66,23 +80,19 @@
                         </div>
 
                         <div id="event-group">
+                            <h3 class="input-label">Sự kiện</h3>
                             {% for event in events %}
-                                <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
-                                    <div class="w-auto">
-                                        <input id="{{ event._id }}" type="checkbox"
-                                               value="{{ event['event_name'] }}"
-                                               name="event_name"
-                                               class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="{{ event._id }}"
-                                               class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}
-                                        </label>
+                                <label for="{{ event._id }}">
+                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                        <div class="w-auto py-3">
+                                            <input id="{{ event._id }}" type="checkbox"
+                                                   value="{{ event['event_name'] }}"
+                                                   name="event_name"
+                                                   class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                            <span class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}</span>
+                                        </div>
                                     </div>
-                                    <div class="w-auto">
-                                        <label for="num-{{ event._id }}"></label>
-                                        <input id="num-{{ event._id }}" type="number" value="0" min="0"
-                                               class="number-input ms-4 w-[64px] rounded-md">
-                                    </div>
-                                </div>
+                                </label>
                             {% endfor %}
                         </div>
 
@@ -97,19 +107,17 @@
     <script>
         const eventGroup = document.getElementById('event-group')
         const checkboxGroup = eventGroup.querySelectorAll('.checkbox-input')
-        const inputGroup = eventGroup.querySelectorAll('.number-input')
         const btnSubmit = document.querySelector('#submit')
         let value = ''
         data = []
 
-        btnSubmit.addEventListener('click', submitValue)
-        function submitValue(e) {
-            if (checkboxGroup.length === inputGroup.length) {
-                for (let i in checkboxGroup) {
-                    if (checkboxGroup[i].checked) {
-                        let data_string = checkboxGroup[i].id + ':' + inputGroup[i].value
-                        data.push(data_string)
-                    }
+        btnSubmit.addEventListener('click', addInputEvent)
+
+        function addInputEvent(e) {
+            for (let i in checkboxGroup) {
+                if (checkboxGroup[i].checked) {
+                    let data_string = checkboxGroup[i].id
+                    data.push(data_string)
                 }
                 value = data.join('|')
             }
