@@ -90,7 +90,20 @@ def information(_id):
         return redirect(url_for('home'))
     form = UpdateInfoAccountForm()
     if request.method == 'POST':
-        pass
+        if form.validate_on_submit():
+            try:
+                form_data = {
+                    'fullname': form.fullname.data,
+                    'email': form.email.data,
+                    'phone': form.phone.data,
+                    'address': form.address.data,
+                }
+                account.update(ObjectId(_id), form_data)
+                flash(f"Cập nhật thông tin tài khoản thành công.", "success")
+                return redirect(url_for('user.information', _id=_id))
+            except Exception as e:
+                print(f"Error when add info: {e}")
+                return redirect(url_for('user.information', _id=_id))
     else:
         return render_template('user/infomation.html', user=user, form=form)
 
