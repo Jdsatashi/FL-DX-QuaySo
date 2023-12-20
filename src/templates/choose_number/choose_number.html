@@ -4,16 +4,6 @@
 {% endblock header %}
 
 {% block content %}
-    {#    <iframe src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_pdf_doc']) }}" height="600"#}
-    {#            class="w-full hidden">#}
-    {#    </iframe>#}
-    {#    <div id="giftRuleImage" style="display: none"#}
-    {#         class="fixed top-0 z-30 bg-slate-700 bg-opacity-75 justify-center items-center w-auto h-auto">#}
-    {#        <img#}
-    {#                src="{{ url_for('static', filename=events['folder_path'] + '/' + events['file_image_doc']) }}"#}
-    {#                alt="Cơ cấu giải thưởng">#}
-    {#    </div>#}
-
     <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
         <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
     </div>
@@ -152,7 +142,7 @@
 
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/modal-confirm.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/svg.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='scripts/number-search.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/number-search.js') }}"></script>
     <script type="text/javascript">
         JdFormModal({
             idOpenModal: 'open-modal-btn',

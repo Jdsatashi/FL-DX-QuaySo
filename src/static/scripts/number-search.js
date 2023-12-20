@@ -1,5 +1,3 @@
-import addElement from "../../static/scripts/helper.js";
-
 const inputSearch = document.querySelector('#input-search-number');
 const showListSelected = document.querySelector('#show-selected-number')
 const groupData = document.querySelector('#group-data')
@@ -26,13 +24,16 @@ let inputSearchEvent = (e) => {
 inputSearch.addEventListener('input', inputSearchEvent)
 // Live search main function
 listItem.forEach((item) => {
-    item.onclick = () => {
+    let target = item
+    item.onclick = (e) => {
         let item_value = item.textContent.trim()
         let limit = checkLimit()
         if (limit) {
             alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
         } else {
-            clickAddItem(item, item_value)
+            console.log(`Item value: ${item_value}`)
+            console.log(`Item data: ${target}`)
+            //clickAddItem(item, item_value)
         }
     }
 })
@@ -188,4 +189,13 @@ function currentSelecting() {
         arrResult.push(i.innerText.trim())
     }
     return arrResult
+}
+
+function addElement(parentE, child) {
+    let createElement = document.createElement(child.createTag)
+    parentE.appendChild(createElement)
+    for (let attr in child.options) {
+        createElement[attr] = child.options[attr]
+    }
+    return createElement
 }
