@@ -4,12 +4,10 @@ from _datetime import datetime
 from bson import ObjectId
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
-from src.app import create_folder
 from src.forms import EventForm
 from src.models import Models
 from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT
 from src.requests.authenticate import admin_authorize, authorize_user
-from werkzeug.utils import secure_filename
 
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
