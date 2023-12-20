@@ -80,7 +80,9 @@
                         </div>
 
                         <div id="event-group">
-                            <h3 class="input-label">Sự kiện</h3>
+                            {% if events %}
+                                <h3 class="input-label">Sự kiện</h3>
+                            {% endif %}
                             {% for event in events %}
                                 <label for="{{ event._id }}">
                                     <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
