@@ -5,6 +5,7 @@ logger = logging.getLogger()
 logFormat = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 consoleHandler = logging.StreamHandler()
 consoleHandler.setFormatter(logFormat)
+logger.setLevel(logging.ERROR)
 logger.addHandler(consoleHandler)
 
 fileHandler = RotatingFileHandler("logs/info.log", maxBytes=2048, encoding='utf-8')
