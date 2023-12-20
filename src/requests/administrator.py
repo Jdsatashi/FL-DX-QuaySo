@@ -185,7 +185,7 @@ def account_edit(_id):
                     for event in events_join:
                         # Get event point_exchange to calculate turn roll
                         event_data = event_model.get_one({'_id': ObjectId(event)})
-                        turn_roll = user['point'] // int(event_data['point_exchange'])
+                        turn_roll = int(form.point.data) // int(event_data['point_exchange'])
                         # Data to insert into database
                         input_data = {
                             'user_id': _id,

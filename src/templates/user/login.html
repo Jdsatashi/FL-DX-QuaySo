@@ -2,39 +2,38 @@
 {% block content %}
     <div class="flex justify-center items-center">
         <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center font-bold">
-                <h3 class="text-4xl">Tạo lại mật khẩu</h3>
-                <p>Tài khoản: {{ account.username }}</p>
+            <div class="rounded mx-auto text-center text-4xl font-bold">
+                Đăng nhập
             </div>
             <div class="mt-2">
-                <form method="POST" action="{{ url_for('auth.reset_password', _id=account._id) }}" class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-sm mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="mb-5">
-                            {{ form.new_password.label(class="input-label") }}
-                            {% if form.new_password.errors %}
-                                {{ form.new_password(class="form-input is-invalid") }}
-                                {% for error in form.new_password.errors %}
+                            {{ form.username.label(class="input-label") }}
+                            {% if form.username.errors %}
+                                {{ form.username(class="form-control is-invalid", style="text-transform:uppercase") }}
+                                {% for error in form.username.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.new_password(class="form-input", placeholder="Nhập mật khẩu mới") }}
+                                {{ form.username(class="form-input", placeholder="Tên đăng nhập", style="text-transform:uppercase") }}
                             {% endif %}
                         </div>
 
-                        <div class="mb-5">
-                            {{ form.confirm_password.label(class="input-label") }}
-                            {% if form.confirm_password.errors %}
-                                {{ form.confirm_password(class="form-input is-invalid") }}
-                                {% for error in form.confirm_password.errors %}
+                        <div class="form-group">
+                            {{ form.password.label(class="input-label") }}
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control is-invalid") }}
+                                {% for error in form.password.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.confirm_password(class="form-input", placeholder="Xác nhận mật khẩu mới") }}
+                                {{ form.password(class="form-input", placeholder="Mật khẩu") }}
                             {% endif %}
                         </div>
 

@@ -96,18 +96,18 @@
                                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-400"
                                     aria-labelledby="dropdownLargeButton">
                                     <li>
-                                        <a href="#"
+                                        <a href="{{ url_for('user.information', _id=session['_id']) }}"
                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Thông
                                             tin tài khoản</a>
                                     </li>
                                     <li>
-                                        <a href="{{ url_for('auth.reset_password', _id=session['_id']) }}"
+                                        <a href="{{ url_for('user.reset_password', _id=session['_id']) }}"
                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Đổi
                                             mật khẩu</a>
                                     </li>
                                 </ul>
                                 <div class="py-1">
-                                    <a href="{{ url_for('auth.logout') }}"
+                                    <a href="{{ url_for('user.logout') }}"
                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign
                                         out</a>
                                 </div>
@@ -115,7 +115,7 @@
                         </li>
                     {% else %}
                         <li>
-                            <a href="{{ url_for('auth.login') }}"
+                            <a href="{{ url_for('user.login') }}"
                                class="nav-item">Đăng
                                 nhập</a>
                         </li>

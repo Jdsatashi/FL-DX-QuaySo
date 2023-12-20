@@ -1,13 +1,15 @@
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
-from src.forms import LoginForm, UpdatePasswordForm
+from markupsafe import Markup
+
+from src.forms import LoginForm, UpdatePasswordForm, UpdateInfoAccountForm
 from src.logs import message_logger
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
 from src.utils.utilities import role_auth_id, role_admin_id
 
-auth = Blueprint('auth', __name__)
+auth = Blueprint('user', __name__)
 account = Models(table=ACCOUNT_TABLE)
 
 
@@ -21,7 +23,7 @@ def login():
         if form.validate_on_submit():
             if not user:
                 flash(f"Tài khoản '{username}' không tồn tại.", "warning")
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('user.login'))
             if user and bcrypt.checkpw(password, user["password"]):
                 is_role = user["role_id"]
                 if is_role is None or is_role == '':
@@ -34,9 +36,9 @@ def login():
                 return redirect(url_for('home'))
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('user.login'))
     else:
-        return render_template('auth/login.html', title='Login', form=form)
+        return render_template('user/login.html', title='Login', form=form)
 
 
 @auth.route('/logout')
@@ -52,7 +54,6 @@ def reset_password(_id):
     user = authorize_user()
     is_admin = admin_authorize()
     form = UpdatePasswordForm()
-    print("Reset password function")
     if user['_id'] == _id:
         if request.method == 'POST':
             password = form.new_password.data
@@ -61,7 +62,7 @@ def reset_password(_id):
             flash(f"Cập nhật nhật khẩu mới thành công.", "success")
             message_logger.info(f"User '{user['username']}' đã thay đổi password.")
             return redirect(url_for('home'))
-        return render_template('auth/reset_password.html', account=user, form=form)
+        return render_template('user/reset_password.html', account=user, form=form)
     elif is_admin:
         user = account.get_one(ObjectId(_id))
         if request.method == 'POST':
@@ -74,10 +75,24 @@ def reset_password(_id):
             flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
             message_logger.info(f"Admin đã thay đổi password cho user '{user['username']}'.")
             return redirect(url_for('home'))
-        return render_template('auth/reset_password.html', form=form, account=user)
+        return render_template('user/reset_password.html', form=form, account=user)
     else:
         print('Not access able.')
         return redirect(url_for('home'))
+
+
+@auth.route('/thong-tin/<string:_id>', methods=['GET', 'POST'])
+def information(_id):
+    user = authorize_user()
+    if not user:
+        flash(Markup(f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("auth.login")}" style="color: '
+                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        return redirect(url_for('home'))
+    form = UpdateInfoAccountForm()
+    if request.method == 'POST':
+        pass
+    else:
+        return render_template('user/infomation.html', user=user, form=form)
 
 
 def authorize_user():

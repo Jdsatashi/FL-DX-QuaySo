@@ -23,7 +23,7 @@
     }
 
     .card-content {
-        @apply my-4 mx-8 bg-white md-max:my-2 md-max:mx-4
+        @apply my-4 mx-8 bg-white md-max:my-2 md-max:mx-2
     }
 
     .button-gradient {
@@ -46,6 +46,10 @@
         @apply bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
     }
 
+    .form-group {
+        @apply flex items-center w-full mx-1 mb-2
+    }
+
     .form-input-file {
         @apply block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
     }
@@ -55,7 +59,7 @@
     }
 
     .input-label {
-        @apply block mb-2 text-sm font-medium md:text-xl sm-max:text-2xl text-gray-900 dark:text-white
+        @apply block mb-2 text-lg font-medium md-max:text-base text-gray-900 dark:text-white w-[128px] mt-1
     }
 
     .alert-info {
@@ -167,6 +171,6 @@
     }
 
     .li-item {
-        @apply text-slate-500 text-base md-max:text-lg font-medium
+        @apply text-slate-500 text-base font-medium sm-max:text-lg
     }
 }

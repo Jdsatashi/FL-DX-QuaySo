@@ -14,7 +14,7 @@ class CreateAccountForm(FlaskForm):
 
 
 class UpdateAccountForm(FlaskForm):
-    username = StringField("Username", validators=[Length(min=2), DataRequired()])
+    username = StringField("Tài khoản", validators=[Length(min=2), DataRequired()])
     usercode = StringField("Mã khách hàng", validators=[DataRequired()])
     point = IntegerField("Điểm", validators=[DataRequired()])
     join_event = StringField()
@@ -30,14 +30,14 @@ class UpdatePasswordForm(FlaskForm):
 
 class UpdateInfoAccountForm(FlaskForm):
     fullname = StringField("Họ và tên")
-    phone = StringField("Số điện thoại", validators=[Length(max=13)])
+    phone = StringField("SĐT", validators=[Length(max=13)])
     address = StringField("Địa chỉ")
     email = EmailField("Email")
     submit = SubmitField("Cập nhật tài khoản")
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[Length(min=1), DataRequired()])
+    username = StringField("Tài khoản", validators=[Length(min=1), DataRequired()])
     password = PasswordField("Mật khẩu", validators=[Length(min=2), DataRequired()])
     remember_me = BooleanField("Lưu đăng nhập")
     submit = SubmitField("Đăng nhập")

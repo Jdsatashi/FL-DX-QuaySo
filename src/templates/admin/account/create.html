@@ -26,14 +26,14 @@
                         <div class="mb-3">
                             {{ form.usercode.label(class="input-label") }}
                             {% if form.usercode.errors %}
-                                {{ form.usercode(class="form-input is-invalid") }}
+                                {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.usercode.errors %}
                                     <div class="invalid-feedback">
                                         <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ form.usercode(class="form-input", placeholder="Mã khách hàng") }}
+                                {{ form.usercode(class="form-input", placeholder="Mã khách hàng", style="text-transform:uppercase") }}
                             {% endif %}
                         </div>
 

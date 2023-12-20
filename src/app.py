@@ -24,6 +24,19 @@ from src import mongodb
 # Create absolutely paths to local storage
 uploads_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'src', 'static', 'uploads')
 
+# Add configuration for Flask
+app.config.from_mapping(
+    SECRET_KEY=os.environ.get('SECRET_KEY'),
+    UPLOAD_FOLDER=uploads_folder
+)
+
+# Add default role and create admin account
+from src.requests.role import add_default_role, create_admin_account
+
+with app.app_context():
+    add_default_role()
+    create_admin_account()
+
 
 def create_folder(event_name):
     year = datetime.utcnow().year
@@ -36,22 +49,10 @@ def create_folder(event_name):
     return folder_path
 
 
-# Add configuration for Flask
-app.config.from_mapping(
-    SECRET_KEY=os.environ.get('SECRET_KEY'),
-    UPLOAD_FOLDER=uploads_folder
-)
-
-# Add default role and create admin account
-from src.requests.role import add_default_role, create_admin_account
-
-add_default_role()
-create_admin_account()
-
 # Add all routes
 from src import routes
 
 # Register prefix url
-app.register_blueprint(routes.auth_route.auth, url_prefix='/auth')
+app.register_blueprint(routes.auth_route.auth, url_prefix='/user')
 app.register_blueprint(routes.admin_route.admin, url_prefix='/admin')
 app.register_blueprint(routes.event.events, url_prefix='/events')

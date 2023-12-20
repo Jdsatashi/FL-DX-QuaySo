@@ -54,7 +54,8 @@ def choose_event():
     user = authorize_user()
     if not user:
         flash(Markup(
-            'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'),
+            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'#3a47a6">Click để đăng nhập</a></strong>'),
               'warning')
         return redirect(url_for('home'))
     events = list(event_model.get_all())
@@ -78,30 +79,20 @@ def roll_number(_id):
     # authorize user
     user = authorize_user()
     if not user:
-        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: '
-                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        flash(Markup(
+            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'#3a47a6">Click để đăng nhập</a></strong>'),
+            'warning')
         return redirect(url_for('home'))
     # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})
-    # Get turn of choice number
-    user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
-    # Assign turn choice for user
-    user['turn_roll'] = int(user_joins['turn_roll'])
-    # To string _id for compare
-    user['_id'] = str(user['_id'])
-    # Edit element and add new element to event
+    # Edit element of event
     events['_id'] = str(events['_id'])
-    events.update({
-        'event_year': events['date_created'].year,
-        'folder_path': str('uploads/' + str(events['date_created'].year) + '/' + events['event_name'])
-    })
-    if 'file_pdf_doc' not in events:
-        events.update({'file_pdf_doc': ''})
-    if 'file_image_doc' not in events:
-        events.update({'file_image_doc': ''})
     events.pop('date_created')
     # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    # Assign turn choice for user
+    user['turn_roll'] = rolled['turn_roll']
     turn_chosen = 0
     number_rolled = []
     if 'selected_number' in rolled and 'number_choices' in rolled:
@@ -109,16 +100,15 @@ def roll_number(_id):
         if 'number_choices' not in rolled:
             rolled['number_choices'] = len(number_rolled)
         turn_chosen = rolled['number_choices']
-    # Get the form values
+    # Get the form data
     form = NumberSelectedForm()
     # Create a number list for user can choose
     number_list = create_number_list(events['limit_repeat'], _id, user['_id'])
     # Post method
     if request.method == 'POST':
         # Get the list of number selected
-        list_selected = form.number.data.split(',')
-        unique_set = set(list_selected)
-        list_selected = list(unique_set)
+        list_selected = set(form.number.data.split(','))
+        list_selected = list(list_selected)
         # Validate if number selected more than turn choices
         if len(list_selected) > int(user['turn_roll']):
             flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'warning')
@@ -191,8 +181,9 @@ def information():
     user = authorize_user()
     if not user:
         flash(Markup(
-            'Bạn phải đăng nhập để xem thông tin. <strong><a href="/auth/login" style="color: #3a47a6">Click để đăng nhập</a></strong>'),
-              'warning')
+            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'#3a47a6">Click để đăng nhập</a></strong>'),
+            'warning')
         return redirect(url_for('home'))
     data = {}
     list_event_joined = list()
@@ -208,16 +199,19 @@ def information():
             }
         else:
             data[event['event_id']] = {
-                'turn_roll': int(event['turn_roll'])
+                'turn_roll': int(event['turn_roll']),
+                'number_choices': 0,
+                'selected_number': ''
             }
     for id_event in list_event_joined:
         event = event_model.get_one(ObjectId(id_event))
         data[id_event].update({
             'event_name': event['event_name'],
             'date_close': event['date_close'],
-            'event_active': event['is_active']
+            'event_active': event['is_active'],
+            'point_exchange': event['point_exchange']
         })
-    return render_template('information/info.html', infos=data)
+    return render_template('events/info.html', infos=data, user=user)
 
 
 @app.route('/thong-tin/prints/<string:_id>')
@@ -225,8 +219,10 @@ def print_info(_id):
     # authorize user
     user = authorize_user()
     if not user:
-        flash(Markup('Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="/auth/login" style="color: '
-                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        flash(Markup(
+            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'#3a47a6">Click để đăng nhập</a></strong>'),
+            'warning')
         return redirect(url_for('home'))
     # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})

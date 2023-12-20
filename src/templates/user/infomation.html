@@ -1,0 +1,86 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+    <div class="flex justify-center items-center">
+        <div class="card-simple md-max:w-full w-[800px]">
+            <div class="rounded mx-auto text-center text-4xl font-bold">
+                Thông tin tài khoản
+            </div>
+            <div class="mt-2">
+                <form method="POST" class="max-w-md mx-auto">
+                    {{ form.csrf_token() }}
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="input-label" for="username">Tài khoản</label>
+                            <input id="username" type="text" value="{{ user.username }}" class="form-input" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="input-label" for="usercode">Mã KH</label>
+                            <input id="usercode" type="text" value="{{ user.usercode }}" class="form-input" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.fullname.label(class="input-label") }}
+                            {% if form.fullname.errors %}
+                                {{ form.fullname(class="form-control is-invalid", style="text-transform:uppercase") }}
+                                {% for error in form.fullname.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.fullname(class="form-input", placeholder="Họ và tên", style="text-transform:uppercase") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.email.label(class="input-label") }}
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-control is-invalid") }}
+                                {% for error in form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.email(class="form-input", placeholder="Địa chỉ email") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.phone.label(class="input-label") }}
+                            {% if form.phone.errors %}
+                                {{ form.phone(class="form-control is-invalid") }}
+                                {% for error in form.phone.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.phone(class="form-input", placeholder="Số điện thoại") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.address.label(class="input-label") }}
+                            {% if form.address.errors %}
+                                {{ form.address(class="form-control is-invalid") }}
+                                {% for error in form.address.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.address(class="form-input", placeholder="Địa chỉ") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mt-2 flex justify-center items-center">
+                            {{ form.submit(class="btn-primary") }}
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -44,9 +44,9 @@
     <!-- Main content -->
     <div class="w-auto sm-max:mt-2 -mt-72">
         <div class="element-center">
-            <div class="card-simple lg:w-[760px] md-max:w-full">
+            <div class="card-simple rounded-md lg:w-[760px] md-max:w-full md-max:mx-4">
                 <div class="w-full h-full">
-                    <div class="card-header bg-green-100 mb-1">
+                    <div class="card-header rounded-md bg-green-100 mb-1">
                         <h2 class="card-title">Chọn số may mắn</h2>
                     </div>
                     <div class="card-content bg-white mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
@@ -63,20 +63,40 @@
                             <p class="hidden" id="turn_choose">{{ user['turn_roll'] }}</p>
                             <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
                                 "{{ user['username'] }}"</p>
-                            <ul class="flex justify-center md-max:block">
-                                <li class="mx-1">Tổng lượt chọn: <span class="text-red-500 font-bold">{{ user['turn_roll'] }}</span>.</li>
-                                {% if number_rolled %}
-                                    <li class="mx-1">Đã chọn: <span class="text-red-500 font-bold">{{ turn_chosen }}</span> số.</li>
-                                    <li class="mx-1">Lượt chọn còn dư: <span class="text-red-500 font-bold">{{ user['turn_roll'] - turn_chosen }}</span>.</li>
-                                {% endif %}
-                            </ul>
+                            <div class="element-center">
+                                <table class="w-[320px]">
+                                    <tbody>
+                                    <tr class="li-item">
+                                        <td>Tổng tem:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2 md-max:px-0 w-16 md-max:w-10">{{ user['turn_roll'] }}</td>
+                                        <td colspan="2">Tổng điểm: <span
+                                                class="text-green-500 font-bold py-1 px-2">{{ user['point'] }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td class="md-max:w-[108px]">Tem đã chọn:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2 md-max:px-0">{{ turn_chosen }}</td>
+                                        <td colspan="2">Điểm / tem: <span
+                                                class="text-green-500 font-bold py-1 px-2">{{ events.point_exchange }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Tem còn dư:</td>
+                                        <td class="text-red-500 font-bold py-1 px-2 md-max:px-0">{{ user['turn_roll'] - turn_chosen }}</td>
+                                        <td colspan="2">Điểm dư: <span
+                                                class="text-red-500 font-bold py-1 px-2T">{{ user.point - (user.turn_roll * events.point_exchange) }}</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="element-center max-w-sm mx-auto">
                             <div class="mb-3 mt-3">
                                 <label for="input-search-number"
                                        class="block mb-2 text-sm font-medium md:text-base md-max:text-xl text-gray-900 dark:text-white text-center">Nhập
                                     số cần tìm</label>
-                                <input type="text" id="input-search-number"
+                                <input type="number" id="input-search-number"
                                        class="input-e w-[300px] md-max:w-full md-max:text-xl xl-max:text-xl"
                                        placeholder="Tìm số"
                                        title="Nhập số cần tìm"
