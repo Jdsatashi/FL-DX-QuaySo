@@ -258,6 +258,6 @@ def print_info(_id):
             number_rolled=number_rolled
         )
         # return template
-        return render_pdf(HTML(string=template))
+        return render_pdf(HTML(string=template), download_filename=user['username'])
     else:
         return redirect(url_for('information'))
