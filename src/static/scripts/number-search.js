@@ -177,16 +177,18 @@ function clickAddItem(item, item_value) {
 
 function checkLimit() {
     let limit = false
-    let numberChosen = showListSelected.querySelectorAll("p.item-card")
-    numberChosen = Array.from(numberChosen).length
-    if (numberChosen >= turnChoose) {
+    // Get group chosen number at time were called
+    let groupChosen = showListSelected.querySelectorAll("p.item-card")
+    let groupChosenLength = Array.from(groupChosen).length
+    if (groupChosenLength >= turnChoose) {
         limit = true
     }
     return limit
 }
 
 function currentSelecting() {
-    let groupChosen = showListSelected.querySelectorAll('.item-card')
+    // Get group chosen number at time were called
+    let groupChosen = showListSelected.querySelectorAll('p.item-card')
     let arrResult = []
     for (let i of groupChosen) {
         arrResult.push(i.innerText.trim())

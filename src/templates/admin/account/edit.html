@@ -1,15 +1,15 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
     <div class="flex justify-center items-center">
-        <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center text-4xl font-bold">
+        <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
+            <div class="rounded mx-auto text-center mt-4 mb-6 text-4xl font-bold">
                 Chỉnh sửa tài khoản
             </div>
             <div class="mt-2">
-                <form method="POST" class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-md mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.username.label(class="input-label") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
@@ -23,7 +23,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.usercode.label(class="input-label") }}
                             {% if form.usercode.errors %}
                                 {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
@@ -37,7 +37,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.point.label(class="input-label") }}
                             {% if form.point.errors %}
                                 {{ form.point(class="form-input is-invalid") }}
@@ -51,7 +51,7 @@
                             {% endif %}
                         </div>
 
-                        <label class="relative inline-flex items-center mb-5 cursor-pointer">
+                        <label class="relative inline-flex items-center ms-2 mt-2 mb-2 cursor-pointer">
                             <input type="checkbox" id="is_active" name="is_active" value="True" class="sr-only peer"
                                    {% if account.is_active == True %}checked{% endif %}>
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -59,13 +59,13 @@
                         </label>
 
 
-                        <div id="event-group">
+                        <div id="event-group" class="mx-4">
                             {% if event_join or events %}
                                 <h3 class="input-label">Sự kiện</h3>
                             {% endif %}
                             {% for event in event_join %}
                                 <label for="{{ event }}">
-                                    <div class="flex justify-between items-center ps-4 border-2 border-blue-300 rounded dark:border-gray-700 py-4">
+                                    <div class="flex mb-1 justify-between items-center ps-4 border-2 border-blue-300 rounded dark:border-gray-700 py-4">
                                         <div class="w-auto">
                                             <input id="{{ event }}" type="checkbox"
                                                    value="{{ event_join[event]['event_name'] }}"
@@ -94,8 +94,8 @@
                                 </label>
                             {% endfor %}
                         </div>
-                        <div class="mt-2 flex justify-center items-center">
-                            {{ form.submit(class="btn-primary") }}
+                        <div class="mt-2 text-center mx-auto">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
                     </fieldset>
                 </form>

@@ -17,8 +17,8 @@ function JdFormModal(info) {
         let listNumber = Array.from(showData.querySelectorAll('span.item-list'))
         // Display modal when have value selected
         if (listNumber.length > 0) {
-            document.addEventListener('wheel', preventDefault, {passive: false});
-            document.addEventListener('touchmove', preventDefault, {passive: false});
+            // document.addEventListener('wheel', preventDefault, {passive: false});
+            // document.addEventListener('touchmove', preventDefault, {passive: false});
             // Change style to 'block' to display modal
             mainModal.style.display = 'block'
             modalParent.style.display = 'block';
@@ -41,6 +41,7 @@ function JdFormModal(info) {
             })
             // Add list data to input as string datatype
             inputModalForm.value = listValue.toString()
+            console.log(inputModalForm.value)
         } else {
 
         }

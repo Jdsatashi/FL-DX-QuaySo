@@ -1,16 +1,16 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
     <div class="flex justify-center items-center">
-        <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center text-4xl font-bold">
+        <div class="card-simple rounded-md md-max:w-full w-[800px] md-max:mx-4">
+            <div class="rounded mx-auto text-center mt-4 mb-6 text-4xl font-bold">
                 Đăng nhập
             </div>
             <div class="mt-2">
-                <form method="POST" class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-md mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="mb-5">
-                            {{ form.username.label(class="input-label") }}
+                        <div class="form-group">
+                            {{ form.username.label(class="input-label w-[128px] md-max:w-[80px]") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-control is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.username.errors %}
@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.password.label(class="input-label") }}
+                            {{ form.password.label(class="input-label w-[128px] md-max:w-[80px]") }}
                             {% if form.password.errors %}
                                 {{ form.password(class="form-control is-invalid") }}
                                 {% for error in form.password.errors %}
@@ -37,8 +37,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="form-group mt-2 flex justify-center items-center">
-                            {{ form.submit(class="btn-primary") }}
+                        <div class="mx-auto text-center">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
                     </fieldset>
                 </form>

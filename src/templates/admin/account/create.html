@@ -1,16 +1,16 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
     <div class="flex justify-center items-center">
-        <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center text-4xl font-bold">
+        <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
+            <div class="rounded mx-auto text-center text-4xl mt-4 mb-6 font-bold">
                 Tạo tài khoản
             </div>
             <div class="mt-2">
-                <form method="POST" class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-md mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="mb-3">
-                            {{ form.username.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.username.label(class="input-label w-[236px] md-max:w-[128px]") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.username.errors %}
@@ -23,8 +23,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.usercode.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.usercode.label(class="input-label w-[236px] md-max:w-[128px]") }}
                             {% if form.usercode.errors %}
                                 {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.usercode.errors %}
@@ -37,8 +37,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.point.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.point.label(class="input-label w-[236px] md-max:w-[128px]") }}
                             {% if form.point.errors %}
                                 {{ form.point(class="form-input is-invalid") }}
                                 {% for error in form.point.errors %}
@@ -51,8 +51,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.password.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.password.label(class="input-label w-[236px] md-max:w-[128px]") }}
                             {% if form.password.errors %}
                                 {{ form.password(class="form-input is-invalid") }}
                                 {% for error in form.password.errors %}
@@ -65,8 +65,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.confirm_password.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.confirm_password.label(class="input-label w-[236px] md-max:w-[128px]") }}
                             {% if form.confirm_password.errors %}
                                 {{ form.confirm_password(class="form-input is-invalid") }}
                                 {% for error in form.confirm_password.errors %}
@@ -79,13 +79,13 @@
                             {% endif %}
                         </div>
 
-                        <div id="event-group">
+                        <div id="event-group" class="mx-4">
                             {% if events %}
-                                <h3 class="input-label">Sự kiện</h3>
+                                <h3 class="input-label w-[236px] md-max:w-[128px]">Sự kiện</h3>
                             {% endif %}
                             {% for event in events %}
                                 <label for="{{ event._id }}">
-                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700 mb-1">
                                         <div class="w-auto py-3">
                                             <input id="{{ event._id }}" type="checkbox"
                                                    value="{{ event['event_name'] }}"
@@ -98,8 +98,8 @@
                             {% endfor %}
                         </div>
 
-                        <div class="mt-2 flex justify-center items-center">
-                            {{ form.submit(class="btn-primary") }}
+                        <div class="mt-2 mx-auto text-center">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
                     </fieldset>
                 </form>

@@ -4,15 +4,15 @@
 {% endblock header %}
 
 {% block content %}
-    <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
+    <div class="w-auto h-auto md-max:h-fl md-max:w-fl -z-20">
         <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
     </div>
     <!-- Card modal -->
     <div id="overlay" tabindex="-1"
          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
     >
-        <div class="grid place-items-center mt-40 sm-max:mt-28">
-            <div class="card-simple rounded-lg lg:w-[760px] md-max:w-auto" id="main-modal">
+        <div class="grid place-items-center mt-24 md-max:mt-0 pb-24">
+            <div class="card-simple rounded-lg lg:w-[760px] md-max:w-full" id="main-modal">
                 <div class="w-full h-full">
                     <div class="card-header rounded-t-lg bg-green-500 mb-1">
                         <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="flex justify-center mt-3 w-auto">
                             <div id="confirm-result"
-                                 class="w-auto md-max:w-full grid grid-cols-4 md-max:grid-cols-3 xl-max:text-xl">
+                                 class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-3 xl-max:text-xl">
                             </div>
                         </div>
                         <div class="flex items-end justify-end me-4">
@@ -114,7 +114,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="element-center mb-3">
                             <button type="button" class="button-simple-green" id="open-modal-btn"
                                     title="Xác nhận chọn số">
@@ -156,7 +155,6 @@
                     >{{ number }}</p>
                 {% endfor %}
             </div>
-
         </div>
     </div>
 

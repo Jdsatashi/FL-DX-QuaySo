@@ -1,15 +1,15 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
     <div class="flex justify-center items-center">
-        <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center text-4xl font-bold">
+        <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
+            <div class="rounded mx-auto mt-4 mb-6 text-center text-4xl font-bold">
                 Tạo sự kiện
             </div>
-            <div class="mt-2">
+            <div class="mt-1">
                 <form method="POST" class="max-w-sm mx-auto" enctype="multipart/form-data">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.name.label(class="input-label") }}
                             {% if form.name.errors %}
                                 {{ form.name(class="form-input is-invalid") }}
@@ -23,7 +23,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.date_close.label(class="input-label") }}
                             {% if form.date_close.errors %}
                                 {{ form.date_close(class="form-input is-invalid") }}
@@ -38,7 +38,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.repeat_limit.label(class="input-label") }}
                             {% if form.repeat_limit.errors %}
                                 {{ form.repeat_limit(class="form-input is-invalid") }}
@@ -52,7 +52,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group lg:block">
                             {{ form.point_exchange.label(class="input-label") }}
                             {% if form.point_exchange.errors %}
                                 {{ form.point_exchange(class="form-input is-invalid") }}
@@ -66,8 +66,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mt-2 flex justify-center items-center">
-                            {{ form.submit(class="btn-primary") }}
+                        <div class="mt-2 text-center mx-auto">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
                     </fieldset>
                 </form>
@@ -76,7 +76,7 @@
     </div>
 {% endblock %}
 
-{#                        <div class="mb-3">#}
+{#                        <div class="form-group lg:block">#}
 {#                            {{ form.desc_file.label(class="input-label") }}#}
 {#                            {% if form.desc_file.errors %}#}
 {#                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">#}
@@ -90,7 +90,7 @@
 {#                            {% endif %}#}
 {#                        </div>#}
 {##}
-{#                        <div class="mb-3">#}
+{#                        <div class="form-group lg:block">#}
 {#                            {{ form.desc_image.label(class="input-label") }}#}
 {#                            {% if form.desc_image.errors %}#}
 {#                                <input id="desc_image" name="desc_image" type="file" class="form-input-file is-invalid">#}
