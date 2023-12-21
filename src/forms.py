@@ -24,7 +24,7 @@ class UpdateAccountForm(FlaskForm):
 
 class UpdatePasswordForm(FlaskForm):
     new_password = PasswordField("Mật khẩu mới", validators=[Length(min=2), DataRequired()])
-    confirm_password = PasswordField("Xác nhận mật khẩu mới", validators=[EqualTo('new_password'), DataRequired()])
+    confirm_password = PasswordField("Xác nhận", validators=[EqualTo('new_password'), DataRequired()])
     submit = SubmitField("Cập nhật mật khẩu")
 
 

@@ -80,7 +80,7 @@ def roll_number(_id):
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn phải đăng nhập để quay số. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
@@ -142,7 +142,7 @@ def roll_number(_id):
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
-                logger.debug(f"Error when choosing number.\n{e}")
+                logger.error(f"Error when choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
         # Case re-choice number
         else:
@@ -159,7 +159,7 @@ def roll_number(_id):
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
-                logger.debug(f"Error when re choosing number.\n{e}")
+                logger.error(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
         message_logger.info(f"{user['username']} vào trang chọn số.")
@@ -181,7 +181,7 @@ def information():
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn phải đăng nhập để xem thông tin sự kiện. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
@@ -220,7 +220,7 @@ def print_info(_id):
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn phải đăng nhập để in thông tin. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))

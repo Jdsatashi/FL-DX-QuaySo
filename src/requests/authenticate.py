@@ -4,7 +4,7 @@ import bcrypt
 from markupsafe import Markup
 
 from src.forms import LoginForm, UpdatePasswordForm, UpdateInfoAccountForm
-from src.logs import message_logger
+from src.logs import message_logger, logger
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
 from src.utils.utilities import role_auth_id, role_admin_id
@@ -33,6 +33,7 @@ def login():
                 session["_id"] = user["_id"]
                 flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
                 message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
+                logger.info(f"User '{username.upper()}' đã đăng nhập.")
                 return redirect(url_for('home'))
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
@@ -52,32 +53,34 @@ def logout():
 @auth.route('account/reset-password/<string:_id>', methods=['GET', 'POST'])
 def reset_password(_id):
     user = authorize_user()
+    if not user:
+        flash(Markup(f'Bạn phải đăng nhập để thay đổi mật khẩu. <strong><a href="{url_for("user.login")}" style="color: '
+                     '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        return redirect(url_for('home'))
     is_admin = admin_authorize()
     form = UpdatePasswordForm()
-    if user['_id'] == _id:
+    if user['_id'] == _id or is_admin:
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-            account.update(ObjectId(_id), {'password': hash_password})
-            flash(f"Cập nhật nhật khẩu mới thành công.", "success")
-            message_logger.info(f"User '{user['username']}' đã thay đổi password.")
-            return redirect(url_for('home'))
+            if form.validate_on_submit():
+                try:
+                    account.update(ObjectId(_id), {'password': hash_password})
+                    if user['_id'] == _id:
+                        flash(f"Cập nhật nhật khẩu mới thành công.", "success")
+                        message_logger.info(f"User '{user['username']}' đã thay đổi password.")
+                        return redirect(url_for('home'))
+                    elif is_admin:
+                        flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
+                        message_logger.info(f"Admin đã thay đổi password cho user '{user['username']}'.")
+                        return redirect(url_for('home'))
+                except Exception as e:
+                    logger.error(f"Error while reset password.\n{e}")
+                    return redirect(url_for('home'))
         return render_template('user/reset_password.html', account=user, form=form)
-    elif is_admin:
-        user = account.get_one(ObjectId(_id))
-        if request.method == 'POST':
-            password = form.new_password.data
-            hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-            update_data = {
-                'password': hash_password
-            }
-            account.update(ObjectId(_id), update_data)
-            flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
-            message_logger.info(f"Admin đã thay đổi password cho user '{user['username']}'.")
-            return redirect(url_for('home'))
-        return render_template('user/reset_password.html', form=form, account=user)
     else:
-        print('Not access able.')
+        logger.info(f"User {user['username']} try to reset password of user {_id}")
+        flash(f"Không được phép truy cập.", "warning")
         return redirect(url_for('home'))
 
 
@@ -85,7 +88,7 @@ def reset_password(_id):
 def information(_id):
     user = authorize_user()
     if not user:
-        flash(Markup(f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("auth.login")}" style="color: '
+        flash(Markup(f'Bạn phải đăng nhập để xem thông tin cá nhân. <strong><a href="{url_for("user.login")}" style="color: '
                      '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
     form = UpdateInfoAccountForm()
@@ -99,15 +102,18 @@ def information(_id):
                     'address': form.address.data,
                 }
                 account.update(ObjectId(_id), form_data)
+                message_logger.info(f"User {user['username']} cập nhật thông tin cá nhân thành công")
                 flash(f"Cập nhật thông tin tài khoản thành công.", "success")
                 return redirect(url_for('user.information', _id=_id))
             except Exception as e:
-                print(f"Error when add info: {e}")
+                logger.error(f"Error when add info: {e}")
+                flash(f"Cập nhật thông tin thất bại.", "warning")
                 return redirect(url_for('user.information', _id=_id))
     else:
-        return render_template('user/infomation.html', user=user, form=form)
+        return render_template('user/information.html', user=user, form=form)
 
 
+# function for authorize if user
 def authorize_user():
     if 'username' in session:
         account_data = account.get_one({'username': session['username']})
@@ -115,20 +121,23 @@ def authorize_user():
             session.pop('username')
             return authorize_user()
         account_data['_id'] = str(account_data['_id'])
-        data = account_data
-        if 'password' in data:
-            data.pop('password')
-        return data
+        # Remove sensitive data password
+        if 'password' in account_data:
+            account_data.pop('password')
+        return account_data
     else:
         return False
 
 
+# function for authorize if admin
 def admin_authorize():
+    # authorize user first
     user = authorize_user()
     if not user:
         return False
     if 'password' in user:
         user.pop('password')
+    # Compare if role_id of user is = role_id of role admin
     is_role_admin = user['role_id']
     if not is_role_admin == role_admin_id:
         print(
