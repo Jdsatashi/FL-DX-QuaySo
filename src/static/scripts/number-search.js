@@ -6,11 +6,38 @@ const turnChoose = parseInt(document.getElementById('turn_choose').innerText)
 const giftRuleBtn = document.getElementById('giftRule')
 const randomNumber = document.getElementById('randNum')
 let randomLoop = 0
+const dateClose = document.getElementById('date-close')
 
-giftRuleBtn.onclick = function () {
-    let giftRuleImg = document.getElementById('giftRuleImage')
-    giftRuleImg.style.display = 'block'
-}
+document.addEventListener('DOMContentLoaded', function () {
+    let date = dateClose.textContent
+    let closureDate = new Date(date)
+    closureDate.setHours(23, 59, 59);
+    let x = setInterval(function () {
+
+        let now = new Date().getTime();
+
+        let distance = closureDate - now;
+
+        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("demo").innerHTML = days + " ngày - " + hours + " giờ - "
+            + minutes + " phút - " + seconds + " giây.";
+
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("demo").innerHTML = "EXPIRED";
+        }
+    }, 1000);
+});
+
+
+// giftRuleBtn.onclick = function () {
+//     let giftRuleImg = document.getElementById('giftRuleImage')
+//     giftRuleImg.style.display = 'block'
+// }
 
 randomNumber.onclick = RandomChoice
 
@@ -74,7 +101,7 @@ function RandomChoice(e) {
     if (arrResult.includes(random.toString())) {
         if (arrResult.length < max) {
             console.log("Trùng số: " + random + " rerandom")
-            if (randomLoop <= 15){
+            if (randomLoop <= 15) {
                 return RandomChoice(e)
             } else {
                 randomLoop = 0

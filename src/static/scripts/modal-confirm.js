@@ -7,21 +7,17 @@ function JdFormModal(info) {
     const formModal = document.querySelector(`#${info.idModalForm}`)
     const inputModalForm = formModal.querySelector(`#${info.idModalInput}`)
     const idModalConfirm = mainModal.querySelector(`#${info.idModalConfirm}`)
-
-    function preventDefault(event) {
-        event.preventDefault();
-    }
+    const mainContent = document.getElementById('main-content')
 
     // Open modal and send data to confirm
     openModalButton.addEventListener('click', (e) => {
         let listNumber = Array.from(showData.querySelectorAll('span.item-list'))
         // Display modal when have value selected
         if (listNumber.length > 0) {
-            // document.addEventListener('wheel', preventDefault, {passive: false});
-            // document.addEventListener('touchmove', preventDefault, {passive: false});
             // Change style to 'block' to display modal
             mainModal.style.display = 'block'
             modalParent.style.display = 'block';
+            mainContent.classList.add('fixed')
             if (idModalConfirm.hasChildNodes()) {
                 while (idModalConfirm.firstChild) {
                     idModalConfirm.firstChild.remove()
@@ -40,7 +36,7 @@ function JdFormModal(info) {
                 addItem.innerHTML = confirmValue.toString()
             })
             // Add list data to input as string datatype
-            inputModalForm.value = listValue.toString()
+            inputModalForm.value = listValue.join(', ')
             console.log(inputModalForm.value)
         } else {
 
@@ -63,6 +59,7 @@ function JdFormModal(info) {
     function clearData() {
         mainModal.style.display = 'none'
         modalParent.style.display = 'none';
+        mainContent.classList.remove('fixed')
         const
             itemList = Array.from(idModalConfirm.querySelectorAll('p.item-card'))
         if (itemList) {

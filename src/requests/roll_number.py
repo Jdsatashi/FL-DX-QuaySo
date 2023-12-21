@@ -19,7 +19,7 @@ def create_number_list(limit, event_id, user_id):
     user_selected = []
     user_rolled = join_event_model.get_one({'event_id': event_id, 'user_id': user_id})
     if 'selected_number' in user_rolled and 'number_choices' in user_rolled:
-        number_selected = user_rolled['selected_number'].split(',')
+        number_selected = user_rolled['selected_number'].split(', ')
         for number in number_selected:
             user_selected.append(int(number))
     rolled = join_event_model.get_all()
@@ -28,7 +28,7 @@ def create_number_list(limit, event_id, user_id):
             if 'selected_number' in roll and 'number_choices' in roll and roll['event_id'] == event_id:
                 list_selected.append(roll['selected_number'])
     for number in list_selected:
-        arr = number.split(',')
+        arr = number.split(', ')
         for i in arr:
             all_number_selected.append(int(i))
     for num in all_number_selected:
@@ -89,6 +89,10 @@ def roll_number(_id):
     # Edit element of event
     events['_id'] = str(events['_id'])
     events.pop('date_created')
+    # Format date follow by day-month-year for easily readable
+    date_show = datetime.strptime(events['date_close'], '%Y-%m-%d').strftime('%d-%m-%Y')
+    events.update({'date_show': date_show})
+    logger.debug(events['date_close'])
     # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     # Assign turn choice for user
@@ -96,7 +100,7 @@ def roll_number(_id):
     turn_chosen = 0
     number_rolled = []
     if 'selected_number' in rolled and 'number_choices' in rolled:
-        number_rolled = rolled['selected_number'].split(',')
+        number_rolled = rolled['selected_number'].split(', ')
         if 'number_choices' not in rolled:
             rolled['number_choices'] = len(number_rolled)
         turn_chosen = rolled['number_choices']
@@ -106,26 +110,29 @@ def roll_number(_id):
     number_list = create_number_list(events['limit_repeat'], _id, user['_id'])
     # Post method
     if request.method == 'POST':
-        # Get the list of number selected
-        list_selected = set(form.number.data.split(','))
+        # Get the list and use set to remove duplicates values
+        list_selected = set(form.number.data.split(', '))
         list_selected = list(list_selected)
         # Validate if number selected more than turn choices
         if len(list_selected) > int(user['turn_roll']):
             flash(f"Bạn chỉ được chọn {user['turn_roll']} số.", 'warning')
             return redirect(url_for('roll_number', _id=_id))
+        # Sorting data number selected
+        list_selected = sorted(list_selected, key=int)
         # Change data type of close_date value to datetime
-        try:
-            close_date = events['date_close'].strftime('%Y-%m-%d')
-            close_date = datetime.strptime(close_date, '%Y-%m-%d')
-        except AttributeError:
-            close_date = datetime.strptime(events['date_close'], '%Y-%m-%d')
+        close_date = events['date_close']
+
         # Validate if current date > closure date
-        if close_date < datetime.now():
-            flash(f"Sự kiện đã kết thúc 0h ngày {events['date_close'].strftime('%Y-%m-%d')}.", 'warning')
+        if not events['is_active']:
+            flash(f"Sự kiện được tạm dừng hoặc đã kết thúc.", 'warning')
+            return redirect(url_for('choose_event'))
+        if datetime.now().strftime("%Y-%m-%d") > close_date:
+            print(f"Now: {datetime.now().strftime('%Y-%m-%d')} | Type {type(datetime.now().strftime('%Y-%m-%d'))}\nClose date: {close_date} | Type: {type(close_date)}")
+            flash(f"Sự kiện đã kết thúc 23h59 phút ngày {events['date_close']}.", 'warning')
             return redirect(url_for('choose_event'))
         # Get data from form
         form_data = {
-            'selected_number': form.number.data,
+            'selected_number': ', '.join(list_selected),
             'number_choices': len(list_selected),
             'date_created': datetime.utcnow()
         }
@@ -162,6 +169,7 @@ def roll_number(_id):
                 logger.error(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
+        current_date = datetime.now().strftime('%Y-%m-%d')
         message_logger.info(f"{user['username']} vào trang chọn số.")
         return render_template(
             'choose_number/choose_number.html',
@@ -172,6 +180,7 @@ def roll_number(_id):
             _id=_id,
             turn_chosen=turn_chosen,
             number_rolled=number_rolled,
+            now=current_date
         )
 
 
@@ -195,7 +204,7 @@ def information():
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
                 'number_choices': int(event['number_choices']),
-                'selected_number': ', '.join(sorted(event['selected_number'].split(','), key=int))
+                'selected_number': ', '.join(sorted(event['selected_number'].split(', '), key=int))
             }
         else:
             data[event['event_id']] = {
@@ -236,7 +245,7 @@ def print_info(_id):
     # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     if 'selected_number' in rolled and 'number_choices' in rolled:
-        number_rolled = rolled['selected_number'].split(',')
+        number_rolled = rolled['selected_number'].split(', ')
         number_rolled = sorted(number_rolled, key=int)
         number_rolled_str = ', '.join(number_rolled)
         turn_chosen = len(number_rolled)
