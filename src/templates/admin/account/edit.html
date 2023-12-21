@@ -10,7 +10,7 @@
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="form-group lg:block">
-                            {{ form.username.label(class="input-label") }}
+                            {{ form.username.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.username.errors %}
@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="form-group lg:block">
-                            {{ form.usercode.label(class="input-label") }}
+                            {{ form.usercode.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.usercode.errors %}
                                 {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.usercode.errors %}
@@ -38,7 +38,7 @@
                         </div>
 
                         <div class="form-group lg:block">
-                            {{ form.point.label(class="input-label") }}
+                            {{ form.point.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.point.errors %}
                                 {{ form.point(class="form-input is-invalid") }}
                                 {% for error in form.point.errors %}
@@ -61,7 +61,7 @@
 
                         <div id="event-group" class="mx-4">
                             {% if event_join or events %}
-                                <h3 class="input-label">Sự kiện</h3>
+                                <h3 class="input-label w-[256px] md-max:w-[108px]">Sự kiện</h3>
                             {% endif %}
                             {% for event in event_join %}
                                 <label for="{{ event }}">

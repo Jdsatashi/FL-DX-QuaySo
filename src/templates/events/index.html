@@ -20,10 +20,10 @@
                         Lặp số
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Hoạt động
+                        Điểm quy đổi
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Action
+                        Trạng thái
                     </th>
                     <th scope="col" class="px-6 py-3">
                         <a href="{{ url_for('event.insert') }}">
@@ -45,6 +45,9 @@
                             {{ event.limit_repeat }}
                         </td>
                         <td class="px-6 py-4 ms-2">
+                            {{ event.point_exchange }}
+                        </td>
+                        <td class="px-6 py-4 ms-2">
                             <div class="flex items-center">
                                 {% if event['is_active'] %}
                                     <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-3 sm-max:max-h-1.5 sm-max:max-w-3 rounded-full bg-green-500 me-2"></div>
@@ -55,14 +58,9 @@
                                 {% endif %}
                             </div>
                         </td>
-                        <td class="px-6 py-4 ms-2">
+                        <td class="flex items-center px-6 py-4 ms-2">
                             <a href="{{ url_for('event.update', _id=event['_id']) }}"
                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                        </td>
-                        <td class="flex items-center px-6 py-4 ms-2">
-                            <a href=""
-                               class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Reset
-                                password</a>
                         </td>
                     </tr>
                 {% endfor %}

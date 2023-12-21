@@ -61,19 +61,21 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            {% if infos[id]['selected_number'] != '' and infos[id]['number_choices'] > 0 %}
+                                <div class="mb-4 mt-1">
+                                    <a href="{{ url_for('print_info', _id=id) }}"
+                                       class="flex font-medium text-base text-green-600 hover:text-emerald-500"
+                                       title="File pdf">
+                                        <svg class="w-4 h-4 mt-1 me-1 text-green-600 hover:text-emerald-500 dark:text-white"
+                                             aria-hidden="true"
+                                             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"></path>
+                                            <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"></path>
+                                        </svg>
+                                        <span>Nhấn xem bản in trước.</span></a>
+                                </div>
+                            {% endif %}
 
-                            <div class="mb-4 mt-1">
-                                <a href="{{ url_for('print_info', _id=id) }}"
-                                   class="flex font-medium text-base text-green-600 hover:text-emerald-500"
-                                   title="File pdf">
-                                    <svg class="w-4 h-4 mt-1 me-1 text-green-600 hover:text-emerald-500 dark:text-white"
-                                         aria-hidden="true"
-                                         xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"></path>
-                                        <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"></path>
-                                    </svg>
-                                    <span>Nhấn xem bản in trước.</span></a>
-                            </div>
                         </div>
                         <div class="mb-4">
                             <a href="{{ url_for('roll_number', _id=id) }}"
