@@ -1,13 +1,12 @@
-import os
 from _datetime import datetime
-
 from bson import ObjectId
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
 from src.forms import EventForm
+from src.logs import logger
 from src.models import Models
 from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT
-from src.requests.authenticate import admin_authorize, authorize_user
+from src.requests.authenticate import admin_authorize
 
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
@@ -42,12 +41,16 @@ def insert():
         now = datetime.now().strftime('%Y-%m-%d')
         return render_template('events/create.html', form=form, date_now=now)
     if request.method == 'POST':
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        form_date = form.date_close.data.strftime('%Y-%m-%d')
+        is_active = False if current_date > form_date else True
         data_form = {
             'event_name': form.name.data,
-            'limit_repeat': int(form.repeat_limit.data),
-            'point_exchange': int(form.point_exchange.data),
+            'limit_repeat': abs(int(form.repeat_limit.data)),
+            'point_exchange': abs(int(form.point_exchange.data)),
+            'date_start': form.date_start.data.strftime('%Y-%m-%d'),
             'date_close': form.date_close.data.strftime('%Y-%m-%d'),
-            'is_active': True,
+            'is_active': is_active,
             'date_created': datetime.utcnow()
         }
         if form.validate_on_submit():
@@ -77,12 +80,15 @@ def update(_id):
         if request.method == 'GET':
             return render_template('events/edit.html', form=form, event=spec_event)
         elif request.method == 'POST':
+            current_date = datetime.now().strftime('%Y-%m-%d')
+            form_date = form.date_close.data.strftime('%Y-%m-%d')
+            is_active = False if current_date > form_date else form.is_active.data
             data_form = {
                 'event_name': form.name.data,
-                'limit_repeat': int(form.repeat_limit.data),
-                'point_exchange': int(form.point_exchange.data),
-                'date_close': form.date_close.data.strftime('%Y-%m-%d'),
-                'is_active': form.is_active.data,
+                'limit_repeat': abs(int(form.repeat_limit.data)),
+                'point_exchange': abs(int(form.point_exchange.data)),
+                'date_close': form_date,
+                'is_active': is_active,
                 'date_created': datetime.utcnow()
             }
             if form.validate_on_submit():

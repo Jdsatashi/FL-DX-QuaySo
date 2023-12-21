@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField, IntegerField, DateField, FileField
-from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms.validators import DataRequired, EqualTo, Length, NumberRange
+from _datetime import datetime
 
 
 class CreateAccountForm(FlaskForm):
@@ -50,9 +51,10 @@ class NumberSelectedForm(FlaskForm):
 
 class EventForm(FlaskForm):
     name = StringField("Tên sự kiện", validators=[DataRequired()])
+    date_start = DateField("Ngày bắt đầu", default=datetime.today)
     date_close = DateField("Ngày kết thúc", validators=[DataRequired()])
-    repeat_limit = IntegerField("Giới hạn lặp số")
-    point_exchange = IntegerField("Điểm / tem")
+    repeat_limit = IntegerField("Giới hạn lặp số", default="1", validators=[NumberRange(min=1)])
+    point_exchange = IntegerField("Điểm / tem", validators=[DataRequired(), NumberRange(min=1)])
     # desc_file = FileField("Chi tiết sự kiện, file PDF")
     # desc_image = FileField("Hình ảnh")
     is_active = BooleanField("Hoạt động")
