@@ -3,6 +3,7 @@ import bcrypt
 
 from src.mongodb import ROLE_TABLE, ACCOUNT_TABLE
 from src.utils.utilities import role_admin_id as is_admin
+from src.logs import message_logger, logger
 
 
 def add_default_role():
@@ -12,7 +13,7 @@ def add_default_role():
     ]
     for role in roles:
         if not ROLE_TABLE.find_one(role):
-            print(f"Adding default role: {role['role']}")
+            message_logger.info(f"Adding default role: {role['role']}")
             ROLE_TABLE.insert_one(role)
 
 
@@ -35,6 +36,6 @@ def create_admin_account():
                 "role_id": role_admin_id,
                 "date_created": datetime.utcnow()
             })
-            print("Added admin account.")
+            message_logger.info("Added admin account.")
         except Exception as e:
-            print("Create admin errors. ", e)
+            logger.error("Create admin errors. ", e)
