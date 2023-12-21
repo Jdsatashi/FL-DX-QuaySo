@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             clearInterval(x);
             document.getElementById("demo").innerHTML = "EXPIRED";
         }
-    }, 1000);
+    }, 500);
 });
 
 
