@@ -25,7 +25,7 @@
         .td-item {
             font-weight: 500;
             font-size: 1.25rem;
-            line-height: 1rem;
+            line-height: 1.25rem;
             color: rgba(16, 15, 15, 0.8);
         }
 
@@ -98,14 +98,14 @@
             <td>Tổng lượt chọn:</td>
             <td class="item-data-number">{{ user['turn_roll'] }}</td>
             <td colspan="2"></td>
-            <td style="width: 128px">Tổng số điểm:</td>
+            <td style="width: 148px">Tổng số điểm:</td>
             <td>320</td>
         </tr>
         <tr class="td-item">
             <td>Lượt đã chọn:</td>
             <td class="item-data-number" colspan="2">{{ turn_chosen }}</td>
             <td></td>
-            <td colspan="1" style="width: 128px">Điểm còn dư:</td>
+            <td colspan="1" style="width: 148px">Điểm còn dư:</td>
             <td>320</td>
         </tr>
         <tr class="td-item">
@@ -113,7 +113,7 @@
             <td class="item-data-number">{{ user['turn_roll'] - turn_chosen }}</td>
         </tr>
         <tr class="td-item">
-            <td style="width: 148px; display: flex; margin-top: 0.5rem;">Các số đã chọn:</td>
+            <td style="width: 168px; display: flex; margin-top: 0.5rem;">Các số đã chọn:</td>
             <td class="item-data-list" colspan="6">{{ number_rolled_str }}</td>
         </tr>
     </tbody>
