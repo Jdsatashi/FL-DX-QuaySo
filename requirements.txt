@@ -29,3 +29,4 @@ WTForms==3.1.1
 zopfli==0.2.3
 gunicorn==21.2.0
 validators==0.22.0
+APScheduler=3.10.4
