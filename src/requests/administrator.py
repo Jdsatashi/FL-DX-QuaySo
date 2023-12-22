@@ -43,7 +43,7 @@ def account_manager():
         return render_template('admin/account/index.html', accounts=account_data)
     # Return error
     except Exception as e:
-        print(f"Error.\n{e}")
+        logger.error(f"Error when direct to manage account page.\n{e}")
         flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
         return redirect(url_for('home'))
 

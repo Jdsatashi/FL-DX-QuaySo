@@ -4,11 +4,6 @@ from src.app import app
 from src.logs import message_logger
 from src.requests.authenticate import authorize_user
 
-import os
-
-
-from flask_weasyprint import HTML, render_pdf
-
 
 # function to home page
 @app.route('/')
@@ -18,7 +13,7 @@ def home():
         if '_id' in session:
             session['_id'] = str(user['_id'])
         message_logger.info(f"{user['username']} đã tiến vào trang chủ.")
-    return render_template('home.html', title='Home page')
+    return render_template('home.html', title='Trang chủ')
 
 
 # function handle error 404
