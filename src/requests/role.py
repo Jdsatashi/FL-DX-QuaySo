@@ -31,7 +31,6 @@ def create_admin_account():
         try:
             ACCOUNT_TABLE.insert_one({
                 "username": 'admin',
-                "email": 'vdt1073@gmail.com',
                 "password": hashed_password,
                 "role_id": role_admin_id,
                 "date_created": datetime.utcnow()
