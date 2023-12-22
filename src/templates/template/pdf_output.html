@@ -78,46 +78,56 @@
         .text-red {
             color: rgba(224, 36, 36, 0.85);
         }
+
+        .logo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: auto;
+            margin: -4rem 0 0 -4rem;
+        }
     </style>
 </head>
 <body>
+<img src="../../static/assets/hinhdx.png" alt="" class="logo">
 <div class="w-auto" style="margin-top: -2rem;">
     <h2 class="text-center text-4xl text-red">{{ events.event_name }}</h2>
     <div class="border-b">
         <table class="table">
-    <tbody>
-        <tr class="td-item">
-            <td>Tài khoản:</td>
-            <td class="item-data">{{ user.username }}</td>
-        </tr>
-        <tr class="td-item">
-            <td>Mã KH:</td>
-            <td class="item-data">{{ user.username }}</td>
-        </tr>
-        <tr class="td-item">
-            <td>Tổng lượt chọn:</td>
-            <td class="item-data-number">{{ user.turn_roll }}</td>
-            <td colspan="2"></td>
-            <td style="width: 148px">Tổng số điểm:</td>
-            <td>{{ user.point }}</td>
-        </tr>
-        <tr class="td-item">
-            <td>Lượt đã chọn:</td>
-            <td class="item-data-number" colspan="2">{{ turn_chosen }}</td>
-            <td></td>
-            <td colspan="1" style="width: 148px">Điểm còn dư:</td>
-            <td>{{ user.point - (events.point_exchange * user.turn_roll) }}</td>
-        </tr>
-        <tr class="td-item">
-            <td>Lượt còn dư:</td>
-            <td class="item-data-number">{{ user.turn_roll - turn_chosen }}</td>
-        </tr>
-        <tr class="td-item">
-            <td style="width: 168px; display: flex; margin-top: 0.5rem;">Các số đã chọn:</td>
-            <td class="item-data-list" colspan="6">{{ number_rolled_str }}</td>
-        </tr>
-    </tbody>
-</table>
+            <tbody>
+            <tr class="td-item">
+                <td>Tài khoản:</td>
+                <td class="item-data">{{ user.username }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Mã KH:</td>
+                <td class="item-data">{{ user.username }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Tổng lượt chọn:</td>
+                <td class="item-data-number">{{ user.turn_roll }}</td>
+                <td colspan="2"></td>
+                <td style="width: 148px">Tổng số điểm:</td>
+                <td>{{ user.point }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Lượt đã chọn:</td>
+                <td class="item-data-number" colspan="2">{{ turn_chosen }}</td>
+                <td></td>
+                <td colspan="1" style="width: 148px">Điểm còn dư:</td>
+                <td>{{ user.point - (events.point_exchange * user.turn_roll) }}</td>
+            </tr>
+            <tr class="td-item">
+                <td>Lượt còn dư:</td>
+                <td class="item-data-number">{{ user.turn_roll - turn_chosen }}</td>
+            </tr>
+            <tr class="td-item">
+                <td style="width: 168px; display: flex; margin-top: 0.5rem;">Các số đã chọn:</td>
+                <td class="item-data-list" colspan="6">{{ number_rolled_str }}</td>
+            </tr>
+            </tbody>
+        </table>
 
     </div>
     <div class="grid-group h-auto" style="margin-top: 1rem">

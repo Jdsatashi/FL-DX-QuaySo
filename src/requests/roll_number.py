@@ -1,6 +1,6 @@
 from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash
-from _datetime import datetime
+from _datetime import datetime, timedelta
 
 from flask_weasyprint import render_pdf, HTML
 from markupsafe import Markup
@@ -56,7 +56,7 @@ def choose_event():
         flash(Markup(
             f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
-              'warning')
+            'warning')
         return redirect(url_for('home'))
     events = list(event_model.get_all())
     for event in events:
@@ -171,6 +171,11 @@ def roll_number(_id):
     else:
         current_date = datetime.now().strftime('%Y-%m-%d')
         message_logger.info(f"{user['username']} vào trang chọn số.")
+        date_close = datetime.strptime(events['date_close'], "%Y-%m-%d")
+        # Date random to take random if user didn't select number
+        date_random = date_close - timedelta(days=3)
+        date = date_random.strftime('%d-%m-%Y')
+        print(date)
         return render_template(
             'choose_number/choose_number.html',
             number_list=number_list, title="Chọn số",
@@ -181,6 +186,7 @@ def roll_number(_id):
             turn_chosen=turn_chosen,
             number_rolled=number_rolled,
             now=current_date,
+            date_will_random=date
         )
 
 
@@ -259,8 +265,9 @@ def print_info(_id):
             number_rolled=number_rolled,
             title="In file"
         )
+        filename = f"Dongxanh-{events['event_name']}-{user['username']}.pdf"
         # return template
         message_logger.info(f"User {user['username']} đã in sự kiện {events['event_name']}.")
-        return render_pdf(HTML(string=template))
+        return render_pdf(HTML(string=template), download_filename=filename, automatic_download=True)
     else:
         return redirect(url_for('information'))

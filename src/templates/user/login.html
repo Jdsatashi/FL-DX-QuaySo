@@ -24,25 +24,12 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.password.label(class="input-label w-[128px] md-max:w-[80px]") }}
-                            {% if form.password.errors %}
-                                {{ form.password(class="form-control is-invalid") }}
-                                {% for error in form.password.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.password(class="form-input", placeholder="Mật khẩu") }}
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            <label for="website-admin"
-                                   class="input-label">Username</label>
+                            <label for="password"
+                                   class="input-label">Mật khẩu</label>
                             <div class="flex w-[90%]">
-                                <input type="text" id="website-admin"
+                                <input type="password" id="password" name="password"
                                        class="rounded-none rounded-s-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 text-sm p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                       placeholder="Bonnie Green">
+                                       placeholder="Điền mật khẩu">
                                 <span id="button-show-password"
                                       class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 hover:bg-gray-200 border border-gray-300 rounded-e-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
                                   <svg id="show-password" class="w-4 h-4 text-slate-600 dark:text-white" aria-hidden="true"
@@ -65,7 +52,6 @@
                                 <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Lưu đăng nhập</span>
                             </label>
                         </div>
-
                         <div class="mx-auto text-center">
                             {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
@@ -75,7 +61,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        const pwField = document.getElementById("website-admin")
+        const pwField = document.getElementById("password")
         const btnShowPw = document.getElementById("button-show-password")
         const showPassword = document.getElementById("show-password")
         const hidePassword = document.getElementById("hide-password")
@@ -95,10 +81,11 @@
             if(showPW){
                 showPassword.style.display = "none"
                 hidePassword.style.display = "block"
-                
+                pwField.type = "text"
             } else {
                 showPassword.style.display = "block"
                 hidePassword.style.display = "none"
+                pwField.type = "password"
             }
         }
     </script>
