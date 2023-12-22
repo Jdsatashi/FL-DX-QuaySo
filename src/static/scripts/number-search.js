@@ -13,18 +13,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let closureDate = new Date(date)
     closureDate.setHours(23, 59, 59);
     let x = setInterval(function () {
-
         let now = new Date().getTime();
-
         let distance = closureDate - now;
-
         let days = Math.floor(distance / (1000 * 60 * 60 * 24));
         let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById("demo").innerHTML = days + " ngày - " + hours + " giờ - "
-            + minutes + " phút - " + seconds + " giây.";
+        document.getElementById("demo").innerHTML = days + " ngày - " + hours + ":"
+            + minutes + ":" + seconds;
 
         if (distance < 0) {
             clearInterval(x);
