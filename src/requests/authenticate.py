@@ -1,8 +1,11 @@
+from datetime import timedelta
+
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 import bcrypt
 from markupsafe import Markup
 
+from src.app import app
 from src.forms import LoginForm, UpdatePasswordForm, UpdateInfoAccountForm
 from src.logs import message_logger, logger
 from src.models import Models
@@ -19,18 +22,23 @@ def login():
     if request.method == 'POST':
         username = str(form.username.data).lower()
         password = form.password.data.encode("utf-8")
+        remember_me = form.remember_me.data
         user = account.get_one({'username': username})
         if form.validate_on_submit():
             if not user:
                 flash(f"Tài khoản '{username}' không tồn tại.", "warning")
                 return redirect(url_for('user.login'))
             if user and bcrypt.checkpw(password, user["password"]):
+                logger.debug(f"Remember me value: {remember_me}")
+                COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
                 is_role = user["role_id"]
                 if is_role is None or is_role == '':
                     account.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 session["username"] = username
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
+                session.permanent = True
+                app.permanent_session_lifetime = timedelta(seconds=COOKIE_MAX_AGE)
                 flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
                 message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
                 logger.info(f"User '{username.upper()}' đã đăng nhập.")
@@ -39,7 +47,7 @@ def login():
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
                 return redirect(url_for('user.login'))
     else:
-        return render_template('user/login.html', title='Login', form=form)
+        return render_template('user/login.html', form=form, title="Đăng nhập")
 
 
 @auth.route('/logout')
@@ -77,7 +85,7 @@ def reset_password(_id):
                 except Exception as e:
                     logger.error(f"Error while reset password.\n{e}")
                     return redirect(url_for('home'))
-        return render_template('user/reset_password.html', account=user, form=form)
+        return render_template('user/reset_password.html', account=user, form=form, title="Đổi mật khẩu")
     else:
         logger.info(f"User {user['username']} try to reset password of user {_id}")
         flash(f"Không được phép truy cập.", "warning")
@@ -110,7 +118,7 @@ def information(_id):
                 flash(f"Cập nhật thông tin thất bại.", "warning")
                 return redirect(url_for('user.information', _id=_id))
     else:
-        return render_template('user/information.html', user=user, form=form)
+        return render_template('user/information.html', user=user, form=form, title="Thông tin tài khoản")
 
 
 # function for authorize if user
