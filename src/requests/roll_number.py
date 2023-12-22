@@ -70,7 +70,8 @@ def choose_event():
         'choose_number/choose_event.html',
         user=user,
         events=events,
-        event_joined=list_joined
+        event_joined=list_joined,
+        title="Chọn sợ kiện"
     )
 
 
@@ -127,7 +128,6 @@ def roll_number(_id):
             flash(f"Sự kiện được tạm dừng hoặc đã kết thúc.", 'warning')
             return redirect(url_for('choose_event'))
         if datetime.now().strftime("%Y-%m-%d") > close_date:
-            print(f"Now: {datetime.now().strftime('%Y-%m-%d')} | Type {type(datetime.now().strftime('%Y-%m-%d'))}\nClose date: {close_date} | Type: {type(close_date)}")
             flash(f"Sự kiện đã kết thúc 23h59 phút ngày {events['date_close']}.", 'warning')
             return redirect(url_for('choose_event'))
         # Get data from form
@@ -145,7 +145,7 @@ def roll_number(_id):
                     f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.",
                     "success")
                 message_logger.info(
-                    f"User '{user['username']}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
+                    f"Sự kiện: {events['event_name']}: User '{user['username']}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
@@ -162,7 +162,7 @@ def roll_number(_id):
                     f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{events['event_name'].upper()}' thành công.",
                     "success")
                 message_logger.info(
-                    f"User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
+                    f"Sự kiện: {events['event_name']}: User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
                 return redirect(url_for('roll_number', _id=_id))
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
@@ -173,14 +173,14 @@ def roll_number(_id):
         message_logger.info(f"{user['username']} vào trang chọn số.")
         return render_template(
             'choose_number/choose_number.html',
-            number_list=number_list, title="Quay số",
+            number_list=number_list, title="Chọn số",
             form=form,
             events=events,
             user=user,
             _id=_id,
             turn_chosen=turn_chosen,
             number_rolled=number_rolled,
-            now=current_date
+            now=current_date,
         )
 
 
@@ -220,7 +220,8 @@ def information():
             'event_active': event['is_active'],
             'point_exchange': event['point_exchange']
         })
-    return render_template('events/info.html', infos=data, user=user)
+    message_logger.info(f"User {user['username']} tiến vào trang thông tin")
+    return render_template('events/info.html', infos=data, user=user, title="Thông tin sự kiện")
 
 
 @app.route('/thong-tin/prints/<string:_id>')
@@ -255,9 +256,11 @@ def print_info(_id):
             user=user,
             turn_chosen=turn_chosen,
             number_rolled_str=number_rolled_str,
-            number_rolled=number_rolled
+            number_rolled=number_rolled,
+            title="In file"
         )
         # return template
-        return render_pdf(HTML(string=template), download_filename=user['username'])
+        message_logger.info(f"User {user['username']} đã in sự kiện {events['event_name']}.")
+        return render_pdf(HTML(string=template))
     else:
         return redirect(url_for('information'))
