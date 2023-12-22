@@ -28,7 +28,7 @@ def index():
             event['date_close'] = event['date_close'].strftime('%Y-%m-%d')
         except AttributeError:
             event['date_close'] = event['date_close']
-    return render_template('events/index.html', events=data_list)
+    return render_template('events/index.html', events=data_list, title="Quản lý sự kiện")
 
 
 @events.route('/create', methods=['POST', 'GET'])
@@ -39,7 +39,7 @@ def insert():
     form = EventForm()
     if request.method == 'GET':
         now = datetime.now().strftime('%Y-%m-%d')
-        return render_template('events/create.html', form=form, date_now=now)
+        return render_template('events/create.html', form=form, date_now=now, title="Thêm sự kiện")
     if request.method == 'POST':
         current_date = datetime.now().strftime('%Y-%m-%d')
         form_date = form.date_close.data.strftime('%Y-%m-%d')
@@ -78,7 +78,7 @@ def update(_id):
     form = EventForm()
     if spec_event:
         if request.method == 'GET':
-            return render_template('events/edit.html', form=form, event=spec_event)
+            return render_template('events/edit.html', form=form, event=spec_event, title="Sửa sự kiện")
         elif request.method == 'POST':
             current_date = datetime.now().strftime('%Y-%m-%d')
             form_date = form.date_close.data.strftime('%Y-%m-%d')
@@ -97,9 +97,9 @@ def update(_id):
                     flash(f'Cập nhật thành công "{data_form["event_name"]}".', 'success')
                     return redirect(url_for('event.index'))
                 except Exception as e:
-                    print("Error updating event. ", e)
+                    logger.error("Error updating event. ", e)
             flash(f'Cập nhật thất bại, vui lòng kiểm tra lại.', 'danger')
-            return render_template('events/edit.html', form=form, event=spec_event)
+            return redirect(url_for('event.update', _id=_id))
     flash(f'Không tìm thấy sự kiện.', 'warning')
     return redirect(url_for('event.index'))
 
