@@ -116,6 +116,9 @@ def account_create():
                 logger.error(f"Error when create user.\n{e}")
                 flash('Server gặp sự cố, vui lòng thử lại sau.', 'warning')
                 return redirect(url_for('admin.account_manager'))
+        logger.info(f"Writting issues.")
+        flash('Một vài trường thông tin bị sai, vui lòng thử lại.', 'warning')
+        return redirect(url_for('admin.account_manager'))
     # Render form data when method is GET
     else:
         return render_template('admin/account/create.html', title='Create account', form=form, events=events)
