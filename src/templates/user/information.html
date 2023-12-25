@@ -1,0 +1,86 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+    <div class="flex justify-center items-center">
+        <div class="card-simple rounded-md md-max:w-full w-[800px] md-max:mx-4">
+            <div class="rounded mt-4 mb-6 md-max:mt-2 md-max:mb-3 mx-auto text-center text-4xl font-bold">
+                Thông tin tài khoản
+            </div>
+            <div class="mt-2">
+                <form method="POST" class="max-w-md mx-auto">
+                    {{ form.csrf_token() }}
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="input-label w-[128px] md-max:w-[84px]" for="username">Tài khoản</label>
+                            <input id="username" type="text" value="{{ user.username }}" class="form-input" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="input-label w-[128px] md-max:w-[84px]" for="usercode">Mã KH</label>
+                            <input id="usercode" type="text" value="{{ user.usercode }}" class="form-input" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.fullname.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {% if form.fullname.errors %}
+                                {{ form.fullname(class="form-control is-invalid", style="text-transform:uppercase") }}
+                                {% for error in form.fullname.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.fullname(class="form-input", placeholder="Họ và tên", style="text-transform:uppercase", value=user.fullname) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.email.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-control is-invalid") }}
+                                {% for error in form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.email(class="form-input", placeholder="Địa chỉ email", value=user.email) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.phone.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {% if form.phone.errors %}
+                                {{ form.phone(class="form-control is-invalid") }}
+                                {% for error in form.phone.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.phone(class="form-input", placeholder="Số điện thoại", value=user.phone) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.address.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {% if form.address.errors %}
+                                {{ form.address(class="form-control is-invalid") }}
+                                {% for error in form.address.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.address(class="form-input", placeholder="Địa chỉ", value=user.address) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-2 text-center mx-auto">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

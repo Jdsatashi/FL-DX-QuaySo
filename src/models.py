@@ -3,29 +3,30 @@ class Models:
         self.table = table
 
     def get_one(self, data_dict):
-        data = self.table.find_one(data_dict)
-        return data
+        return self.table.find_one(data_dict)
 
     def get_all(self):
-        data_list = self.table.find()
-        return data_list
+        return self.table.find()
+
+    def get_all_exclude(self, exclude):
+        return self.table.find(exclude)
 
     def get_many(self, data):
-        data_list = self.table.find(data)
-        return data_list
+        return self.table.find(data)
 
     def create(self, data_dict):
-        data = self.table.insert_one(data_dict)
-        return data
+        return self.table.insert_one(data_dict)
 
     def update(self, _id, data_dict):
-        data = self.table.find_one_and_update({
+        return self.table.find_one_and_update({
             '_id': _id
             }, {
                 '$set': data_dict
             }
         )
-        return data
 
-    def delete(self):
+    def delete_one(self, _id):
+        self.table.find_one_and_delete({'_id': _id})
+
+    def delete_many(self, data_dict):
         pass

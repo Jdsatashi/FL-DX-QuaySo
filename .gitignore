@@ -9,6 +9,10 @@ node_modules
 src/static/dist
 .vercel
 vercel.json
+<<<<<<< HEAD
 package-lock.json
 package.json
 tailwind.config.js
+=======
+*.log
+>>>>>>> origin/main

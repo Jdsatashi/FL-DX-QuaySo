@@ -15,15 +15,15 @@
     }
 
     .card-header {
-        @apply w-full shadow-sm border-b-2 border-green-300 border-opacity-50 rounded
+        @apply w-auto shadow-sm border-b-2 border-green-300 border-opacity-50
     }
 
     .card-title {
-        @apply md:text-3xl md-max:text-4xl px-3 py-2 font-bold
+        @apply md:text-xl md-max:text-2xl px-6 py-2 font-medium
     }
 
     .card-content {
-        @apply my-4 mx-8 bg-white md-max:my-2 md-max:mx-4
+        @apply my-4 mx-8 bg-white md-max:my-2 md-max:mx-2
     }
 
     .button-gradient {
@@ -43,7 +43,15 @@
     }
 
     .form-input {
-        @apply bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+        @apply bg-gray-50 w-[90%] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+    }
+
+    .form-group {
+        @apply w-full mx-1 mb-2 md-max:justify-center
+    }
+
+    .form-input-file {
+        @apply block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
     }
 
     .input-e {
@@ -51,7 +59,7 @@
     }
 
     .input-label {
-        @apply block mb-2 text-sm font-medium md:text-xl sm-max:text-2xl text-gray-900 dark:text-white
+        @apply block mb-2 text-lg md-max:text-base text-gray-900 dark:text-white mt-1
     }
 
     .alert-info {
@@ -144,5 +152,25 @@
 
     .select-input {
         @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[400px] md-max:w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+    }
+
+    .danger {
+        @apply bg-red-300 border
+    }
+
+    .success {
+        @apply bg-green-300 border
+    }
+
+    .warning {
+        @apply bg-yellow-200 border
+    }
+
+    .td-item {
+        @apply text-slate-500 text-lg md-max:text-2xl font-medium mb-2
+    }
+
+    .li-item {
+        @apply text-slate-500 text-base font-medium sm-max:text-lg
     }
 }

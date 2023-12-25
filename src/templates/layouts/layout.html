@@ -6,7 +6,7 @@
     <title>
         {% if title %} {{ title }} {% else %} DX web {% endif %}
     </title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/heart-favor.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icon-dx.ico') }}">
     <!-- Load tailwindcss !-->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/tailwind.min.css') }}">
     <!-- Load source from child page !-->
@@ -18,9 +18,13 @@
 <!-- Navigation bar of page !-->
 {% include 'layouts/navbar.html' %}
 <!-- Block to insert content !-->
+<img class="-z-10 w-auto h-16 hidden sm-max:block sm-max:h-fl md-max:w-fl" src="{{ url_for('static', filename='assets/hinhdx.png') }}" alt="Hình đồng xanh">
+
 {% block content %}
 
 {% endblock content %}
+
+{% include 'layouts/bottom_nav.html' %}
 
 <!-- Load Javascript !-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>

@@ -1,16 +1,16 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
     <div class="flex justify-center items-center">
-        <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center text-4xl font-bold">
-                Chỉnh sửa sự kiện {{ event['date_close'] }}
+        <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
+            <div class="rounded mx-auto mt-4 mb-6 text-center text-4xl font-bold">
+                Chỉnh sửa sự kiện {{ event['event_name'] }}
             </div>
             <div class="mt-2">
-                <form method="POST" class="max-w-sm mx-auto">
+                <form method="POST" class="max-w-sm mx-auto" enctype="multipart/form-data">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="mb-3">
-                            {{ form.name.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.name.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.name.errors %}
                                 {{ form.name(class="form-input is-invalid") }}
                                 {% for error in form.name.errors %}
@@ -23,22 +23,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.date_close.label(class="input-label") }}
-                            {% if form.date_close.errors %}
-                                {{ form.date_close(class="form-input is-invalid") }}
-                                {% for error in form.date_close.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc", value=event['date_close']) }}
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.repeat_limit.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.repeat_limit.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.repeat_limit.errors %}
                                 {{ form.repeat_limit(class="form-input is-invalid") }}
                                 {% for error in form.repeat_limit.errors %}
@@ -51,15 +37,57 @@
                             {% endif %}
                         </div>
 
-                        <label class="relative inline-flex items-center mb-3 cursor-pointer">
+                        <div class="form-group lg:block">
+                            {{ form.point_exchange.label(class="input-label w-[256px] md-max:w-[108px]") }}
+                            {% if form.point_exchange.errors %}
+                                {{ form.point_exchange(class="form-input is-invalid") }}
+                                {% for error in form.point_exchange.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.point_exchange(class="form-input", placeholder="Điểm quy đổi", value=event.point_exchange) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group lg:block">
+                            {{ form.date_start.label(class="input-label w-[256px] md-max:w-[108px]") }}
+                            {% if form.date_start.errors %}
+                                {{ form.date_start(class="form-input is-invalid") }}
+                                {% for error in form.date_start.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.date_start(class="form-input", placeholder="Ngày kết thúc", value=event['date_start']) }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group lg:block">
+                            {{ form.date_close.label(class="input-label w-[256px] md-max:w-[108px]") }}
+                            {% if form.date_close.errors %}
+                                {{ form.date_close(class="form-input is-invalid") }}
+                                {% for error in form.date_close.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc", value=event['date_close']) }}
+                            {% endif %}
+                        </div>
+
+                        <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="is_active" name="is_active" value="True" class="sr-only peer"
                                    {% if event.is_active == True %}checked{% endif %}>
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hoạt động</span>
                         </label>
 
-                        <div class="mt-2 flex justify-center items-center">
-                            {{ form.submit(class="btn-primary") }}
+                        <div class="mt-2 text-center mx-auto">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
                     </fieldset>
                 </form>

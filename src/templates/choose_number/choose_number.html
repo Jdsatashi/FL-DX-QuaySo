@@ -4,30 +4,27 @@
 {% endblock header %}
 
 {% block content %}
-    <div class="w-auto h-auto sm-max:h-full sm-max:w-full -z-20">
-        <img src="{{ url_for('static', filename='assets/background.jpg')}}" alt="Background">
-    </div>
     <!-- Card modal -->
     <div id="overlay" tabindex="-1"
          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
-         style="display: none;">
-        <div class="grid place-items-center mt-40 sm-max:mt-28">
-            <div class="card-simple lg:w-[760px] md-max:w-auto" id="main-modal">
+    >
+        <div class="grid place-items-center mt-24 md-max:mt-0 pb-24">
+            <div class="card-simple rounded-lg lg:w-[760px] md-max:w-full" id="main-modal">
                 <div class="w-full h-full">
-                    <div class="card-header bg-green-100 mb-1">
-                        <h2 class="card-title">Xác nhận lựa chọn.</h2>
+                    <div class="card-header rounded-t-lg bg-green-500 mb-1">
+                        <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
                     </div>
-                    <div class="card-content bg-green-50 mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
+                    <div class="card-content bg-white mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
                         <div class="element-center">
                             <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
                         </div>
                         <div class="flex justify-center mt-3 w-auto">
                             <div id="confirm-result"
-                                 class="w-auto md-max:w-full grid grid-cols-4 md-max:grid-cols-3 xl-max:text-xl">
+                                 class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-3 xl-max:text-xl">
                             </div>
                         </div>
-                        <div class="flex items-end justify-end me-4">
-                            <button type="button" class="button-simple" id="close-modal-btn">Close
+                        <div class="flex items-end justify-center me-4">
+                            <button type="button" class="button-simple" id="close-modal-btn">Hủy
                             </button>
                             <form id="modal-form" method="post" action="">
                                 {{ form.csrf_token() }}
@@ -42,90 +39,187 @@
     </div>
 
     <!-- Main content -->
-    <div class="w-auto sm-max:mt-2 -mt-72">
-        <div class="element-center">
-            <div class="card-simple lg:w-[760px] md-max:w-full">
-                <div class="w-full h-full">
-                    <div class="card-header bg-green-100 mb-1">
-                        <h2 class="card-title">Chọn số may mắn</h2>
-                    </div>
-                    <div class="card-content bg-green-50 mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
-                        <div class="element-center flex-wrap">
-                            <h3 class="w-auto text-xl md-max:text-2xl font-bold me-4 sm-max:mb-2">Sự kiện:
-                                "{{ events['event_name'] }}"</h3>
-                            {% if number_rolled %}
-                                <p class="w-auto text-xl md-max:text-2xl sm-max:mb-2">Tài khoản "{{ user['username'] }}"
-                                    đã chọn {{ turn_chosen }} lần, bạn còn
-                                    <strong>{{ user['turn_roll'] - turn_chosen }}</strong> lượt chọn số.</p>
-                            {% else %}
-                                <p class="w-auto text-xl md-max:text-2xl sm-max:mb-2">Tài khoản "{{ user['username'] }}"
-                                    được chọn
-                                    <strong>{{ user['turn_roll'] }}</strong> số.</p>
-                            {% endif %}
-                        </div>
-                        <div class="element-center max-w-sm mx-auto">
-                            <div class="mb-3 mt-3">
-                                <label for="input-search-number"></label>
-                                <input type="text" id="input-search-number"
-                                       class="input-e w-[300px] md-max:w-full md-max:text-xl xl-max:text-xl"
-                                       placeholder="Tìm số"
-                                       title="Nhập số cần tìm"
-                                >
+    <div id="main-content">
+        <div class="w-auto h-auto md-max:h-fl md-max:w-fl -z-50">
+            <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
+        </div>
+        <div class="w-auto sm-max:mt-2 -mt-72">
+            <div class="element-center">
+                <div class="card-simple rounded-md lg:w-[760px] md-max:w-full md-max:mx-4">
+                    <div class="w-full h-full">
+                        <div class="card-header rounded-md bg-green-100 mb-1">
+                            <div class="flex justify-center items-center">
+                                <h3 class="text-2xl font-bold mt-2 md-max:text-3xl">Sự
+                                    kiện:
+                                    {{ events['event_name'] }}</h3>
                             </div>
+                            <p class="w-auto text-base text-center md-max:text-md mb-4">Kết thúc: Hết ngày <span
+                                    class="font-medium">{{ events.date_show }}</span></p>
                         </div>
-                        <div class="flex justify-center mt-3 w-auto">
-                            <div id="show-selected-number"
-                                 class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+                        <div id="alert-1"
+                             class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                             role="alert">
+                            <div class="ms-3 text-sm font-medium">
+                                Lưu ý: Những tem chọn số còn dư sẽ được tự động chọn vào ngày {{ date_will_random }} (3 ngày trước khi kết thúc).
                             </div>
-                        </div>
-                        <div class="element-center mb-3">
-                            <button type="button" class="button-simple-green" id="open-modal-btn"
-                                    title="Xác nhận chọn số">
-                                Xác nhận
+                            <button type="button"
+                                    class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
+                                    data-dismiss-target="#alert-1" aria-label="Close">
+                                <span class="sr-only">Close</span>
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                                </svg>
                             </button>
                         </div>
-                        <div id="user-id" class="hidden">{{ user['_id'] }}</div>
+                        <div class="card-content bg-white mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
+                            <p class="mt1 mb-2 text-md font-medium text-slate-700 text-center">Thời gian còn lại:
+                                {% if now <= events.date_close %}
+                                    <span id="demo" class="text-red-600"></span>
+                                {% else %}
+                                    <span class="text-red-600">0 ngày - 0 : 0 : 0 giây</span>
+                                {% endif %}
+                            </p>
+                            <div class="mb-4">
+                                <p class="hidden" id="turn_choose">{{ user['turn_roll'] }}</p>
+                                <p class="hidden" id="date-close">{{ events.date_close }}</p>
+                                <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
+                                    "{{ user['username'] }}"</p>
+                                <div class="element-center">
+                                    <table class="w-[320px]">
+                                        <tbody>
+                                        <tr class="li-item">
+                                            <td>Tổng tem:</td>
+                                            <td class="text-green-500 font-bold py-1 px-2 md-max:px-0 w-16 md-max:w-10">{{ user['turn_roll'] }}</td>
+                                            <td colspan="2">Tổng điểm: <span
+                                                    class="text-green-500 font-bold py-1 px-2">{{ user['point'] }}</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="li-item">
+                                            <td class="md-max:w-[108px]">Tem đã chọn:</td>
+                                            <td class="text-green-500 font-bold py-1 px-2 md-max:px-0">{{ turn_chosen }}</td>
+                                            <td colspan="2" class="hidden">Điểm / tem: <span
+                                                    class="text-green-500 font-bold py-1 px-2">{{ events.point_exchange }}</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="li-item">
+                                            <td>Tem còn dư:</td>
+                                            <td class="text-red-500 font-bold py-1 px-2 md-max:px-0">{{ user['turn_roll'] - turn_chosen }}</td>
+                                            <td colspan="2">Điểm dư: <span
+                                                    class="text-red-500 font-bold py-1 px-2T">{{ user.point - (user.turn_roll * events.point_exchange) }}</span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% if turn_chosen > 0 %}
+                                    <div class="mb-4 mt-1 element-center">
+                                        <a href="{{ url_for('print_info', _id=events['_id']) }}"
+                                           class="flex font-medium text-base text-green-600 hover:text-emerald-500"
+                                           title="File pdf">
+                                            <svg class="w-4 h-4 mt-1 me-1 text-green-600 hover:text-emerald-500 dark:text-white"
+                                                 aria-hidden="true"
+                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                 viewBox="0 0 20 20">
+                                                <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"></path>
+                                                <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"></path>
+                                            </svg>
+                                            <span>Bản in tem.</span></a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% if now <= events.date_close %}
+                                <div class="element-center max-w-sm mx-auto">
+                                    <div class="mb-3 mt-3">
+                                        <label for="input-search-number"
+                                               class="block mb-2 text-sm font-medium md:text-base md-max:text-xl text-gray-900 dark:text-white text-center">Nhập
+                                            số cần tìm</label>
+                                        <input type="number" id="input-search-number"
+                                               class="input-e w-[300px] md-max:w-full md-max:text-xl xl-max:text-xl"
+                                               placeholder="Tìm số"
+                                               title="Nhập số cần tìm"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="my-1">
+                                        <h4 class="text-base text-center" style="display: none;">Các số đã chọn</h4>
+                                    </div>
+                                    <div class="flex justify-center w-auto">
+                                        <div id="show-selected-number"
+                                             class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="element-center mb-3">
+                                    <button type="button" class="button-simple-green" id="open-modal-btn"
+                                            title="Xác nhận chọn số">
+                                        Xác nhận
+                                    </button>
+                                    <button type="button" id="randNum" title="Chọn ngẫu nhiên một số"
+                                            class="mt-2 rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-300 hover:ring-1 hover:ring-slate-400 ms-2 md-max:ms-1 md-max:px-2 md-max:w-auto">
+                                        Ngẫu nhiên
+                                    </button>
+                                </div>
+                            {% else %}
+                                <h3 class="text-2xl text-center text-red-600 font-medium">Sự kiện đã kết thúc. <a
+                                        href="{{ url_for('information') }}"
+                                        class="text-green-700 border-b-2 border-green-600 hover:text-emerald-500 hover:border-emerald-600">Nhấn
+                                    xem thông tin</a></h3>
+                            {% endif %}
+                            <div id="user-id" class="hidden">{{ user['_id'] }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="group-data">
-            <div class="mx-32 w-auto md-max:mx-4">
-                {% if number_rolled %}
-                    <h2 class="text-2xl">Các số đã chọn. Click chọn lại hoặc chọn số khác</h2>
-                    <div class="w-auto grid grid-cols-5">
-                        {% for number in number_rolled %}
+            <div id="hidden-selected"></div>
+            {% if now <= events.date_close %}
+                <div id="group-data">
+                    <div class="mx-32 w-auto md-max:mx-4">
+                        <div id="item-selecting" style="display: none">
+                            {% if number_rolled %}
+                                <h2 class="text-2xl">Các số đã chọn. Click chọn lại hoặc chọn số khác</h2>
+                                <div class="w-auto grid grid-cols-5">
+                                    {% for number in number_rolled %}
+                                        <p id="li-{{ number }}"
+                                           class="group-item"
+                                           title="Nhấn để chọn số"
+                                        >{{ number }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-2xl">Các số khả dụng:</h3>
+                    </div>
+                    <div class="w-auto mx-32 my-4 grid grid-cols-10 lg-max:mx-4 lg-max:grid-cols-6">
+                        {% for number in number_list %}
                             <p id="li-{{ number }}"
                                class="group-item"
                                title="Nhấn để chọn số"
                             >{{ number }}</p>
                         {% endfor %}
                     </div>
-                {% endif %}
-                <h3 class="text-2xl">Các số khả dụng:</h3>
-            </div>
-            <div class="w-auto mx-32 my-4 grid grid-cols-10 lg-max:mx-4 lg-max:grid-cols-6 ">
-                {% for number in number_list %}
-                    <p id="li-{{ number }}"
-                       class="group-item"
-                       title="Nhấn để chọn số"
-                    >{{ number }}</p>
-                {% endfor %}
-            </div>
+                </div>
+            {% endif %}
         </div>
     </div>
-    <script type="module" src="{{ url_for('static', filename='scripts/number-search.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/modal.js') }}"></script>
-    <script type="text/javascript">
-        JdModal({
-            idOpenModal: 'open-modal-btn',
-            idCloseModal: 'close-modal-btn',
-            idModalParent: 'overlay',
-            idMainModal: 'main-modal',
-            idShowNumberToConfirm: 'show-selected-number',
-            idModalForm: 'modal-form',
-            idModalInput: 'modal-input',
-            idModalConfirm: 'confirm-result'
-        })
-    </script>
+    {% if now <= events.date_close %}
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/modal-confirm.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/svg.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/number-search.js') }}"></script>
+        <script type="text/javascript">
+            JdFormModal({
+                idOpenModal: 'open-modal-btn',
+                idCloseModal: 'close-modal-btn',
+                idModalParent: 'overlay',
+                idMainModal: 'main-modal',
+                idShowNumberToConfirm: 'show-selected-number',
+                idModalForm: 'modal-form',
+                idModalInput: 'modal-input',
+                idModalConfirm: 'confirm-result'
+            })
+        </script>
+    {% endif %}
 {% endblock %}

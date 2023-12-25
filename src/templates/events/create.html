@@ -1,16 +1,16 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
     <div class="flex justify-center items-center">
-        <div class="card-simple md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center text-4xl font-bold">
+        <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
+            <div class="rounded mx-auto mt-4 mb-6 text-center text-4xl font-bold">
                 Tạo sự kiện
             </div>
-            <div class="mt-2">
-                <form method="POST" class="max-w-sm mx-auto">
+            <div class="mt-1">
+                <form method="POST" class="max-w-sm mx-auto" enctype="multipart/form-data">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="mb-3">
-                            {{ form.name.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.name.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.name.errors %}
                                 {{ form.name(class="form-input is-invalid") }}
                                 {% for error in form.name.errors %}
@@ -23,23 +23,8 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.date_close.label(class="input-label") }}
-                            {% if form.date_close.errors %}
-                                {{ form.date_close(class="form-input is-invalid") }}
-                                {% for error in form.date_close.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc", value=date_now, min=date_now, max="2030-12-31") }}
-                                <p class="text-sm text-slate-700">Định dạng Tháng-Ngày-Năm</p>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.repeat_limit.label(class="input-label") }}
+                        <div class="form-group lg:block">
+                            {{ form.repeat_limit.label(class="input-label w-[256px] md-max:w-[108px]") }}
                             {% if form.repeat_limit.errors %}
                                 {{ form.repeat_limit(class="form-input is-invalid") }}
                                 {% for error in form.repeat_limit.errors %}
@@ -52,8 +37,50 @@
                             {% endif %}
                         </div>
 
-                        <div class="mt-2 flex justify-center items-center">
-                            {{ form.submit(class="btn-primary") }}
+                        <div class="form-group lg:block">
+                            {{ form.point_exchange.label(class="input-label w-[256px] md-max:w-[108px]") }}
+                            {% if form.point_exchange.errors %}
+                                {{ form.point_exchange(class="form-input is-invalid") }}
+                                {% for error in form.point_exchange.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.point_exchange(class="form-input", placeholder="Điểm quy đổi") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group lg:block">
+                            <label for="date_start" class="input-label w-[256px] md-max:w-[108px]">Ngày bắt đầu</label>
+                            {% if form.date_start.errors %}
+                                {{ form.date_start(class="form-input is-invalid") }}
+                                {% for error in form.date_start.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.date_start(class="form-input", placeholder="Ngày kết thúc", value=date_now, min="2023-01-01", max="2030-12-31") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group lg:block">
+                            <label for="date_close" class="input-label w-[256px] md-max:w-[108px]">Ngày kết thúc</label>
+                            {% if form.date_close.errors %}
+                                {{ form.date_close(class="form-input is-invalid") }}
+                                {% for error in form.date_close.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.date_close(class="form-input", placeholder="Ngày kết thúc", value=date_now, min=date_now, max="2030-12-31") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-2 text-center mx-auto">
+                            {{ form.submit(class="btn-primary w-52 py-2.5") }}
                         </div>
                     </fieldset>
                 </form>
@@ -61,3 +88,31 @@
         </div>
     </div>
 {% endblock %}
+
+{#                        <div class="form-group lg:block">#}
+{#                            {{ form.desc_file.label(class=" input-label w-[256px] md-max:w-[108px]") }}#}
+{#                            {% if form.desc_file.errors %}#}
+{#                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">#}
+{#                                {% for error in form.desc_file.errors %}#}
+{#                                    <div class="invalid-feedback">#}
+{#                                        <span>{{ error }}</span>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                            {% else %}#}
+{#                                <input id="desc_file" name="desc_file" type="file" class="form-input-file">#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{##}
+{#                        <div class="form-group lg:block">#}
+{#                            {{ form.desc_image.label(class=" input-label w-[256px] md-max:w-[108px]") }}#}
+{#                            {% if form.desc_image.errors %}#}
+{#                                <input id="desc_image" name="desc_image" type="file" class="form-input-file is-invalid">#}
+{#                                {% for error in form.desc_image.errors %}#}
+{#                                    <div class="invalid-feedback">#}
+{#                                        <span>{{ error }}</span>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                            {% else %}#}
+{#                                <input id="desc_image" name="desc_image" type="file" class="form-input-file">#}
+{#                            {% endif %}#}
+{#                        </div>#}
