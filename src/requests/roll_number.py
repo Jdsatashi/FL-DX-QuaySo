@@ -71,7 +71,7 @@ def choose_event():
         user=user,
         events=events,
         event_joined=list_joined,
-        title="Chọn sợ kiện"
+        title="Chọn sự kiện"
     )
 
 

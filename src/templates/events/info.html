@@ -62,7 +62,7 @@
                                 </tbody>
                             </table>
                             {% if infos[id]['selected_number'] != '' and infos[id]['number_choices'] > 0 %}
-                                <div class="mb-4 mt-1">
+                                <div class="mb-4 mt-1 md-max:hidden">
                                     <a href="{{ url_for('print_info', _id=id) }}"
                                        class="flex font-medium text-base text-green-600 hover:text-emerald-500"
                                        title="File pdf">

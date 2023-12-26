@@ -40,7 +40,7 @@ def account_manager():
                 account.update(ObjectId(data['_id']), {'is_active': True})
                 data['is_active'] = True
         logger.info("Get all data account success.")
-        return render_template('admin/account/index.html', accounts=account_data)
+        return render_template('admin/account/index.html', accounts=account_data, title="Quản l tài khoản")
     # Return error
     except Exception as e:
         logger.error(f"Error when direct to manage account page.\n{e}")
