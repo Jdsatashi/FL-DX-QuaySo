@@ -92,6 +92,18 @@ def reset_password(_id):
         return redirect(url_for('home'))
 
 
+@auth.route('/thong-tin')
+@auth.route('/thong-tin/')
+def fake_thong_tin():
+    user = authorize_user()
+    if not user:
+        flash(Markup(
+            f'Bạn phải đăng nhập để xem thông tin cá nhân. <strong><a href="{url_for("user.login")}" style="color: '
+            '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
+        return redirect(url_for('home'))
+    return redirect(url_for('home'))
+
+
 @auth.route('/thong-tin/<string:_id>', methods=['GET', 'POST'])
 def information(_id):
     user = authorize_user()
