@@ -1,16 +1,20 @@
+import os
 from _datetime import datetime
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint
+from werkzeug.utils import secure_filename
 
 from src.logs import message_logger, logger
 from src.requests.authenticate import admin_authorize
 from src.forms import CreateAccountForm, UpdateAccountForm
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE, USER_JOIN_EVENT
-from src.utils.utilities import role_auth_id
+from src.utils.utilities import role_auth_id, create_folder
 from src.requests.event import event_model, join_event_model
 
 import bcrypt
+import pandas as pd
+
 
 admin = Blueprint('admin', __name__)
 # Assign account as account table model
@@ -123,6 +127,57 @@ def account_create():
     else:
         return render_template('admin/account/create.html', title='Create account', form=form, events=events)
 
+
+# Create list accounts
+@admin.route('accounts/list/add', methods=['POST', 'GET'])
+def account_add_list():
+    # Authorize is admin
+    adm = admin_authorize()
+    if not adm:
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
+        return redirect(url_for('home'))
+    if request.method == 'POST':
+        # Get file
+        uploaded_file = request.files['csv_list']
+        # Secure filename
+        file_name = uploaded_file.filename
+        if file_name != '':
+            try:
+                # Create folder and get path
+                folder_path = create_folder("csv")
+                # Validate filename and rename
+                new_filename = check_file_name(folder_path, uploaded_file)
+                file_path = os.path.join(folder_path, new_filename)
+                try:
+                    uploaded_file.save(os.path.join(folder_path, new_filename))
+                except Exception as e:
+                    logger.error(f"Error save file. {e}\n")
+                col_name = ['usercode', 'username', 'point_dm2', 'address']
+                csv_data = pd.read_excel(file_path, names=col_name, header=None)
+                data_list = {}
+                for i, row in csv_data.iterrows():
+                    data_list[i] = {
+                        'username': row['username'],
+                        'password': row['username'].lower(),
+
+                    }
+                    logger.info(f"{i} | {row['usercode']}, {row['username']}, {row['point_dm2']}, {row['address']}")
+                return render_template('admin/account/input_csv.html')
+            except Exception as e:
+                logger.error(f"Error when upload csv list. {e}")
+            # flash(f"Added file: {uploaded_file.filename} successfully!", 'success')
+    return render_template('admin/account/input_csv.html')
+
+
+# Rename file if file exist in same path
+def check_file_name(path, file):
+    file_name = file.filename
+    base, ext = os.path.splitext(file_name)
+    num = 1
+    while os.path.isfile(os.path.join(path, file_name)):
+        file_name = f"{base}-({num}){ext}"
+        num += 1
+    return file_name
 
 # Updating accounts
 @admin.route('account/<string:_id>', methods=['POST', 'GET'])

@@ -1,8 +1,6 @@
 from datetime import timedelta
-
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
-import bcrypt
 from markupsafe import Markup
 
 from src.app import app
@@ -11,6 +9,9 @@ from src.logs import message_logger, logger
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE
 from src.utils.utilities import role_auth_id, role_admin_id
+
+import bcrypt
+
 
 auth = Blueprint('user', __name__)
 account = Models(table=ACCOUNT_TABLE)

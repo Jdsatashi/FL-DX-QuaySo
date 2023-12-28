@@ -1,0 +1,22 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+    <div class="flex justify-center items-center">
+        <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
+            <div class="rounded mx-auto text-center text-4xl mt-4 mb-6 font-bold">
+                Thêm danh sách user
+            </div>
+            <div class="mt-2">
+                <form method="POST" class="max-w-md mx-auto" enctype="multipart/form-data">
+                    <fieldset>
+                        <label for="csv_list" class="input-label">Danh sách user (File CSV, Excel...)</label>
+                        <input id="csv_list" name="csv_list" type="file" class="form-input-file">
+
+                        <div class="mt-2 text-center mx-auto">
+                            <button type="submit" class="btn-primary w-52 py-2.5">Thêm danh sách</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
