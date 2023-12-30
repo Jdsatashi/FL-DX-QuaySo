@@ -7,7 +7,6 @@ from _datetime import datetime
 class CreateAccountForm(FlaskForm):
     username = StringField("Username", validators=[Length(min=2), DataRequired()])
     usercode = StringField("Mã khách hàng", validators=[DataRequired()])
-    point = IntegerField("Điểm", validators=[DataRequired()])
     password = PasswordField("Mật khẩu", validators=[Length(min=2), DataRequired()])
     confirm_password = PasswordField("Xác nhận mật khẩu", validators=[EqualTo('password'), DataRequired()])
     join_event = StringField()
@@ -17,7 +16,6 @@ class CreateAccountForm(FlaskForm):
 class UpdateAccountForm(FlaskForm):
     username = StringField("Tài khoản", validators=[Length(min=2), DataRequired()])
     usercode = StringField("Mã khách hàng", validators=[DataRequired()])
-    point = IntegerField("Điểm", validators=[DataRequired()])
     join_event = StringField()
     is_active = BooleanField("Hoạt động")
     submit = SubmitField("Cập nhật tài khoản")
