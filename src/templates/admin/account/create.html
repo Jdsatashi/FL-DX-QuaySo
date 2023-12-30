@@ -10,7 +10,7 @@
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="form-group lg:block">
-                            {{ form.username.label(class="input-label w-[236px] md-max:w-[128px]") }}
+                            {{ form.username.label(class="input-label") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.username.errors %}
@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="form-group lg:block">
-                            {{ form.usercode.label(class="input-label w-[236px] md-max:w-[128px]") }}
+                            {{ form.usercode.label(class="input-label") }}
                             {% if form.usercode.errors %}
                                 {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.usercode.errors %}
@@ -38,21 +38,7 @@
                         </div>
 
                         <div class="form-group lg:block">
-                            {{ form.point.label(class="input-label w-[236px] md-max:w-[128px]") }}
-                            {% if form.point.errors %}
-                                {{ form.point(class="form-input is-invalid") }}
-                                {% for error in form.point.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.point(class="form-input", placeholder="Điểm mua hàng") }}
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group lg:block">
-                            {{ form.password.label(class="input-label w-[236px] md-max:w-[128px]") }}
+                            {{ form.password.label(class="input-label") }}
                             {% if form.password.errors %}
                                 {{ form.password(class="form-input is-invalid") }}
                                 {% for error in form.password.errors %}
@@ -66,7 +52,7 @@
                         </div>
 
                         <div class="form-group lg:block">
-                            {{ form.confirm_password.label(class="input-label w-[236px] md-max:w-[128px]") }}
+                            {{ form.confirm_password.label(class="input-label") }}
                             {% if form.confirm_password.errors %}
                                 {{ form.confirm_password(class="form-input is-invalid") }}
                                 {% for error in form.confirm_password.errors %}
@@ -79,19 +65,25 @@
                             {% endif %}
                         </div>
 
-                        <div id="event-group" class="mx-4">
+                        <div id="event-group" class="w-[90%]">
                             {% if events %}
-                                <h3 class="input-label w-[236px] md-max:w-[128px]">Sự kiện</h3>
+                                <div class="flex justify-between">
+                                    <h3 class="input-label">Sự kiện</h3>
+                                    <h3 class="input-label me-4">Điểm</h3>
+                                </div>
                             {% endif %}
                             {% for event in events %}
                                 <label for="{{ event._id }}">
-                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded dark:border-gray-700 mb-1">
+                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded-lg dark:border-gray-700 mb-1">
                                         <div class="w-auto py-3">
                                             <input id="{{ event._id }}" type="checkbox"
                                                    value="{{ event['event_name'] }}"
                                                    name="event_name"
                                                    class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                             <span class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}</span>
+                                        </div>
+                                        <div>
+                                            <input id="point-{{ event._id }}" type="number" min="1" max="999999" value="1" class="input-point rounded-lg w-20 my-2 me-2 bg-slate-50">
                                         </div>
                                     </div>
                                 </label>
@@ -112,14 +104,18 @@
         const btnSubmit = document.querySelector('#submit')
         let value = ''
         data = []
+        const groupInput = document.querySelectorAll('.input-point')
 
         btnSubmit.addEventListener('click', addInputEvent)
-
         function addInputEvent(e) {
             for (let i in checkboxGroup) {
                 if (checkboxGroup[i].checked) {
+                    let pointInput = document.getElementById(`point-${checkboxGroup[i].id}`)
+                    console.log(pointInput)
                     let data_string = checkboxGroup[i].id
-                    data.push(data_string)
+                    let point = pointInput.value
+                    let string_value = data_string + ',' + point
+                    data.push(string_value)
                 }
                 value = data.join('|')
             }

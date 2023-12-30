@@ -12,21 +12,23 @@ from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
 
 
+# Function creating number list for user choose
 def create_number_list(limit, event_id, user_id):
-    list_selected = []
-    all_number_selected = []
+    list_selected, all_number_selected, user_selected = [], [], []
     unavailable_number = {}
-    user_selected = []
+    # user_rolled check which number chosen by user
     user_rolled = join_event_model.get_one({'event_id': event_id, 'user_id': user_id})
     if 'selected_number' in user_rolled and 'number_choices' in user_rolled:
         number_selected = user_rolled['selected_number'].split(', ')
         for number in number_selected:
             user_selected.append(int(number))
+    # rolled get all number was chosen
     rolled = join_event_model.get_all()
     if rolled:
         for roll in rolled:
             if 'selected_number' in roll and 'number_choices' in roll and roll['event_id'] == event_id:
                 list_selected.append(roll['selected_number'])
+
     for number in list_selected:
         arr = number.split(', ')
         for i in arr:
@@ -98,6 +100,7 @@ def roll_number(_id):
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     # Assign turn choice for user
     user['turn_roll'] = rolled['turn_roll']
+    user['point'] = rolled['user_point']
     turn_chosen = 0
     number_rolled = []
     if 'selected_number' in rolled and 'number_choices' in rolled:
@@ -210,13 +213,15 @@ def information():
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
                 'number_choices': int(event['number_choices']),
-                'selected_number': ', '.join(sorted(event['selected_number'].split(', '), key=int))
+                'selected_number': ', '.join(sorted(event['selected_number'].split(', '), key=int)),
+                'user_point': event['user_point']
             }
         else:
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
                 'number_choices': 0,
-                'selected_number': ''
+                'selected_number': '',
+                'user_point': event['user_point']
             }
     for id_event in list_event_joined:
         event = event_model.get_one(ObjectId(id_event))
@@ -227,7 +232,7 @@ def information():
             'point_exchange': event['point_exchange']
         })
     message_logger.info(f"User {user['username']} tiến vào trang thông tin")
-    return render_template('events/info.html', infos=data, user=user, title="Thông tin sự kiện")
+    return render_template('choose_number/info.html', infos=data, user=user, title="Thông tin sự kiện")
 
 
 @app.route('/thong-tin/prints/<string:_id>')
@@ -245,29 +250,30 @@ def print_info(_id):
     # Get turn of choice number
     user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     # Assign turn choice for user
-    user['turn_roll'] = int(user_joins['turn_roll'])
-    # Edit element and add new element to event
-    events['_id'] = str(events['_id'])
-    events.pop('date_created')
-    # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     if 'selected_number' in rolled and 'number_choices' in rolled:
         number_rolled = rolled['selected_number'].split(', ')
-        number_rolled = sorted(number_rolled, key=int)
-        number_rolled_str = ', '.join(number_rolled)
         turn_chosen = len(number_rolled)
+        print_data = {
+            'event_name': events['event_name'],
+            'username': user['username'],
+            'usercode': user['usercode'],
+            'user_point': rolled['user_point'],
+            'point_exchange': events['point_exchange'],
+            'turn_roll': user_joins['turn_roll'],
+            'turn_chosen': turn_chosen,
+            'number_rolled_str': rolled['selected_number']
+        }
+        logger.debug(print_data)
         template = render_template(
             'template/pdf_output.html',
-            events=events,
-            user=user,
-            turn_chosen=turn_chosen,
-            number_rolled_str=number_rolled_str,
+            data=print_data,
             number_rolled=number_rolled,
             title="In file"
         )
         filename = f"Dongxanh-{events['event_name']}-{user['username']}.pdf"
         # return template
         message_logger.info(f"User {user['username']} đã in sự kiện {events['event_name']}.")
-        return render_pdf(HTML(string=template), download_filename=filename, automatic_download=True)
+        return render_pdf(HTML(string=template))
     else:
         return redirect(url_for('information'))

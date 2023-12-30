@@ -92,39 +92,39 @@
 <body>
 <img src="../../static/assets/hinhdx.png" alt="" class="logo">
 <div class="w-auto" style="margin-top: -2rem;">
-    <h2 class="text-center text-4xl text-red">{{ events.event_name }}</h2>
+    <h2 class="text-center text-4xl text-red">{{ data.event_name }}</h2>
     <div class="border-b">
         <table class="table">
             <tbody>
             <tr class="td-item">
                 <td>Tài khoản:</td>
-                <td class="item-data">{{ user.username }}</td>
+                <td class="item-data">{{ data.username }}</td>
             </tr>
             <tr class="td-item">
                 <td>Mã KH:</td>
-                <td class="item-data">{{ user.username }}</td>
+                <td class="item-data">{{ data.usercode }}</td>
             </tr>
             <tr class="td-item">
                 <td>Tổng lượt chọn:</td>
-                <td class="item-data-number">{{ user.turn_roll }}</td>
+                <td class="item-data-number">{{ data.turn_roll }}</td>
                 <td colspan="2"></td>
                 <td style="width: 148px">Tổng số điểm:</td>
-                <td>{{ user.point }}</td>
+                <td>{{ data.user_point }}</td>
             </tr>
             <tr class="td-item">
                 <td>Lượt đã chọn:</td>
-                <td class="item-data-number" colspan="2">{{ turn_chosen }}</td>
+                <td class="item-data-number" colspan="2">{{ data.turn_chosen }}</td>
                 <td></td>
                 <td colspan="1" style="width: 148px">Điểm còn dư:</td>
-                <td>{{ user.point - (events.point_exchange * user.turn_roll) }}</td>
+                <td>{{ data.user_point - (data.point_exchange * data.turn_roll) }}</td>
             </tr>
             <tr class="td-item">
                 <td>Lượt còn dư:</td>
-                <td class="item-data-number">{{ user.turn_roll - turn_chosen }}</td>
+                <td class="item-data-number">{{ data.turn_roll - data.turn_chosen }}</td>
             </tr>
             <tr class="td-item">
                 <td style="width: 168px; display: flex; margin-top: 0.5rem;">Các số đã chọn:</td>
-                <td class="item-data-list" colspan="6">{{ number_rolled_str }}</td>
+                <td class="item-data-list" colspan="6">{{ data.number_rolled_str }}</td>
             </tr>
             </tbody>
         </table>

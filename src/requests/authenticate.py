@@ -21,14 +21,18 @@ account = Models(table=ACCOUNT_TABLE)
 def login():
     form = LoginForm()
     if request.method == 'POST':
-        username = str(form.username.data).lower()
+        username = str(form.username.data)
         password = form.password.data.encode("utf-8")
         remember_me = form.remember_me.data
-        user = account.get_one({'username': username})
+        user1 = account.get_one({'username': username.lower()})
+        user2 = account.get_one({'username': username.upper()})
+        logger.info(f"User 1: {user1} | User2: {user2}")
         if form.validate_on_submit():
-            if not user:
+            if user1 is None and user2 is None:
                 flash(f"Tài khoản '{username}' không tồn tại.", "warning")
                 return redirect(url_for('user.login'))
+            else:
+                user = user1 if user2 is None else user2
             if user and bcrypt.checkpw(password, user["password"]):
                 logger.debug(f"Remember me value: {remember_me}")
                 COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
