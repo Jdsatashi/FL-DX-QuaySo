@@ -30,7 +30,7 @@ def create_admin_account():
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
         try:
             ACCOUNT_TABLE.insert_one({
-                "username": 'admin',
+                "username": 'ADMIN',
                 "password": hashed_password,
                 "role_id": role_admin_id,
                 "date_created": datetime.utcnow()
