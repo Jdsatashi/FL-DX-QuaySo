@@ -1,0 +1,71 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+    <div class="m-4 max-w-full">
+        <div class="flex my-8">
+            <div class="justify-start items-start">
+                <h2 class="text-2xl font-bold">Quản lý sự kiện</h2>
+            </div>
+        </div>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="table-1">
+                <thead class="table-1-h">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Sự kiện
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Ngày hết hạn
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Lặp số
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Điểm quy đổi
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Trạng thái
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <a href="{{ url_for('event.insert') }}">
+                            <span class="text-base font-bold">+</span> Thêm sự kiện
+                        </a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for event in events %}
+                    <tr class="table-1-b">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ event.event_name }}
+                        </th>
+                        <td class="px-6 py-4 ms-2">
+                            {{ event.date_close }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ event.limit_repeat }}
+                        </td>
+                        <td class="px-6 py-4 ms-2">
+                            {{ event.point_exchange }}
+                        </td>
+                        <td class="px-6 py-4 ms-2">
+                            <div class="flex items-center">
+                                {% if event['is_active'] %}
+                                    <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-3 sm-max:max-h-1.5 sm-max:max-w-3 rounded-full bg-green-500 me-2"></div>
+                                    Đang diễn ra
+                                {% else %}
+                                    <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-2 sm-max:max-h-1.5 sm-max:max-w-2 rounded-full bg-red-500 me-2"></div>
+                                    Kết thúc
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="flex items-center px-6 py-4 ms-2">
+                            <a href="{{ url_for('event.update', _id=event['_id']) }}"
+                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
