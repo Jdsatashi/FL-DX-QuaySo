@@ -39,7 +39,7 @@ def login():
                 is_role = user["role_id"]
                 if is_role is None or is_role == '':
                     account.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
-                session["username"] = username
+                session["username"] = user['username']
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
                 session.permanent = True
