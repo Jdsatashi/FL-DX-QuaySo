@@ -4,13 +4,36 @@
 {% endblock header %}
 {% block content %}
     <div class="m-4 max-w-full">
-        <div class="flex my-8">
-            <div class="justify-start items-start">
+        <div class="grid grid-cols-2 my-8">
+            <div class="items-center mb-4">
                 <h2 class="text-2xl font-bold">Quản lý tài khoản</h2>
             </div>
-            <div class="justify-end items-end">
-                <a href="{{ url_for('admin.account_add_list') }}">Thêm danh sách</a>
+            <div class="flex justify-between items-center">
+                <div class="items-center">
+                    <a href="{{ url_for('admin.account_add_list') }}" class="button-simple">Thêm danh sách</a>
+                </div>
+                <form class="w-[480px]">
+                    <label for="default-search"
+                           class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Tìm kiếm</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+                            </svg>
+                        </div>
+                        <input type="search" id="default-search"
+                               class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                               placeholder="Search Mockups, Logos..." required>
+                        <button type="submit"
+                                class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </form>
             </div>
+
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="table-1">
@@ -71,13 +94,19 @@
         </div>
         <div class="element-center m-8">
             {% if current_page > 1 %}
-            <button type="button" onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page - 1) }}'" class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-s-lg hover:bg-emerald-700">Trang sau
-            </button>
+                <button type="button"
+                        onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page - 1) }}'"
+                        class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-s-lg hover:bg-emerald-700">
+                    Trang sau
+                </button>
             {% endif %}
             <div class="px-[1px]"></div>
             {% if current_page < max_page %}
-            <button type="button" onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page + 1) }}'" class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-e-lg hover:bg-emerald-700">Trang tới
-            </button>
+                <button type="button"
+                        onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page + 1) }}'"
+                        class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-e-lg hover:bg-emerald-700">
+                    Trang tới
+                </button>
             {% endif %}
         </div>
     </div>
