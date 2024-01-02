@@ -18,9 +18,10 @@ def add_default_role():
 
 
 def create_admin_account():
-    admin = ACCOUNT_TABLE.find_one({'username': 'admin'})
+    admin = ACCOUNT_TABLE.find_one({'username': 'ADMIN'})
     if not admin:
-        role_admin_id = None
+        role_admin_id = is_admin
+        logger.info(f"is_admin: {is_admin}")
         if is_admin is None:
             add_default_role()
             role_admin = ROLE_TABLE.find_one({'role': 'admin'})
