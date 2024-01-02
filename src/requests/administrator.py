@@ -1,7 +1,4 @@
-import math
 from _datetime import datetime
-
-import pymongo
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint
 
@@ -17,6 +14,7 @@ import os
 import bcrypt
 import traceback
 import pandas as pd
+import math
 
 
 admin = Blueprint('admin', __name__)
@@ -47,6 +45,9 @@ def account_manager():
         current_page = total_pages
     # Skip data
     skip_data = (current_page - 1) * perpage
+    if skip_data < 0:
+        skip_data = 0
+    logger.info(f'Skip: {skip_data} | current page: {current_page} | perpage: {perpage}')
     # Get all accounts data exclude admin accounts
     account_data = list(ACCOUNT_TABLE.find({'_id': {'$ne': ObjectId(adm['_id'])}}).limit(perpage).skip(skip_data))
     try:
@@ -56,7 +57,7 @@ def account_manager():
             data.pop('password')
             # Change ObjectId to String
             data['_id'] = str(data['_id'])
-            data['role_id'] = str(data['role_id'])
+            # data['role_id'] = str(data['role_id'])
             # Add is_active if account does not have it
             if 'is_active' not in data:
                 account.update(ObjectId(data['_id']), {'is_active': True})
@@ -177,7 +178,7 @@ def account_add_list():
                     error_info = traceback.format_exc()
                     logger.error(f'Error save file.\nError: {e}\n{error_info}"')
                 # Column name
-                col_name = ['usercode', 'username', 'point_dm2', 'address', 'event']
+                col_name = ['usercode', 'fullname', 'point_dm2', 'address', 'event']
                 # Check extension match with pandas reader type
                 match ext:
                     case '.xlsx':
@@ -192,8 +193,10 @@ def account_add_list():
                 # Get event data from event name
                 event = event_model.get_one({'event_name': event_name})
                 event_id = str(event['_id'])
+                exchange_point = event['point_exchange']
                 # Get current date time for create or update
                 now = datetime.utcnow()
+                event_assign = []
                 # Loop through data in csv file
                 for i, row in csv_data.iterrows():
                     if int(i) > 0:
@@ -201,11 +204,13 @@ def account_add_list():
                         hashed_password = bcrypt.hashpw(row['username'].lower().encode("utf-8"), bcrypt.gensalt())
                         # Add data to data dict
                         data_dict = {
-                            'username': row['username'].upper(),
+                            'username': row['usercode'].upper(),
                             'usercode': row['usercode'].upper(),
                             'password': hashed_password,
                             'address': row['address'],
+                            'fullname': row['fullname'],
                         }
+                        logger.info(f"Handle user {data_dict['username']}")
                         is_existed = account.get_one({'username': data_dict['username']})
                         # Try adding of update account
                         try:
@@ -213,16 +218,37 @@ def account_add_list():
                             if is_existed is None:
                                 data_dict.update({'date_created': now})
                                 account.create(data_dict)
+                                logger.info("Add user success")
+                                user_id = data_dict['_id']
                             # When account exited updating account
                             else:
                                 data_dict.update({'date_updated': now})
                                 account.update(is_existed['_id'], data_dict)
+                                user_id = is_existed['_id']
+                                logger.info("Update user success")
                         # Except error
                         except Exception as e:
                             error_info = traceback.format_exc()
                             logger.error(f'Error when adding user {data_dict["username"]}.\nError: {e}\n{error_info}"')
                             flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                             return redirect(url_for('admin.account_add_list'))
+                        logger.info(f"Data dict after create and update: {data_dict}")
+                        user_point = int(row['point_dm2'])
+                        turn_choices = user_point // int(exchange_point)
+                        event_assign.append({
+                            'user_id': str(user_id),
+                            'event_id': event_id,
+                            'user_point': user_point,
+                            'turn_roll': turn_choices,
+                            'date_created': now
+                        })
+                try:
+                    USER_JOIN_EVENT.insert_many(event_assign)
+                    logger.info("Assign users to event success")
+                except Exception as e:
+                    error_info = traceback.format_exc()
+                    logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
+                    flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                 flash(f"Added file: {uploaded_file.filename} successfully!", 'success')
                 return redirect(url_for('admin.account_add_list'))
             except Exception as e:
