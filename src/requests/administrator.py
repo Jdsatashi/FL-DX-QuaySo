@@ -1,4 +1,7 @@
+import math
 from _datetime import datetime
+
+import pymongo
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint
 
@@ -22,15 +25,30 @@ account = Models(table=ACCOUNT_TABLE)
 
 
 # Get all accounts
-@admin.route('/accounts/')
+@admin.route('/accounts/', methods=['GET', 'HEAD'])
 def account_manager():
     # Authorize is admin
     adm = admin_authorize()
     if not adm:
         flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
+    # Pagination settings
+    perpage = 4
+    # Get current page for specific data
+    current_page = request.args.get('page', 1, type=int)
+    if current_page <= 0:
+        current_page = 1
+    # Get total items in table
+    total_data = ACCOUNT_TABLE.count_documents({'_id': {'$ne': ObjectId(adm['_id'])}})
+    # From total items then calculate maximum page size | math.ceil make 4.8 to 5
+    total_pages = math.ceil(total_data/perpage)
+    # If current page is over max page then reset to max page
+    if current_page > total_pages:
+        current_page = total_pages
+    # Skip data
+    skip_data = (current_page - 1) * perpage
     # Get all accounts data exclude admin accounts
-    account_data = list(account.get_all_exclude({'_id': {'$ne': ObjectId(adm['_id'])}}))
+    account_data = list(ACCOUNT_TABLE.find({'_id': {'$ne': ObjectId(adm['_id'])}}).limit(perpage).skip(skip_data))
     try:
         # Edit some sensitive data in account data
         for data in account_data:
@@ -44,7 +62,7 @@ def account_manager():
                 account.update(ObjectId(data['_id']), {'is_active': True})
                 data['is_active'] = True
         logger.info("Get all data account success.")
-        return render_template('admin/account/index.html', accounts=account_data, title="Quản l tài khoản")
+        return render_template('admin/account/index.html', accounts=account_data, current_page=current_page, max_page=total_pages, title="Quản l tài khoản")
     # Return error
     except Exception as e:
         error_info = traceback.format_exc()

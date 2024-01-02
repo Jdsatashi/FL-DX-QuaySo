@@ -69,6 +69,17 @@
                 </tbody>
             </table>
         </div>
+        <div class="element-center m-8">
+            {% if current_page > 1 %}
+            <button type="button" onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page - 1) }}'" class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-s-lg hover:bg-emerald-700">Trang sau
+            </button>
+            {% endif %}
+            <div class="px-[1px]"></div>
+            {% if current_page < max_page %}
+            <button type="button" onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page + 1) }}'" class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-e-lg hover:bg-emerald-700">Trang tới
+            </button>
+            {% endif %}
+        </div>
     </div>
 
 {% endblock %}
