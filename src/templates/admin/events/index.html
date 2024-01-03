@@ -36,7 +36,7 @@
                 {% for event in events %}
                     <tr class="table-1-b">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ event.event_name }}
+                            <a href="{{ url_for('event.event_detail', _id=event['_id'], event_name=event['event_name'])}}">{{ event.event_name }}</a>
                         </th>
                         <td class="px-6 py-4 ms-2">
                             {{ event.date_close }}

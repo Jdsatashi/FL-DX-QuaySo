@@ -1,71 +1,128 @@
 {% extends 'layouts/layout.html' %}
+{% block header %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+{% endblock header %}
 {% block content %}
     <div class="m-4 max-w-full">
-        <div class="flex my-8">
-            <div class="justify-start items-start">
-                <h2 class="text-2xl font-bold">Quản lý sự kiện</h2>
+        <div class="grid grid-cols-3 lg-max:grid-cols-1 my-8">
+            <div class="lg-max:element-center mb-4">
+                <h2 class="text-2xl font-bold">
+                    <a href="{{ url_for('event.event_detail', _id=context._id) }}">
+                        {{ context.event_name }}
+                    </a>
+                </h2>
             </div>
+            <div class="flex lg:justify-end lg:items-center flex-wrap-reverse col-span-2">
+                <form class="w-[480px] text-center md-max:mx-auto">
+                    <label for="search_account"
+                           class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Tìm kiếm</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+                            </svg>
+                        </div>
+                        <input type="search" id="search_account" name="search_account"
+                               class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                               placeholder="VN123, ABC12...">
+                        <button type="submit"
+                                class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="table-1">
                 <thead class="table-1-h">
                 <tr>
                     <th scope="col" class="px-6 py-3">
-                        Sự kiện
+                        Mã KH
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Ngày hết hạn
+                        Tên KH
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Lặp số
+                    <th scope="col" class="px-3 py-3">
+                        Tổng điểm
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Điểm quy đổi
+                    <th scope="col" class="px-3 py-3">
+                        Điểm dư
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Trạng thái
+                    <th scope="col" class="px-3 py-3">
+                        Tổng tem
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        <a href="{{ url_for('event.insert') }}">
-                            <span class="text-base font-bold">+</span> Thêm sự kiện
-                        </a>
+                    <th scope="col" class="px-3 py-3">
+                        Tem đã chọn
+                    </th>
+                    <th scope="col" class="px-3 py-3">
+                        Tem dư
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for event in events %}
+                {% for acc in context.user_list %}
                     <tr class="table-1-b">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ event.event_name }}
-                        </th>
-                        <td class="px-6 py-4 ms-2">
-                            {{ event.date_close }}
+                        <td class="px-6 py-4">
+                            {{ acc.usercode }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ event.limit_repeat }}
+                            {% if 'fullname' in acc %}
+                                {{ acc.fullname }}
+                            {% endif %}
                         </td>
-                        <td class="px-6 py-4 ms-2">
-                            {{ event.point_exchange }}
+                        <td class="px-6 py-4 font-medium text-green-600 text-end">
+                            {{ acc.user_point }}
                         </td>
-                        <td class="px-6 py-4 ms-2">
-                            <div class="flex items-center">
-                                {% if event['is_active'] %}
-                                    <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-3 sm-max:max-h-1.5 sm-max:max-w-3 rounded-full bg-green-500 me-2"></div>
-                                    Đang diễn ra
-                                {% else %}
-                                    <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-2 sm-max:max-h-1.5 sm-max:max-w-2 rounded-full bg-red-500 me-2"></div>
-                                    Kết thúc
-                                {% endif %}
-                            </div>
+                        <td class="px-6 py-4 font-medium text-end">
+                            {% if 'rest_point' in acc %}
+                                <span class="text-red-600">{{ acc.rest_point }}</span>
+                            {% else %}
+                                <span class="text-green-600">0</span>
+                            {% endif %}
                         </td>
-                        <td class="flex items-center px-6 py-4 ms-2">
-                            <a href="{{ url_for('event.update', _id=event['_id']) }}"
-                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <td class="px-6 py-4 font-medium text-green-600 text-end">
+                            {{ acc.turn_roll }}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-end">
+                            {% if 'number_choices' in acc %}
+                                <span class="text-green-600">{{ acc.number_choices }}</span>
+                            {% else %}
+                                <span class="text-red-600">0</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-end">
+                            {% if 'rest_choices' in acc %}
+                                <span class="text-green-600">{{ acc.rest_choices }}</span>
+                            {% else %}
+                                <span class="text-red-600">0</span>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
+        <div class="element-center m-8">
+            {% if context.current_page > 1 %}
+                <button type="button"
+                        onclick="window.location.href='{{ url_for('event.event_detail', _id=context._id, page=context.current_page - 1, search_account=context.s_query) }}'"
+                        class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-s-lg hover:bg-emerald-700">
+                    Trang trước
+                </button>
+            {% endif %}
+            <div class="px-[1px]"></div>
+            {% if context.current_page < context.max_page %}
+                <button type="button"
+                        onclick="window.location.href='{{ url_for('event.event_detail', _id=context._id, page=context.current_page + 1, search_account=context.s_query) }}'"
+                        class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-e-lg hover:bg-emerald-700">
+                    Trang sau
+                </button>
+            {% endif %}
+        </div>
     </div>
+
 {% endblock %}

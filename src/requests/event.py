@@ -133,33 +133,76 @@ def update(_id):
 
 
 @events.route('event/detail/<string:_id>', methods=['GET'])
-def event_detail(_id, event_name):
+def event_detail(_id):
     context = {}
     # Authorize is admin
-    is_admin = admin_authorize()
-    if not is_admin:
+    adm = admin_authorize()
+    if not adm:
         return redirect(url_for('home'))
+    # Get search query
+    s_query = request.args.get('search_account', type=str)
+    # Pagination settings
+    perpage = 10
+    # Get current page for specific data
+    current_page = request.args.get('page', 1, type=int)
+    # Get current event to get name and point exchange
+    current_event = event_model.get_one({'_id': ObjectId(_id)})
+    point_exchange = current_event['point_exchange']
+    # Get all user was joined event
     events_joined = join_event_model.get_many({'event_id': _id})
-    user_joined_id = list()
-    user_data = list()
+    # List user id
+    user_id_list = list()
+    # List all user was joined event
     for event in events_joined:
-        user_id = str(event['user_id'])
-        user_joined_id.append(user_id)
-        user = account.get_one({'_id': ObjectId(user_id)})
+        # Get user id
+        user_id = ObjectId(event['user_id'])
+        user_id_list.append(user_id)
+    if s_query:
+        # Get query data from query search
+        query_data = {
+            '_id': {'$ne': ObjectId(adm['_id'])},
+            '$or': [
+                {'username': {'$regex': s_query, "$options": "i"}},
+                {'usercode': {'$regex': s_query, "$options": "i"}},
+            ]
+        }
+    else:
+        # Default query data
+        query_data = {
+            '_id': {'$ne': ObjectId(adm['_id']), '$in': user_id_list}
+        }
+    # Process pagination
+    user_data, max_page = account.pagination(current_page, perpage, query_data)
+    # Loop through user to add more info
+    for user in user_data:
+        # Get join events to get info user join events
+        event = join_event_model.get_one({'event_id': _id, 'user_id': str(user['_id'])})
+        # Get user_point and turn_roll
+        user_point = event['user_point']
+        turn_roll = event['turn_roll']
+        rest_point = user_point - (turn_roll * point_exchange)
         user.update({
-            'user_point': event['user_point'],
-            'turn_roll': event['turn_roll']
+            'user_point': user_point,
+            'turn_roll': turn_roll,
+            'rest_point': rest_point
         })
+        # If user joined then get selected number and number choices
         if 'selected_number' in event and 'number_choices' in event:
+            number_choices = event['number_choices']
+            rest_choices = turn_roll - number_choices
             user.update({
                 'selected_number': event['selected_number'],
-                'number_choices': event['number_choices']
+                'number_choices': number_choices,
+                'rest_choices': rest_choices
             })
-        user_data.append(user)
-    context['event_name'] = event_name
+    # Put all require render data to context
     context['user_list'] = user_data
+    context['event_name'] = current_event['event_name']
+    context['max_page'] = max_page
+    context['current_page'] = current_page
+    context['s_query'] = s_query
+    context['_id'] = _id
     return render_template('admin/events/event_joins.html', context=context)
-
 
 # def saveFile():
 # file_doc = request.files.get('desc_file')
