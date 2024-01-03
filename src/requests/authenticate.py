@@ -36,8 +36,7 @@ def login():
             if user and bcrypt.checkpw(password, user["password"]):
                 logger.debug(f"Remember me value: {remember_me}")
                 COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
-                is_role = user["role_id"]
-                if is_role is None or is_role == '':
+                if "role_id" not in user:
                     account.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 session["username"] = user['username']
                 user['_id'] = str(user["_id"])
