@@ -31,12 +31,10 @@ def account_manager():
         return redirect(url_for('home'))
     # Get search query
     s_query = request.args.get('search_account', type=str)
-    logger.info(f"Search query 1: {s_query}")
     # Pagination settings
     perpage = 10
     # Get current page for specific data
     current_page = request.args.get('page', 1, type=int)
-    logger.info(f"Current page: {current_page}")
     if s_query:
         # Get query data from query
         query_data = {
@@ -51,7 +49,7 @@ def account_manager():
         # Default query data
         query_data = {'_id': {'$ne': ObjectId(adm['_id'])}}
         # Get data accounts exclude admin accounts
-    account_data, total_pages = pymongo_pagination(current_page, perpage, ACCOUNT_TABLE, query_data)
+    account_data, total_pages = account.pagination(current_page, perpage, query_data, [('username', 1)])
     try:
         # Edit some sensitive data in account data
         for data in account_data:
@@ -204,8 +202,8 @@ def account_add_list():
                 # Loop through data in csv file
                 for i, row in csv_data.iterrows():
                     if int(i) > 0:
-                        # Hashing password
-                        hashed_password = bcrypt.hashpw(row['username'].lower().encode("utf-8"), bcrypt.gensalt())
+                        # Hashing password for user
+                        hashed_password = bcrypt.hashpw(row['usercode'].lower().encode("utf-8"), bcrypt.gensalt())
                         # Add data to data dict
                         data_dict = {
                             'username': row['usercode'].upper(),
@@ -213,6 +211,7 @@ def account_add_list():
                             'password': hashed_password,
                             'address': row['address'],
                             'fullname': row['fullname'],
+                            'is_active': True
                         }
                         logger.info(f"Handle user {data_dict['username']}")
                         is_existed = account.get_one({'username': data_dict['username']})
@@ -236,9 +235,11 @@ def account_add_list():
                             logger.error(f'Error when adding user {data_dict["username"]}.\nError: {e}\n{error_info}"')
                             flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                             return redirect(url_for('admin.account_add_list'))
-                        logger.info(f"Data dict after create and update: {data_dict}")
+                        # Get user points
                         user_point = int(row['point_dm2'])
+                        # Get turn choices
                         turn_choices = user_point // int(exchange_point)
+                        # Add data to event_assign dict
                         event_assign.append({
                             'user_id': str(user_id),
                             'event_id': event_id,
@@ -247,14 +248,17 @@ def account_add_list():
                             'date_created': now
                         })
                 try:
+                    # Handing add data
                     USER_JOIN_EVENT.insert_many(event_assign)
                     logger.info("Assign users to event success")
+                # Return error
                 except Exception as e:
                     error_info = traceback.format_exc()
                     logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
                     flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                 flash(f"Added file: {uploaded_file.filename} successfully!", 'success')
                 return redirect(url_for('admin.account_add_list'))
+            # Return error
             except Exception as e:
                 error_info = traceback.format_exc()
                 logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
@@ -384,28 +388,3 @@ def check_file_name(path, file):
         file_name = f"{base}-({num}){ext}"
         num += 1
     return file_name
-
-
-def pymongo_pagination(current_page: int, perpage: int, table, query_data: dict, sorting: dict = None):
-    if sorting is None:
-        sorting = []
-    if current_page <= 0:
-        current_page = 1
-    # Get total items in table
-    total_data = table.count_documents(query_data)
-    # From total items then calculate maximum page size | math.ceil make 4.8 to 5
-    total_pages = math.ceil(total_data / perpage)
-    # If current page is over max page then reset to max page
-    if current_page > total_pages:
-        current_page = total_pages
-    # Skip data
-    skip_data = (current_page - 1) * perpage
-    if skip_data < 0:
-        skip_data = 0
-    # Optional sorting or not
-    if sorting is not None and len(sorting) > 0:
-        data_list = list(table.find(query_data).sort(sorting).limit(perpage).skip(skip_data))
-    else:
-        data_list = list(table.find(query_data).limit(perpage).skip(skip_data))
-
-    return data_list, total_pages
