@@ -3,7 +3,6 @@ const showListSelected = document.querySelector('#show-selected-number')
 const groupData = document.querySelector('#group-data')
 let listItem = groupData.querySelectorAll('.group-item')
 const turnChoose = parseInt(document.getElementById('turn_choose').innerText)
-const giftRuleBtn = document.getElementById('giftRule')
 const randomNumber = document.getElementById('randNum')
 let randomLoop = 0
 const dateClose = document.getElementById('date-close')
@@ -93,12 +92,12 @@ function RandomChoice(e) {
     randomLoop++
     let min = 1;
     let max = Array.from(listItem).length;
-    let random = Math.floor(Math.random() * (max - min + 1) + min)
+    let randomNum = Math.floor(Math.random() * (max - min + 1) + min)
     let arrResult = currentSelecting()
-    if (arrResult.includes(random.toString())) {
+    if (arrResult.some(item => item.trim() === randomNum.toString())) {
         if (arrResult.length < max) {
-            console.log("Trùng số: " + random + " rerandom")
             if (randomLoop <= 15) {
+                console.log("Rerandom" + randomLoop)
                 return RandomChoice(e)
             } else {
                 randomLoop = 0
@@ -113,7 +112,8 @@ function RandomChoice(e) {
         if (limit) {
             alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
         } else {
-            let item = Array.from(listItem)[random]
+            randomNum -= 1
+            let item = Array.from(listItem)[randomNum]
             try {
                 let item_value = item.textContent.trim()
                 clickAddItem(item, item_value)
@@ -122,7 +122,6 @@ function RandomChoice(e) {
                 randomLoop = 0
                 alert("Không thể chọn ngẫu nhiên, vui lòng thử lại")
             }
-
         }
     }
 }
@@ -166,7 +165,7 @@ function clickAddItem(item, item_value) {
     item.style.display = 'none'
     let arrResult = currentSelecting()
     if (arrResult.includes(item_value)) {
-        alert(`Không thể chọn số ${item_value}`)
+        alert(`Không thể chọn số ${item_value}\n${arrResult}`)
     } else {
         let addItem = addElement(showListSelected, {
             createTag: 'p',
@@ -187,6 +186,7 @@ function clickAddItem(item, item_value) {
                 innerHTML: xButton
             }
         })
+
         const removeBtnE = document.getElementById(removeButton.id)
         removeBtnE.onclick = function (evn) {
             evn.preventDefault()
