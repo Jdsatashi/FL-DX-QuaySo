@@ -6,7 +6,9 @@
     <div class="m-4 max-w-full">
         <div class="grid grid-cols-3 lg-max:grid-cols-1 my-8">
             <div class="lg-max:element-center mb-4">
-                <h2 class="text-2xl font-bold">Quản lý tài khoản</h2>
+                <h2 class="text-2xl font-bold">
+                    <a href="{{ url_for('admin.account_manager') }}">Quản lý tài khoản</a>
+                </h2>
             </div>
             <div class="flex lg:justify-between lg:items-center flex-wrap-reverse col-span-2">
                 <div class="md-max:element-center md-max:w-[100%]">
@@ -25,7 +27,7 @@
                         </div>
                         <input type="search" id="search_account" name="search_account"
                                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                               placeholder="VN123, Lê Văn A..." required>
+                               placeholder="VN123, Lê Văn A...">
                         <button type="submit"
                                 class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             Tìm kiếm
@@ -45,10 +47,13 @@
                     <th scope="col" class="px-6 py-3">
                         Mã KH
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th>
+                        Tên KH
+                    </th>
+                    <th scope="col" class="element-center px-auto py-4">
                         Hoạt động
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-3 py-3">
                         Action
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -68,15 +73,16 @@
                             {{ acc.usercode }}
                         </td>
                         <td class="px-6 py-4">
-                            <div class="flex items-center">
+                            {% if 'fullname' in acc %}
+                                {{ acc.fullname }}
+                            {% endif %}
+                        </td>
+                        <td class="element-center">
                                 {% if acc.is_active %}
                                     <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                                    Đang hoạt động
                                 {% else %}
                                     <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
-                                    Dừng hoạt động
                                 {% endif %}
-                            </div>
                         </td>
                         <td class="px-6 py-4">
                             <a href="{{ url_for('admin.account_edit', _id=acc._id) }}"
@@ -97,7 +103,7 @@
                 <button type="button"
                         onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page - 1, search_account=s_query) }}'"
                         class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-s-lg hover:bg-emerald-700">
-                    Trang sau
+                    Trang trước
                 </button>
             {% endif %}
             <div class="px-[1px]"></div>
@@ -105,7 +111,7 @@
                 <button type="button"
                         onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page + 1, search_account=s_query) }}'"
                         class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-e-lg hover:bg-emerald-700">
-                    Trang tới
+                    Trang sau
                 </button>
             {% endif %}
         </div>
