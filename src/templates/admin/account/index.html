@@ -4,16 +4,16 @@
 {% endblock header %}
 {% block content %}
     <div class="m-4 max-w-full">
-        <div class="grid grid-cols-2 my-8">
-            <div class="items-center mb-4">
+        <div class="grid grid-cols-3 lg-max:grid-cols-1 my-8">
+            <div class="lg-max:element-center mb-4">
                 <h2 class="text-2xl font-bold">Quản lý tài khoản</h2>
             </div>
-            <div class="flex justify-between items-center">
-                <div class="items-center">
+            <div class="flex lg:justify-between lg:items-center flex-wrap-reverse col-span-2">
+                <div class="md-max:element-center md-max:w-[100%]">
                     <a href="{{ url_for('admin.account_add_list') }}" class="button-simple">Thêm danh sách</a>
                 </div>
-                <form class="w-[480px]">
-                    <label for="default-search"
+                <form class="w-[480px] text-center md-max:mx-auto">
+                    <label for="search_account"
                            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Tìm kiếm</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -23,9 +23,9 @@
                                       stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
                             </svg>
                         </div>
-                        <input type="search" id="default-search"
+                        <input type="search" id="search_account" name="search_account"
                                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                               placeholder="Search Mockups, Logos..." required>
+                               placeholder="VN123, Lê Văn A..." required>
                         <button type="submit"
                                 class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             Tìm kiếm
@@ -95,7 +95,7 @@
         <div class="element-center m-8">
             {% if current_page > 1 %}
                 <button type="button"
-                        onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page - 1) }}'"
+                        onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page - 1, search_account=s_query) }}'"
                         class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-s-lg hover:bg-emerald-700">
                     Trang sau
                 </button>
@@ -103,7 +103,7 @@
             <div class="px-[1px]"></div>
             {% if current_page < max_page %}
                 <button type="button"
-                        onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page + 1) }}'"
+                        onclick="window.location.href='{{ url_for('admin.account_manager', page=current_page + 1, search_account=s_query) }}'"
                         class="bg-green-800 px-6 spy-1 text-white font-semibold text-lg rounded-e-lg hover:bg-emerald-700">
                     Trang tới
                 </button>

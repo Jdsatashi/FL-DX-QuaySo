@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from src.forms import EventForm
 from src.logs import logger
 from src.models import Models
-from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT
+from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT, ACCOUNT_TABLE
 from src.requests.authenticate import admin_authorize
 
 import traceback
@@ -13,6 +13,7 @@ import traceback
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
 join_event_model = Models(table=USER_JOIN_EVENT)
+account = Models(table=ACCOUNT_TABLE)
 
 
 @events.route('/')
@@ -133,12 +134,31 @@ def update(_id):
 
 @events.route('event/detail/<string:_id>', methods=['GET'])
 def event_detail(_id, event_name):
+    context = {}
     # Authorize is admin
     is_admin = admin_authorize()
     if not is_admin:
         return redirect(url_for('home'))
-    event_joined = join_event_model.get_many({'event_id': _id})
-    return render_template('admin/events/event_joins.html')
+    events_joined = join_event_model.get_many({'event_id': _id})
+    user_joined_id = list()
+    user_data = list()
+    for event in events_joined:
+        user_id = str(event['user_id'])
+        user_joined_id.append(user_id)
+        user = account.get_one({'_id': ObjectId(user_id)})
+        user.update({
+            'user_point': event['user_point'],
+            'turn_roll': event['turn_roll']
+        })
+        if 'selected_number' in event and 'number_choices' in event:
+            user.update({
+                'selected_number': event['selected_number'],
+                'number_choices': event['number_choices']
+            })
+        user_data.append(user)
+    context['event_name'] = event_name
+    context['user_list'] = user_data
+    return render_template('admin/events/event_joins.html', context=context)
 
 
 # def saveFile():

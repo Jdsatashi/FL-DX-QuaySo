@@ -10,3 +10,4 @@ src/static/dist
 .vercel
 vercel.json
 *.log
+uploads/

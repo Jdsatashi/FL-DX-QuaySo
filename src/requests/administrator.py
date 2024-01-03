@@ -7,7 +7,7 @@ from src.requests.authenticate import admin_authorize
 from src.forms import CreateAccountForm, UpdateAccountForm
 from src.models import Models
 from src.mongodb import ACCOUNT_TABLE, USER_JOIN_EVENT
-from src.utils.utilities import role_auth_id, create_folder
+from src.utils.utilities import role_auth_id, create_folder, role_admin_id
 from src.requests.event import event_model, join_event_model
 
 import os
@@ -15,7 +15,6 @@ import bcrypt
 import traceback
 import pandas as pd
 import math
-
 
 admin = Blueprint('admin', __name__)
 # Assign account as account table model
@@ -30,26 +29,29 @@ def account_manager():
     if not adm:
         flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
+    # Get search query
+    s_query = request.args.get('search_account', type=str)
+    logger.info(f"Search query 1: {s_query}")
     # Pagination settings
-    perpage = 4
+    perpage = 10
     # Get current page for specific data
     current_page = request.args.get('page', 1, type=int)
-    if current_page <= 0:
-        current_page = 1
-    # Get total items in table
-    total_data = ACCOUNT_TABLE.count_documents({'_id': {'$ne': ObjectId(adm['_id'])}})
-    # From total items then calculate maximum page size | math.ceil make 4.8 to 5
-    total_pages = math.ceil(total_data/perpage)
-    # If current page is over max page then reset to max page
-    if current_page > total_pages:
-        current_page = total_pages
-    # Skip data
-    skip_data = (current_page - 1) * perpage
-    if skip_data < 0:
-        skip_data = 0
-    logger.info(f'Skip: {skip_data} | current page: {current_page} | perpage: {perpage}')
-    # Get all accounts data exclude admin accounts
-    account_data = list(ACCOUNT_TABLE.find({'_id': {'$ne': ObjectId(adm['_id'])}}).limit(perpage).skip(skip_data))
+    logger.info(f"Current page: {current_page}")
+    if s_query:
+        # Get query data from query
+        query_data = {
+            '_id': {'$ne': ObjectId(adm['_id'])},
+            '$or': [
+                {'username': {'$regex': s_query, "$options": "i"}},
+                {'usercode': {'$regex': s_query, "$options": "i"}},
+                {'fullname': {'$regex': s_query, "$options": "i"}}
+            ]
+        }
+    else:
+        # Default query data
+        query_data = {'_id': {'$ne': ObjectId(adm['_id'])}}
+        # Get data accounts exclude admin accounts
+    account_data, total_pages = pymongo_pagination(current_page, perpage, ACCOUNT_TABLE, query_data)
     try:
         # Edit some sensitive data in account data
         for data in account_data:
@@ -63,7 +65,9 @@ def account_manager():
                 account.update(ObjectId(data['_id']), {'is_active': True})
                 data['is_active'] = True
         logger.info("Get all data account success.")
-        return render_template('admin/account/index.html', accounts=account_data, current_page=current_page, max_page=total_pages, title="Quản l tài khoản")
+        logger.info(f"Search query 3: {s_query}")
+        return render_template('admin/account/index.html', accounts=account_data, current_page=current_page,
+                               max_page=total_pages, s_query=s_query, title="Quản lý tài khoản")
     # Return error
     except Exception as e:
         error_info = traceback.format_exc()
@@ -380,3 +384,28 @@ def check_file_name(path, file):
         file_name = f"{base}-({num}){ext}"
         num += 1
     return file_name
+
+
+def pymongo_pagination(current_page: int, perpage: int, table, query_data: dict, sorting: dict = None):
+    if sorting is None:
+        sorting = []
+    if current_page <= 0:
+        current_page = 1
+    # Get total items in table
+    total_data = table.count_documents(query_data)
+    # From total items then calculate maximum page size | math.ceil make 4.8 to 5
+    total_pages = math.ceil(total_data / perpage)
+    # If current page is over max page then reset to max page
+    if current_page > total_pages:
+        current_page = total_pages
+    # Skip data
+    skip_data = (current_page - 1) * perpage
+    if skip_data < 0:
+        skip_data = 0
+    # Optional sorting or not
+    if sorting is not None and len(sorting) > 0:
+        data_list = list(table.find(query_data).sort(sorting).limit(perpage).skip(skip_data))
+    else:
+        data_list = list(table.find(query_data).limit(perpage).skip(skip_data))
+
+    return data_list, total_pages
