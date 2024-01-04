@@ -53,6 +53,7 @@ class EventForm(FlaskForm):
     date_close = DateField("Ngày kết thúc", validators=[DataRequired()])
     repeat_limit = IntegerField("Giới hạn lặp số", default="1", validators=[NumberRange(min=1)])
     point_exchange = IntegerField("Điểm / tem", validators=[DataRequired(), NumberRange(min=1)])
+    range_number = IntegerField("Tem ước tính", validators=[DataRequired(), NumberRange(min=10)])
     # desc_file = FileField("Chi tiết sự kiện, file PDF")
     # desc_image = FileField("Hình ảnh")
     is_active = BooleanField("Hoạt động")

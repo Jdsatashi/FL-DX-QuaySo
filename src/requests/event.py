@@ -57,6 +57,7 @@ def insert():
             'event_name': form.name.data,
             'limit_repeat': abs(int(form.repeat_limit.data)),
             'point_exchange': abs(int(form.point_exchange.data)),
+            'range_number': abs(int(form.range_number.data)),
             'date_start': form.date_start.data.strftime('%Y-%m-%d'),
             'date_close': form.date_close.data.strftime('%Y-%m-%d'),
             'is_active': is_active,
@@ -107,9 +108,10 @@ def update(_id):
                 'event_name': form.name.data,
                 'limit_repeat': abs(int(form.repeat_limit.data)),
                 'point_exchange': abs(int(form.point_exchange.data)),
+                'range_number': abs(int(form.range_number.data)),
                 'date_close': form_date,
                 'is_active': is_active,
-                'date_created': datetime.utcnow()
+                'date_updated': datetime.utcnow()
             }
             # Validate form fields
             if form.validate_on_submit():

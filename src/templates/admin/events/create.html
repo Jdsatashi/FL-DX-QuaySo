@@ -52,6 +52,20 @@
                         </div>
 
                         <div class="form-group lg:block">
+                            {{ form.range_number.label(class="input-label w-[256px] md-max:w-[108px]") }}
+                            {% if form.range_number.errors %}
+                                {{ form.range_number(class="form-input is-invalid") }}
+                                {% for error in form.range_number.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.range_number(class="form-input", placeholder="Số tem ước tính") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group lg:block">
                             <label for="date_start" class="input-label w-[256px] md-max:w-[108px]">Ngày bắt đầu</label>
                             {% if form.date_start.errors %}
                                 {{ form.date_start(class="form-input is-invalid") }}

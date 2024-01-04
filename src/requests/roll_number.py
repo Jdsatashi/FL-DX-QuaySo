@@ -11,9 +11,11 @@ from src.logs import message_logger, logger
 from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
 
+max_number_range = 266
+
 
 # Function creating number list for user choose
-def create_number_list(limit, event_id, user_id):
+def create_number_list(limit: int, event_id: str, user_id: str, max_range: int):
     list_selected, all_number_selected, user_selected = [], [], []
     unavailable_number = {}
     # user_rolled check which number chosen by user
@@ -28,20 +30,23 @@ def create_number_list(limit, event_id, user_id):
         for roll in rolled:
             if 'selected_number' in roll and 'number_choices' in roll and roll['event_id'] == event_id:
                 list_selected.append(roll['selected_number'])
-
+    # Add number was selected to list selected
     for number in list_selected:
         arr = number.split(', ')
         for i in arr:
             all_number_selected.append(int(i))
+    # Dict for number selected
     for num in all_number_selected:
         if num not in unavailable_number:
             unavailable_number[num] = 1
         else:
+            # Counting up for number selected
             unavailable_number[num] += 1
+        # When number selected own by user, remove 1 count from unavailable dict
         if num in user_selected:
-            unavailable_number[num] = 0
+            unavailable_number[num] -= 1
     list_number = {}
-    for i in range(1, 266):
+    for i in range(1, max_range + 1):
         if i > 0:
             if i in unavailable_number:
                 if limit - unavailable_number[i] > 0 and unavailable_number[i] > 0:
@@ -110,8 +115,6 @@ def roll_number(_id):
         turn_chosen = rolled['number_choices']
     # Get the form data
     form = NumberSelectedForm()
-    # Create a number list for user can choose
-    number_list = create_number_list(events['limit_repeat'], _id, user['_id'])
     # Post method
     if request.method == 'POST':
         # Get the list and use set to remove duplicates values
@@ -172,6 +175,9 @@ def roll_number(_id):
                 logger.error(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
+        max_range = max_number_range if 'range_number' not in events else events['range_number']
+        # Create a number list for user can choose
+        number_list = create_number_list(events['limit_repeat'], _id, user['_id'], max_range)
         # Get current page for compare
         current_date = datetime.now().strftime('%Y-%m-%d')
         date_close = datetime.strptime(events['date_close'], "%Y-%m-%d")
