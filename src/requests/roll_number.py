@@ -41,7 +41,7 @@ def create_number_list(limit, event_id, user_id):
         if num in user_selected:
             unavailable_number[num] = 0
     list_number = {}
-    for i in range(256):
+    for i in range(1, 256):
         if i > 0:
             if i in unavailable_number:
                 if limit - unavailable_number[i] > 0 and unavailable_number[i] > 0:
@@ -172,13 +172,14 @@ def roll_number(_id):
                 logger.error(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
+        # Get current page for compare
         current_date = datetime.now().strftime('%Y-%m-%d')
-        message_logger.info(f"{user['username']} vào trang chọn số.")
         date_close = datetime.strptime(events['date_close'], "%Y-%m-%d")
         # Date random to take random if user didn't select number
         date_random = date_close - timedelta(days=3)
         date = date_random.strftime('%d-%m-%Y')
-        print(date)
+        # Logging data
+        message_logger.info(f"{user['username']} vào trang chọn số.")
         return render_template(
             'choose_number/choose_number.html',
             number_list=number_list, title="Chọn số",
@@ -264,7 +265,6 @@ def print_info(_id):
             'turn_chosen': turn_chosen,
             'number_rolled_str': rolled['selected_number']
         }
-        logger.debug(print_data)
         template = render_template(
             'template/pdf_output.html',
             data=print_data,
