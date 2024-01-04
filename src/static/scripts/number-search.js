@@ -45,14 +45,15 @@ let inputSearchEvent = (e) => {
 inputSearch.addEventListener('input', inputSearchEvent)
 // Live search main function
 listItem.forEach((item) => {
-    let target = item
     item.onclick = (e) => {
         let item_value = item.textContent.trim()
         let limit = checkLimit()
         if (limit) {
+            if(turnChoose <= 0){
+                 alert(`Bạn không có lượt chọn nào.`)
+            }
             alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
         } else {
-            console.log(target)
             clickAddItem(item, item_value)
         }
     }
