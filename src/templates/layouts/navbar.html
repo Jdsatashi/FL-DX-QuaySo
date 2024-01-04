@@ -34,7 +34,7 @@
                            class="nav-item">Thông
                             tin</a>
                     </li>
-                    {% if session['username'] == 'ADMIN' or session['username'] == 'DXADMIN' %}
+                    {% if 'is_admin' in session and session['is_admin'] == True %}
 
                         <li>
                             <button id="dropdownAdmNavbarLink" data-dropdown-toggle="dropdownAdmNavbar"

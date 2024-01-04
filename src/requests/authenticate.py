@@ -24,21 +24,18 @@ def login():
         username = str(form.username.data)
         password = form.password.data.encode("utf-8")
         remember_me = form.remember_me.data
-        user1 = account.get_one({'username': username.lower()})
-        user2 = account.get_one({'username': username.upper()})
-        logger.info(f"User 1: {user1} | User2: {user2}")
+        user = account.get_one({'username': {"$regex": username, "$options": "i"}})
         if form.validate_on_submit():
-            if user1 is None and user2 is None:
-                flash(f"Tài khoản '{username}' không tồn tại.", "warning")
+            if not user:
+                flash(f"Tài khoản không tồn tại.", "warning")
                 return redirect(url_for('user.login'))
-            else:
-                user = user1 if user2 is None else user2
-            if user and bcrypt.checkpw(password, user["password"]):
-                logger.debug(f"Remember me value: {remember_me}")
+            if bcrypt.checkpw(password, user["password"]):
                 COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
                 if "role_id" not in user:
                     account.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 session["username"] = user['username']
+                if user['role_id'] == role_admin_id:
+                    session['is_admin'] = True
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
                 session.permanent = True
@@ -50,6 +47,8 @@ def login():
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
                 return redirect(url_for('user.login'))
+        flash(f"Một số dữ liệu không đúng, vui lòng tử lại.", "warning")
+        return redirect(url_for('user.login'))
     else:
         return render_template('user/login.html', form=form, title="Đăng nhập")
 
