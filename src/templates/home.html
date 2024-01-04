@@ -18,16 +18,6 @@
                         </div>
                     </a>
                 {% endif %}
-                <a href="{{ url_for('user.information', _id=session._id) }}">
-                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
-                        <div class="bg-slate-300 rounded-t-md">
-                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Thông tin tài khoản</h3>
-                        </div>
-                        <div class="card-content">
-                            <p class="text-md">Xem các thông tin của bạn như họ và tên, thông tin liên lạc (SĐT, địa chỉ...).</p>
-                        </div>
-                    </div>
-                </a>
                 <a href="{{ url_for('choose_event') }}">
                     <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
                         <div class="bg-slate-300 rounded-t-md">
@@ -56,6 +46,17 @@
                         <div class="card-content">
                             <p class="text-md">Xem các thông tin về các sự kiện bạn đã tham gia, các số may mắn bạn đ
                                 lựa chọn cho các sự kiện.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('user.information', _id=session._id) }}">
+                    <div class="card-small w-auto rounded-md hover:border-2 hover:border-green-200">
+                        <div class="bg-slate-300 rounded-t-md">
+                            <h3 class="md:text-2xl md-max:text-3xl px-3 py-2 font-bold">Thông tin tài khoản</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="text-md">Xem các thông tin của bạn như họ và tên, thông tin liên lạc (SĐT, địa
+                                chỉ...).</p>
                         </div>
                     </div>
                 </a>

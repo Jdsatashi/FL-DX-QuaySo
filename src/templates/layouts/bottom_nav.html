@@ -10,7 +10,7 @@
                 <img src="{{ url_for('static', filename='assets/dx-logo.png') }}" class="w-7 h-7" alt="">
                 <span class="text-[12px] text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Trang chủ</span>
             </button>
-            {% if session['username'] == 'ADMIN' %}
+            {% if session['username'] == 'ADMIN' or session['username'] == 'DXADMIN' %}
                 <button type="button" id="dropUpEventBottomLink" data-dropdown-toggle="dropUpEventBottomBar"
                         class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
                     <svg class="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
