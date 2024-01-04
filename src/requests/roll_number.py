@@ -41,7 +41,7 @@ def create_number_list(limit, event_id, user_id):
         if num in user_selected:
             unavailable_number[num] = 0
     list_number = {}
-    for i in range(1, 256):
+    for i in range(1, 500):
         if i > 0:
             if i in unavailable_number:
                 if limit - unavailable_number[i] > 0 and unavailable_number[i] > 0:
