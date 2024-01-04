@@ -1,19 +1,20 @@
 from _datetime import datetime
 from bson import ObjectId
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 
 from src.forms import EventForm
 from src.logs import logger
 from src.models import Models
 from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT, ACCOUNT_TABLE
 from src.requests.authenticate import admin_authorize
+from src.utils.constants import MAX_NUMBER_RANGE_DEFAULT
 
 import traceback
 
 events = Blueprint('event', __name__)
 event_model = Models(table=EVENT_TABLE)
 join_event_model = Models(table=USER_JOIN_EVENT)
-account = Models(table=ACCOUNT_TABLE)
+user_model = Models(table=ACCOUNT_TABLE)
 
 
 @events.route('/')
@@ -21,6 +22,7 @@ def index():
     # Authorize is admin
     is_admin = admin_authorize()
     if not is_admin:
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     # Get all data events
     data = event_model.get_all()
@@ -39,6 +41,7 @@ def insert():
     # Authorize is admin
     is_admin = admin_authorize()
     if not is_admin:
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     # Get form rule
     form = EventForm()
@@ -85,6 +88,7 @@ def update(_id):
     # Authorize is admin
     is_admin = admin_authorize()
     if not is_admin:
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     # Get specific event for updating
     spec_event = event_model.get_one({'_id': ObjectId(_id)})
@@ -118,6 +122,7 @@ def update(_id):
                 # Try updating data to database
                 try:
                     event_model.update(ObjectId(_id), data_form)
+                    update_user_join(_id)
                     flash(f'Cập nhật thành công "{data_form["event_name"]}".', 'success')
                     return redirect(url_for('event.index'))
                 # Except error
@@ -140,6 +145,7 @@ def event_detail(_id):
     # Authorize is admin
     adm = admin_authorize()
     if not adm:
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
     # Get search query
     s_query = request.args.get('search_account', type=str)
@@ -174,7 +180,7 @@ def event_detail(_id):
             '_id': {'$ne': ObjectId(adm['_id']), '$in': user_id_list}
         }
     # Process pagination
-    user_data, max_page = account.pagination(current_page, perpage, query_data)
+    user_data, max_page = user_model.pagination(current_page, perpage, query_data)
     # Loop through user to add more info
     for user in user_data:
         # Get join events to get info user join events
@@ -205,6 +211,40 @@ def event_detail(_id):
     context['s_query'] = s_query
     context['_id'] = _id
     return render_template('admin/events/event_joins.html', context=context)
+
+
+def update_user_join(_id):
+    # Get main event
+    main_event = event_model.get_one({'_id': ObjectId(_id)})
+    # Copy dict and remove unused field
+    data_event = main_event.copy()
+    for i in ['_id', 'date_start', 'date_created']:
+        data_event.pop(i)
+    # Get event range number, if not get the default range
+    if 'range_number' not in data_event:
+        data_event['range_number'] = MAX_NUMBER_RANGE_DEFAULT
+    # Get users id of users chosen
+    event_join = join_event_model.get_many({"number_choices": {"$exists": True}, "selected_number": {"$exists": True}})
+    # Loop through event_join get each user data
+    for user in event_join:
+        # Get list number selected
+        selected_number = list(map(int, user['selected_number'].split(', ')))
+        # Remove number > event range number
+        while selected_number[len(selected_number) - 1] > data_event['range_number']:
+            selected_number.pop()
+        # Combine new list to string
+        selected_number_str = ', '.join(map(str, selected_number))
+        # Try update new data
+        try:
+            join_event_model.update(user['_id'], {
+                'number_choices': len(selected_number),
+                'selected_number': selected_number_str
+            })
+            logger.info(f"Data user: {user['_id']}")
+        # When get error => export message
+        except Exception as e:
+            error_msg = traceback.format_exc()
+            logger.error(f"Error when update user join automatic.\nError: '{e}'\n{error_msg}")
 
 # def saveFile():
 # file_doc = request.files.get('desc_file')

@@ -10,8 +10,7 @@ from src.app import app
 from src.logs import message_logger, logger
 from src.requests.authenticate import authorize_user
 from src.requests.event import event_model, join_event_model
-
-max_number_range = 266
+from src.utils.constants import MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
 
 
 # Function creating number list for user choose
@@ -175,7 +174,7 @@ def roll_number(_id):
                 logger.error(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
-        max_range = max_number_range if 'range_number' not in events else events['range_number']
+        max_range = MAX_NUMBER if 'range_number' not in events else events['range_number']
         # Create a number list for user can choose
         number_list = create_number_list(events['limit_repeat'], _id, user['_id'], max_range)
         # Get current page for compare
