@@ -96,9 +96,11 @@
                         </td>
                         <td class="px-6 py-4 font-medium text-end">
                             {% if 'rest_choices' in acc %}
+                                <span class="text-red-600">{{ acc.rest_choices }}</span>
+                            {% elif acc.rest_choices == 0 %}
                                 <span class="text-green-600">{{ acc.rest_choices }}</span>
                             {% else %}
-                                <span class="text-red-600">0</span>
+                                <span class="text-red-600">{{ acc.turn_roll }}</span>
                             {% endif %}
                         </td>
                     </tr>
