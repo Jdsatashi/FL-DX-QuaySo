@@ -49,10 +49,14 @@ listItem.forEach((item) => {
         let item_value = item.textContent.trim()
         let limit = checkLimit()
         if (limit) {
-            if(turnChoose <= 0){
-                 alert(`Bạn không có lượt chọn nào.`)
+            if (turnChoose <= 0) {
+                alert(`Bạn không có lượt chọn nào.`)
             }
-            alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+            if (turnChoose > 0) {
+                alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+            } else {
+                alert(`Bạn không có lượt chọn nào.`)
+            }
         } else {
             clickAddItem(item, item_value)
         }
@@ -111,7 +115,11 @@ function RandomChoice(e) {
     } else {
         let limit = checkLimit(e)
         if (limit) {
-            alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+            if (turnChoose > 0) {
+                alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+            } else {
+                alert(`Bạn không có lượt chọn nào.`)
+            }
         } else {
             randomNum -= 1
             let item = Array.from(listItem)[randomNum]
@@ -130,7 +138,11 @@ function RandomChoice(e) {
 function onClickLiveSearch(e) {
     let limit = checkLimit()
     if (limit) {
-        alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+        if (turnChoose > 0) {
+            alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
+        } else {
+            alert(`Bạn không có lượt chọn nào.`)
+        }
     } else {
         clickAddItem(e.target, e.target.innerHTML.trim())
     }
