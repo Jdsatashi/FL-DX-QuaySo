@@ -1343,6 +1343,14 @@ input:checked + .toggle-bg {
   --tw-ring-color: rgb(63 131 248 / var(--tw-ring-opacity));
 }
 
+@media (max-width: 1023px) {
+  .form-input {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+  }
+}
+
 .form-group {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
@@ -1352,7 +1360,8 @@ input:checked + .toggle-bg {
 
 @media (max-width: 1023px) {
   .form-group {
-    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -1461,6 +1470,9 @@ input:checked + .toggle-bg {
 
 @media (max-width: 1023px) {
   .input-label {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
     font-size: 1rem;
     line-height: 1.5rem;
   }
@@ -3929,9 +3941,9 @@ input:checked + .toggle-bg {
   background-color: rgb(26 86 219 / var(--tw-bg-opacity));
 }
 
-.group:hover .group-hover\:text-blue-600 {
+.group:hover .group-hover\:text-green-600 {
   --tw-text-opacity: 1;
-  color: rgb(28 100 242 / var(--tw-text-opacity));
+  color: rgb(22 163 74 / var(--tw-text-opacity));
 }
 
 .peer:checked ~ .peer-checked\:border-blue-600 {
@@ -4537,8 +4549,8 @@ input:checked + .toggle-bg {
     width: 108px;
   }
 
-  .md-max\:w-\[80px\] {
-    width: 80px;
+  .md-max\:w-\[80\%\] {
+    width: 80%;
   }
 
   .md-max\:w-\[84px\] {
@@ -4563,10 +4575,6 @@ input:checked + .toggle-bg {
 
   .md-max\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .md-max\:justify-center {
-    justify-content: center;
   }
 
   .md-max\:gap-2 {

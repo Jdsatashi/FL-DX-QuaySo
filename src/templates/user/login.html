@@ -10,7 +10,7 @@
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="form-group">
-                            {{ form.username.label(class="input-label w-[128px] md-max:w-[80px]") }}
+                            {{ form.username.label(class="input-label") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-control is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.username.errors %}
@@ -26,9 +26,9 @@
                         <div class="form-group">
                             <label for="password"
                                    class="input-label">Mật khẩu</label>
-                            <div class="flex w-[90%]">
+                            <div class="flex w-[80%] md-max:mx-auto">
                                 <input type="password" id="password" name="password"
-                                       class="rounded-none rounded-s-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 text-sm p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                       class="rounded-none rounded-s-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                        placeholder="Điền mật khẩu">
                                 <span id="button-show-password"
                                       class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 hover:bg-gray-200 border border-gray-300 rounded-e-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
