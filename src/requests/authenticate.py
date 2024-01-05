@@ -31,16 +31,16 @@ def login():
                 COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
                 if "role_id" not in user:
                     user_model.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
-                session["username"] = user['username']
+                message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
+                logger.info(f"User '{username.upper()}' đã đăng nhập.")
+                flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
                 if user['role_id'] == role_admin_id:
                     session['is_admin'] = True
+                session["username"] = user['username']
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(seconds=COOKIE_MAX_AGE)
-                flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
-                message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
-                logger.info(f"User '{username.upper()}' đã đăng nhập.")
                 return redirect(url_for('home'))
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")

@@ -205,6 +205,7 @@ def account_add_list():
                             'password': hashed_password,
                             'address': row['address'],
                             'fullname': row['fullname'],
+                            'role_id': role_auth_id,
                             'is_active': True
                         }
                         logger.info(f"Handle user {data_dict['username']}")

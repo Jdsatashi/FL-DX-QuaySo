@@ -49,9 +49,9 @@ def insert():
         current_time = datetime.now()
         # Format datetime now compare with date close
         current_date = current_time.strftime('%Y-%m-%d')
-        form_date = form.date_close.data.strftime('%Y-%m-%d')
+        close_date = form.date_close.data.strftime('%Y-%m-%d')
         # Status will activate when date close smaller than current date
-        is_active = False if current_date > form_date else True
+        is_active = False if current_date > close_date else True
         # Create data dict
         data_form = {
             'event_name': form.name.data,
@@ -165,10 +165,10 @@ def event_detail(_id):
     if s_query:
         # Get query data from query search
         query_data = {
-            '_id': {'$ne': ObjectId(adm['_id'])},
             '$or': [
                 {'username': {'$regex': s_query, "$options": "i"}},
                 {'usercode': {'$regex': s_query, "$options": "i"}},
+                {'_id': ObjectId(s_query)}
             ]
         }
     else:
@@ -178,6 +178,7 @@ def event_detail(_id):
         }
     # Process pagination
     user_data, max_page = user_model.pagination(current_page, perpage, query_data)
+    logger.info(f"User: {user_data}")
     # Loop through user to add more info
     for user in user_data:
         # Get join events to get info user join events

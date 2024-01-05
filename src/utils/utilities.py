@@ -3,7 +3,8 @@ from bson import ObjectId
 
 from src import logs
 from src.logs import logger, message_logger
-from src.utils.constants import join_event_model, role_model, event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUM
+from src.utils.constants import join_event_model, role_model, event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUM, \
+    user_model
 
 import os
 import random
@@ -93,13 +94,12 @@ def update_user_join(_id):
     })
     # Loop through event_join get each user data
     for user in event_join:
-        logger.info(f"User id: {user['user_id']}")
+        logger.info(f"User id: {user['user_id']} | {user['turn_roll']}")
         # Get list number selected
         selected_number = list(map(int, user['selected_number'].split(', ')))
         # Handle user:
-        message_logger.info(f"Update user: {user['selected_number']}")
+        message_logger.info(f"Before update user: {user['selected_number']}")
         # Remove number > event range number
-        message_logger.info(f"selected_number: Length: {len(selected_number)} | Datas: {selected_number}")
         while selected_number[len(selected_number) - 1] > data_event['range_number']:
             message_logger.info(f"Removed number: [{selected_number[len(selected_number) - 1]}]")
             selected_number.pop()
@@ -130,7 +130,7 @@ def auto_random(event_id):
     # Get user not joined and have turned choose number > 1
     event_join = join_event_model.get_many({
         "event_id": event_id,
-        "turn_roll": {"$gte": 1},
+        "turn_roll": {"$gt": 0},
         "number_choices": {"$exists": False},
         "selected_number": {"$exists": False}
     })
@@ -138,25 +138,36 @@ def auto_random(event_id):
     wasted_choice = join_event_model.get_many({
         "event_id": event_id,
         "$expr": {"$gt": ["$turn_roll", "$number_choices"]},
-        "turn_roll": {"$gte": 1},
+        "turn_roll": {"$gt": 0},
     })
+    event_join = list(event_join)
+    wasted_choice = list(wasted_choice)
+    logger.info(f"List user chưa chọn: {event_join}")
+    logger.info(f"List user còn lượt chọn: {wasted_choice}")
     # Combine list of user not join and user not use all turn
-    data_list = list(event_join) + list(wasted_choice)
+    data_list = event_join + wasted_choice
+    logger.info(f"Combine list: {data_list}")
     now = datetime.now()
     for user in data_list:
-        logger.info(f"user: {user}")
+        # Print user id
+        number_choices = 0 if 'number_choices' not in user else user['number_choices']
+        message_logger.info(f"User id: {user['user_id']} | Lượt chọn ban đầu: {user['turn_roll']} | Lượt đã chọn: {number_choices}.")
         # Create available number dict
         number_list = create_number_list(event['range_number'], event['limit_repeat'], event_id, user['user_id'])
         # Get number of turn roll or the roll was not selected
         turn_roll = user['user_point'] // event['point_exchange'] \
             if 'number_choices' not in user else user['turn_roll'] - user['number_choices']
+        message_logger.info(f"Lượt chọn khả thi: {turn_roll} lượt.")
         # Random number ticket
         list_selected = random.sample(number_list, turn_roll)
+        message_logger.info(f"Tổng số đã random: {len(list_selected)} số.")
         # Get finally list after random | can be all random number list or old number list + random list
         number_selected = list_selected \
-            if 'number_choices' not in user else list_selected + user['selected_number'].split(', ')
+            if 'number_choices' not in user else list_selected + list(map(int, user['selected_number'].split(', ')))
+        message_logger.info(f"Tổng số đã chọn + số random: {len(number_selected)}.")
+        message_logger.info(f"Các số random: {list_selected}.")
         # Change data array to string for saving to database
-        list_selected_str = ', '.join(map(str, sorted(number_selected)))
+        list_selected_str = ', '.join(list(map(str, sorted(number_selected))))
         # Process updated
         try:
             join_event_model.update(user['_id'], {
@@ -164,8 +175,16 @@ def auto_random(event_id):
                 'selected_number': list_selected_str,
                 'date_updated': now
             })
-            message_logger.info(f"Hệ thống tự động chọn số cho user {user['user_id']}: [{list_selected_str}]")
+            message_logger.info(f"Hệ thống tự động chọn số cho user '{user['user_id']}': [{list_selected_str}]")
         # Except error
         except Exception as e:
             error_msg = traceback.format_exc()
             logger.error(f"Error while randomly number for user.\n Error: {e}\n{error_msg}")
+
+
+def update_user_role(_id):
+    user = user_model.get_one({'_id': ObjectId(_id)})
+    if 'role_id' not in user:
+        user_model.update(ObjectId(_id), {
+            'role_id': role_auth_id,
+        })
