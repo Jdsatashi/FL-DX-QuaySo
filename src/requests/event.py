@@ -1,20 +1,17 @@
+import random
 from _datetime import datetime
 from bson import ObjectId
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 
 from src.forms import EventForm
-from src.logs import logger
-from src.models import Models
-from src.mongodb import EVENT_TABLE, USER_JOIN_EVENT, ACCOUNT_TABLE
+from src.logs import logger, message_logger
 from src.requests.authenticate import admin_authorize
-from src.utils.constants import MAX_NUMBER_RANGE_DEFAULT
+from src.utils.constants import event_model, join_event_model, user_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUM
+from src.utils.utilities import create_number_list
 
 import traceback
 
 events = Blueprint('event', __name__)
-event_model = Models(table=EVENT_TABLE)
-join_event_model = Models(table=USER_JOIN_EVENT)
-user_model = Models(table=ACCOUNT_TABLE)
 
 
 @events.route('/')
@@ -222,15 +219,20 @@ def update_user_join(_id):
         data_event.pop(i)
     # Get event range number, if not get the default range
     if 'range_number' not in data_event:
-        data_event['range_number'] = MAX_NUMBER_RANGE_DEFAULT
+        data_event['range_number'] = MAX_NUM
     # Get users id of users chosen
-    event_join = join_event_model.get_many({"number_choices": {"$exists": True}, "selected_number": {"$exists": True}})
+    event_join = join_event_model.get_many({
+        "event_id": _id, "number_choices": {"$exists": True}, "selected_number": {"$exists": True}
+    })
     # Loop through event_join get each user data
     for user in event_join:
         # Get list number selected
         selected_number = list(map(int, user['selected_number'].split(', ')))
+        # Handle user:
+        message_logger.info(f"User: {user['user_id']}")
         # Remove number > event range number
         while selected_number[len(selected_number) - 1] > data_event['range_number']:
+            message_logger.info(f"Removed number: [{selected_number[len(selected_number)]}]")
             selected_number.pop()
         # Combine new list to string
         selected_number_str = ', '.join(map(str, selected_number))
@@ -245,6 +247,55 @@ def update_user_join(_id):
         except Exception as e:
             error_msg = traceback.format_exc()
             logger.error(f"Error when update user join automatic.\nError: '{e}'\n{error_msg}")
+
+
+# Auto random number function
+@events.route('/test/<event_id>')
+def auto_random(event_id):
+    # Get main event
+    event = event_model.get_one({'_id': ObjectId(event_id)})
+    event.pop('_id')
+    # Get event range number
+    event['range_number'] = MAX_NUM if 'range_number' not in event else int(event['range_number'])
+    # Get user not joined and have turned choose number > 1
+    event_join = join_event_model.get_many({
+        "event_id": event_id,
+        "turn_roll": {"$gte": 1},
+        "number_choices": {"$exists": False},
+        "selected_number": {"$exists": False}
+    })
+    wasted_choice = join_event_model.get_many({
+        "event_id": event_id,
+        "$expr": {"$gt": ["$turn_roll", "$number_choices"]},
+        "turn_roll": {"$gte": 1},
+    })
+    data_list = list(event_join) + list(wasted_choice)
+    now = datetime.now()
+    for user in data_list:
+        logger.info(f"user: {user}")
+        # Create available number dict
+        number_list = create_number_list(event['range_number'], event['limit_repeat'], event_id, user['user_id'])
+        # Get list of all objects keys of number dict
+        turn_roll = user['user_point'] // event['point_exchange'] if 'number_choices' not in user else user['turn_roll'] - user['number_choices']
+        list_selected = random.sample(number_list, turn_roll)
+        # Get required data to insert
+        number_choices = len(list_selected)
+        list_selected_str = ', '.join(map(str, list_selected))
+        # Process updated
+        try:
+            join_event_model.update(user['_id'], {
+                'number_choices': number_choices,
+                'selected_number': list_selected_str,
+                'date_updated': now
+            })
+            message_logger.info(f"Hệ thống tự động chọn số cho user {user['user_id']}: [{list_selected_str}]")
+        except Exception as e:
+            error_msg = traceback.format_exc()
+            logger.error(f"Error while randomly number for user.\n Error: {e}\n{error_msg}")
+            return jsonify({'message': 'Get error'})
+    for data in data_list:
+        data.pop('_id')
+    return jsonify({'message': 'Ok', 'event': event, 'data': data_list})
 
 # def saveFile():
 # file_doc = request.files.get('desc_file')
