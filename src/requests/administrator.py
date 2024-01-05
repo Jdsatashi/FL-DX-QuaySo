@@ -53,13 +53,11 @@ def account_manager():
             data.pop('password')
             # Change ObjectId to String
             data['_id'] = str(data['_id'])
-            # data['role_id'] = str(data['role_id'])
             # Add is_active if account does not have it
             if 'is_active' not in data:
                 user_model.update(ObjectId(data['_id']), {'is_active': True})
                 data['is_active'] = True
         logger.info("Get all data account success.")
-        logger.info(f"Search query 3: {s_query}")
         return render_template('admin/account/index.html', accounts=account_data, current_page=current_page,
                                max_page=total_pages, s_query=s_query, title="Quản lý tài khoản")
     # Return error
