@@ -10,17 +10,17 @@
                     {{ form.csrf_token() }}
                     <fieldset>
                         <div class="form-group">
-                            <label class="input-label w-[128px] md-max:w-[84px]" for="username">Tài khoản</label>
+                            <label class="input-label" for="username">Tài khoản</label>
                             <input id="username" type="text" value="{{ user.username }}" class="form-input" readonly>
                         </div>
 
                         <div class="form-group">
-                            <label class="input-label w-[128px] md-max:w-[84px]" for="usercode">Mã KH</label>
-                            <input id="usercode" type="text" value="{{ user.usercode }}" class="form-input" readonly>
+                            <label class="input-label" for="usercode">Mã KH</label>
+                            <input id="usercode" type="text" value="{% if not user.usercode %}{{ user.username }}{% else %}{{ user.usercode }}{% endif %}" class="form-input" readonly>
                         </div>
 
                         <div class="form-group">
-                            {{ form.fullname.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {{ form.fullname.label(class="input-label") }}
                             {% if form.fullname.errors %}
                                 {{ form.fullname(class="form-control is-invalid", style="text-transform:uppercase") }}
                                 {% for error in form.fullname.errors %}
@@ -34,7 +34,7 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.email.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {{ form.email.label(class="input-label") }}
                             {% if form.email.errors %}
                                 {{ form.email(class="form-control is-invalid") }}
                                 {% for error in form.email.errors %}
@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.phone.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {{ form.phone.label(class="input-label") }}
                             {% if form.phone.errors %}
                                 {{ form.phone(class="form-control is-invalid") }}
                                 {% for error in form.phone.errors %}
@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.address.label(class="input-label w-[128px] md-max:w-[84px]") }}
+                            {{ form.address.label(class="input-label") }}
                             {% if form.address.errors %}
                                 {{ form.address(class="form-control is-invalid") }}
                                 {% for error in form.address.errors %}

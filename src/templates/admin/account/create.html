@@ -9,7 +9,7 @@
                 <form method="POST" class="max-w-md mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="form-group lg:block">
+                        <div class="form-group">
                             {{ form.username.label(class="input-label") }}
                             {% if form.username.errors %}
                                 {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
@@ -23,7 +23,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="form-group lg:block">
+                        <div class="form-group">
                             {{ form.usercode.label(class="input-label") }}
                             {% if form.usercode.errors %}
                                 {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
@@ -37,7 +37,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="form-group lg:block">
+                        <div class="form-group">
                             {{ form.password.label(class="input-label") }}
                             {% if form.password.errors %}
                                 {{ form.password(class="form-input is-invalid") }}
@@ -51,7 +51,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="form-group lg:block">
+                        <div class="form-group">
                             {{ form.confirm_password.label(class="input-label") }}
                             {% if form.confirm_password.errors %}
                                 {{ form.confirm_password(class="form-input is-invalid") }}
@@ -65,11 +65,11 @@
                             {% endif %}
                         </div>
 
-                        <div id="event-group" class="w-[90%]">
+                        <div id="event-group" class="w-[90%] mx-auto">
                             {% if events %}
                                 <div class="flex justify-between">
-                                    <h3 class="input-label">Sự kiện</h3>
-                                    <h3 class="input-label me-4">Điểm</h3>
+                                    <h3 class="text-slate-700 text-lg">Sự kiện</h3>
+                                    <h3 class="text-slate-700 text-lg me-4 md-max:me-2">Điểm</h3>
                                 </div>
                             {% endif %}
                             {% for event in events %}

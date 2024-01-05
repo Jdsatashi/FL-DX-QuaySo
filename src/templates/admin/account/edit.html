@@ -2,50 +2,53 @@
 {% block content %}
     <div class="flex justify-center items-center">
         <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
-            <div class="rounded mx-auto text-center mt-4 mb-6 text-4xl font-bold">
+            <div class="rounded mx-auto text-center text-4xl mt-4 mb-6 font-bold">
                 Chỉnh sửa tài khoản
             </div>
             <div class="mt-2">
                 <form method="POST" class="max-w-md mx-auto">
                     {{ form.csrf_token() }}
                     <fieldset>
-                        <div class="form-group lg:block">
-                            {{ form.username.label(class="input-label w-[256px] md-max:w-[108px]") }}
-                            {% if form.username.errors %}
-                                {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
-                                {% for error in form.username.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.username(class="form-input", placeholder="Tên đăng nhập", value=account.username, style="text-transform:uppercase") }}
-                            {% endif %}
+                        <div class="w-[90%] mx-auto">
+                            <div class="form-group">
+                                {{ form.username.label(class="input-label") }}
+                                {% if form.username.errors %}
+                                    {{ form.username(class="form-input is-invalid", style="text-transform:uppercase") }}
+                                    {% for error in form.username.errors %}
+                                        <div class="invalid-feedback">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ form.username(class="form-input", placeholder="Tên đăng nhập", value=account.username, style="text-transform:uppercase") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.usercode.label(class="input-label") }}
+                                {% if form.usercode.errors %}
+                                    {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
+                                    {% for error in form.usercode.errors %}
+                                        <div class="invalid-feedback">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ form.usercode(class="form-input", placeholder="Mã khách hàng", value=account.usercode, style="text-transform:uppercase") }}
+                                {% endif %}
+                            </div>
+                            <div class="element-center">
+                                <label class="relative inline-flex items-center ms-2 mt-2 mb-2 cursor-pointer">
+                                    <input type="checkbox" id="is_active" name="is_active" value="True"
+                                           class="sr-only peer"
+                                           {% if account.is_active == True %}checked{% endif %}>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hoạt động</span>
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="form-group lg:block">
-                            {{ form.usercode.label(class="input-label w-[256px] md-max:w-[108px]") }}
-                            {% if form.usercode.errors %}
-                                {{ form.usercode(class="form-input is-invalid", style="text-transform:uppercase") }}
-                                {% for error in form.usercode.errors %}
-                                    <div class="invalid-feedback">
-                                        <span>{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.usercode(class="form-input", placeholder="Mã khách hàng", value=account.usercode, style="text-transform:uppercase") }}
-                            {% endif %}
-                        </div>
-
-                        <label class="relative inline-flex items-center ms-2 mt-2 mb-2 cursor-pointer">
-                            <input type="checkbox" id="is_active" name="is_active" value="True" class="sr-only peer"
-                                   {% if account.is_active == True %}checked{% endif %}>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                            <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hoạt động</span>
-                        </label>
-
-
-                        <div id="event-group" class="mx-4">
+                        <div id="event-group" class="w-[90%] mx-auto">
                             {% if event_join or events %}
                                 <div class="flex justify-between">
                                     <h3 class="input-label">Sự kiện</h3>
@@ -54,7 +57,7 @@
                             {% endif %}
                             {% for event in event_join %}
                                 <label for="{{ event }}">
-                                    <div class="flex mb-1 justify-between items-center ps-4 border-2 border-blue-300 rounded dark:border-gray-700 py-4">
+                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded-lg dark:border-gray-700 mb-1">
                                         <div class="w-auto">
                                             <input id="{{ event }}" type="checkbox"
                                                    value="{{ event_join[event]['event_name'] }}"
@@ -65,24 +68,26 @@
                                             <span class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event_join[event]['event_name'] }}</span>
                                         </div>
                                         <div>
-                                            <input id="point-{{ event }}" type="number" min="1" class="rounded-lg w-20 my-2 me-2" value="{{ event_join[event]['user_point'] }}">
+                                            <input id="point-{{ event }}" type="number" min="1"
+                                                   class="input-point rounded-lg w-20 my-2 me-2 bg-slate-50"
+                                                   value="{{ event_join[event]['user_point'] }}">
                                         </div>
                                     </div>
                                 </label>
                             {% endfor %}
                             {% for event in events %}
-                                <label for="{{ event['_id'] }}">
-                                    <div class="flex justify-between items-center ps-4 border-2 border-blue-300 rounded dark:border-gray-700 py-4">
+                                <label for="{{ event._id }}">
+                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded-lg dark:border-gray-700 mb-1">
                                         <div class="w-auto py-3">
-                                            <input id="{{ event['_id'] }}" type="checkbox"
+                                            <input id="{{ event._id }}" type="checkbox"
                                                    value="{{ event['event_name'] }}"
                                                    name="event_name"
-                                                   class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                            >
-                                            <span class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event['event_name'] }}</span>
+                                                   class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                            <span class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}</span>
                                         </div>
                                         <div>
-                                            <input id="point-{{ event._id }}" type="number" min="1" class="input-point rounded-lg w-20 my-2 me-2">
+                                            <input id="point-{{ event._id }}" type="number" min="1" max="999999"
+                                                   value="1" class="input-point rounded-lg w-20 my-2 me-2 bg-slate-50">
                                         </div>
                                     </div>
                                 </label>
@@ -105,6 +110,7 @@
         const groupInput = document.querySelectorAll('.input-point')
 
         btnSubmit.addEventListener('click', addInputEvent)
+
         function addInputEvent(e) {
             for (let i in checkboxGroup) {
                 if (checkboxGroup[i].checked) {
