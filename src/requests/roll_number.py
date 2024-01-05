@@ -54,6 +54,7 @@ def roll_number(_id):
     # Edit element of event
     events['_id'] = str(events['_id'])
     events.pop('date_created')
+    max_range = MAX_NUMBER if 'range_number' not in events else events['range_number']
     # Format date follow by day-month-year for easily readable
     date_show = datetime.strptime(events['date_close'], '%Y-%m-%d').strftime('%d-%m-%Y')
     events.update({'date_show': date_show})
@@ -83,6 +84,9 @@ def roll_number(_id):
             return redirect(url_for('roll_number', _id=_id))
         # Sorting data number selected
         list_selected = sorted(list_selected, key=int)
+        if list_selected[len(list_selected) - 1] > max_range:
+            flash(f"Lựa chọn không hợp lệ, vui lòng chọn lại.", 'warning')
+            return redirect(url_for('roll_number', _id=_id))
         # Change data type of close_date value to datetime
         close_date = events['date_close']
 
@@ -132,7 +136,6 @@ def roll_number(_id):
                 logger.error(f"Error when re choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
     else:
-        max_range = MAX_NUMBER if 'range_number' not in events else events['range_number']
         # Create a number list for user can choose
         number_list = create_number_list(max_range, events['limit_repeat'], _id, user['_id'])
         # Get current page for compare
