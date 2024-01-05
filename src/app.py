@@ -56,6 +56,7 @@ from src.models import Models
 from src.mongodb import EVENT_TABLE
 
 
+# Daily jobs function
 def check_active():
     event_model = Models(table=EVENT_TABLE)
     events = event_model.get_all()
@@ -67,6 +68,7 @@ def check_active():
         logs.message_logger.info(f"Update {event['event_name']} daily.")
 
 
+# Date time to proceed daily jobs
 scheduler.add_job(
     func=check_active,
     trigger="cron",
