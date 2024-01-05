@@ -20,6 +20,9 @@ class Models:
     def create(self, data_dict):
         return self.table.insert_one(data_dict)
 
+    def create_many(self, data_list):
+        return self.table.insert_many(data_list)
+
     def update(self, _id, data_dict):
         return self.table.find_one_and_update({
             '_id': _id
