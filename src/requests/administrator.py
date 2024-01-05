@@ -5,20 +5,16 @@ from flask import render_template, redirect, request, flash, url_for, Blueprint
 from src.logs import message_logger, logger
 from src.requests.authenticate import admin_authorize
 from src.forms import CreateAccountForm, UpdateAccountForm
-from src.models import Models
-from src.mongodb import ACCOUNT_TABLE, USER_JOIN_EVENT
-from src.utils.utilities import role_auth_id, create_folder, role_admin_id
-from src.requests.event import event_model, join_event_model
+from src.utils.constants import user_model, event_model, join_event_model
+from src.utils.utilities import role_auth_id, create_folder
 
 import os
 import bcrypt
 import traceback
 import pandas as pd
-import math
 
 admin = Blueprint('admin', __name__)
-# Assign account as account table model
-account = Models(table=ACCOUNT_TABLE)
+# Assign user_model as account table model
 
 
 # Get all accounts
@@ -49,7 +45,7 @@ def account_manager():
         # Default query data
         query_data = {'_id': {'$ne': ObjectId(adm['_id'])}}
         # Get data accounts exclude admin accounts
-    account_data, total_pages = account.pagination(current_page, perpage, query_data, [('username', 1)])
+    account_data, total_pages = user_model.pagination(current_page, perpage, query_data, [('username', 1)])
     try:
         # Edit some sensitive data in account data
         for data in account_data:
@@ -60,7 +56,7 @@ def account_manager():
             # data['role_id'] = str(data['role_id'])
             # Add is_active if account does not have it
             if 'is_active' not in data:
-                account.update(ObjectId(data['_id']), {'is_active': True})
+                user_model.update(ObjectId(data['_id']), {'is_active': True})
                 data['is_active'] = True
         logger.info("Get all data account success.")
         logger.info(f"Search query 3: {s_query}")
@@ -102,14 +98,14 @@ def account_create():
         # Event to assign
         events_join = form.join_event.data
         # Validate if username is existing
-        if ACCOUNT_TABLE.find_one(form_user['username']):
+        if user_model.get_one(form_user['username']):
             flash(f"Username đã tồn tại.", "warning")
             return redirect(url_for('admin.account_create'))
         # Validate Form
         if form.validate_on_submit():
             try:
                 # Create account
-                account.create(form_user)
+                user_model.create(form_user)
                 # Assign user to event when events_join exist
                 if events_join != '':
                     # Split event _id if joining multi event
@@ -214,19 +210,19 @@ def account_add_list():
                             'is_active': True
                         }
                         logger.info(f"Handle user {data_dict['username']}")
-                        is_existed = account.get_one({'username': data_dict['username']})
+                        is_existed = user_model.get_one({'username': data_dict['username']})
                         # Try adding of update account
                         try:
                             # When account not exited creating new account
                             if is_existed is None:
                                 data_dict.update({'date_created': now})
-                                account.create(data_dict)
+                                user_model.create(data_dict)
                                 logger.info("Add user success")
                                 user_id = data_dict['_id']
                             # When account exited updating account
                             else:
                                 data_dict.update({'date_updated': now})
-                                account.update(is_existed['_id'], data_dict)
+                                user_model.update(is_existed['_id'], data_dict)
                                 user_id = is_existed['_id']
                                 logger.info("Update user success")
                         # Except error
@@ -249,7 +245,7 @@ def account_add_list():
                         })
                 try:
                     # Handing add data
-                    USER_JOIN_EVENT.insert_many(event_assign)
+                    join_event_model.create_many(event_assign)
                     logger.info("Assign users to event success")
                 # Return error
                 except Exception as e:
@@ -298,7 +294,7 @@ def account_edit(_id):
     # Get form data
     form = UpdateAccountForm()
     # Get user data for updating
-    user = account.get_one({'_id': ObjectId(_id)})
+    user = user_model.get_one({'_id': ObjectId(_id)})
     if not user:
         flash('Không tìm thấy tài khoản.', 'warning')
         return redirect(url_for('home'))
@@ -316,11 +312,11 @@ def account_edit(_id):
         if form.validate_on_submit():
             # Add fields date update to user
             if 'date_updated' not in user:
-                account.update(ObjectId(_id), {'date_updated': ''})
+                user_model.update(ObjectId(_id), {'date_updated': ''})
             # Handle updating user account
             try:
                 # Updating account
-                edit_account = account.update(ObjectId(_id), form_data)
+                edit_account = user_model.update(ObjectId(_id), form_data)
                 # Get user point for calculating turns roll
                 form_data.update({'events': {}})
                 # Assign event for user when events_join (string from Form) is not ''
@@ -355,7 +351,7 @@ def account_edit(_id):
                     # Get _id of user_join_event table
                     data_delete = join_event_model.get_one({'user_id': _id, 'event_id': event})
                     # Handle deleting
-                    USER_JOIN_EVENT.delete_one({'_id': data_delete['_id']})
+                    join_event_model.delete_one({'_id': data_delete['_id']})
                 # Done jobs, return success
                 message_logger.info(f"Admin cập nhật tài khoản {user['username']}.\nNội dung: {form_data}")
                 flash(f'Cập nhật tài khoản "{edit_account["username"]}".', 'success')

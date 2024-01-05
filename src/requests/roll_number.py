@@ -9,50 +9,8 @@ from src.forms import NumberSelectedForm
 from src.app import app
 from src.logs import message_logger, logger
 from src.requests.authenticate import authorize_user
-from src.requests.event import event_model, join_event_model
-from src.utils.constants import MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
-
-
-# Function creating number list for user choose
-def create_number_list(limit: int, event_id: str, user_id: str, max_range: int):
-    list_selected, all_number_selected, user_selected = [], [], []
-    unavailable_number = {}
-    # user_rolled check which number chosen by user
-    user_rolled = join_event_model.get_one({'event_id': event_id, 'user_id': user_id})
-    if 'selected_number' in user_rolled and 'number_choices' in user_rolled:
-        number_selected = user_rolled['selected_number'].split(', ')
-        for number in number_selected:
-            user_selected.append(int(number))
-    # rolled get all number was chosen
-    rolled = join_event_model.get_all()
-    if rolled:
-        for roll in rolled:
-            if 'selected_number' in roll and 'number_choices' in roll and roll['event_id'] == event_id:
-                list_selected.append(roll['selected_number'])
-    # Add number was selected to list selected
-    for number in list_selected:
-        arr = number.split(', ')
-        for i in arr:
-            all_number_selected.append(int(i))
-    # Dict for number selected
-    for num in all_number_selected:
-        if num not in unavailable_number:
-            unavailable_number[num] = 1
-        else:
-            # Counting up for number selected
-            unavailable_number[num] += 1
-        # When number selected own by user, remove 1 count from unavailable dict
-        if num in user_selected:
-            unavailable_number[num] -= 1
-    list_number = {}
-    for i in range(1, max_range + 1):
-        if i > 0:
-            if i in unavailable_number:
-                if limit - unavailable_number[i] > 0 and unavailable_number[i] > 0:
-                    list_number[i] = limit - unavailable_number[i]
-            else:
-                list_number[i] = limit
-    return list_number
+from src.utils.constants import event_model, join_event_model, user_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
+from src.utils.utilities import create_number_list
 
 
 @app.route('/chon-su-kien')
@@ -176,7 +134,7 @@ def roll_number(_id):
     else:
         max_range = MAX_NUMBER if 'range_number' not in events else events['range_number']
         # Create a number list for user can choose
-        number_list = create_number_list(events['limit_repeat'], _id, user['_id'], max_range)
+        number_list = create_number_list(max_range, events['limit_repeat'], _id, user['_id'])
         # Get current page for compare
         current_date = datetime.now().strftime('%Y-%m-%d')
         date_close = datetime.strptime(events['date_close'], "%Y-%m-%d")

@@ -6,15 +6,13 @@ from markupsafe import Markup
 from src.app import app
 from src.forms import LoginForm, UpdatePasswordForm, UpdateInfoAccountForm
 from src.logs import message_logger, logger
-from src.models import Models
-from src.mongodb import ACCOUNT_TABLE
+from src.utils.constants import user_model
 from src.utils.utilities import role_auth_id, role_admin_id
 
 import bcrypt
 
 
 auth = Blueprint('user', __name__)
-account = Models(table=ACCOUNT_TABLE)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -24,7 +22,7 @@ def login():
         username = str(form.username.data)
         password = form.password.data.encode("utf-8")
         remember_me = form.remember_me.data
-        user = account.get_one({'username': {"$regex": username, "$options": "i"}})
+        user = user_model.get_one({'username': {"$regex": username, "$options": "i"}})
         if form.validate_on_submit():
             if not user:
                 flash(f"Tài khoản không tồn tại.", "warning")
@@ -32,7 +30,7 @@ def login():
             if bcrypt.checkpw(password, user["password"]):
                 COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
                 if "role_id" not in user:
-                    account.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
+                    user_model.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 session["username"] = user['username']
                 if user['role_id'] == role_admin_id:
                     session['is_admin'] = True
@@ -76,7 +74,7 @@ def reset_password(_id):
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
             if form.validate_on_submit():
                 try:
-                    account.update(ObjectId(_id), {'password': hash_password})
+                    user_model.update(ObjectId(_id), {'password': hash_password})
                     if user['_id'] == _id:
                         flash(f"Cập nhật nhật khẩu mới thành công.", "success")
                         message_logger.info(f"User '{user['username']}' đã thay đổi password.")
@@ -124,7 +122,7 @@ def information(_id):
                     'phone': form.phone.data,
                     'address': form.address.data,
                 }
-                account.update(ObjectId(_id), form_data)
+                user_model.update(ObjectId(_id), form_data)
                 message_logger.info(f"User {user['username']} cập nhật thông tin cá nhân thành công")
                 flash(f"Cập nhật thông tin tài khoản thành công.", "success")
                 return redirect(url_for('user.information', _id=_id))
@@ -139,7 +137,7 @@ def information(_id):
 # function for authorize if user
 def authorize_user():
     if 'username' in session:
-        account_data = account.get_one({'username': session['username']})
+        account_data = user_model.get_one({'username': session['username']})
         if account_data is None:
             session.pop('username')
             return authorize_user()
