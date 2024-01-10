@@ -84,7 +84,7 @@ def roll_number(_id):
             return redirect(url_for('roll_number', _id=_id))
         # Sorting data number selected
         list_selected = sorted(list_selected, key=int)
-        if list_selected[len(list_selected) - 1] > max_range:
+        if int(list_selected[len(list_selected) - 1]) > max_range:
             flash(f"Lựa chọn không hợp lệ, vui lòng chọn lại.", 'warning')
             return redirect(url_for('roll_number', _id=_id))
         # Change data type of close_date value to datetime
