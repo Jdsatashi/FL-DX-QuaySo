@@ -1,15 +1,20 @@
-import random
+import traceback
+
+import numpy as np
+import pandas as pd
+from io import BytesIO
 from _datetime import datetime
+
+import xlsxwriter
 from bson import ObjectId
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from bson.errors import InvalidId
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_file
 
 from src.forms import EventForm
-from src.logs import logger, message_logger
+from src.logs import logger
 from src.requests.authenticate import admin_authorize
-from src.utils.constants import event_model, join_event_model, user_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUM
-from src.utils.utilities import create_number_list, update_user_join
-
-import traceback
+from src.utils.constants import event_model, join_event_model, user_model
+from src.utils.utilities import update_user_join, create_folder
 
 events = Blueprint('event', __name__)
 
@@ -136,7 +141,7 @@ def update(_id):
     return redirect(url_for('event.index'))
 
 
-@events.route('event/detail/<string:_id>', methods=['GET'])
+@events.route('event-detail/<string:_id>', methods=['GET'])
 def event_detail(_id):
     context = {}
     # Authorize is admin
@@ -163,24 +168,41 @@ def event_detail(_id):
         user_id = ObjectId(event['user_id'])
         user_id_list.append(user_id)
     if s_query:
+        # Try making query to ObjectId to check if it was id
+        try:
+            query_data = {
+                '_id': ObjectId(s_query)
+            }
         # Get query data from query search
-        query_data = {
-            '_id': ObjectId(s_query),
-            '$or': [
-                {'username': {'$regex': s_query, "$options": "i"}},
-                {'usercode': {'$regex': s_query, "$options": "i"}},
-            ]
-        }
+        except InvalidId:
+            query_data = {
+                '$or': [
+                    {'username': {'$regex': s_query, "$options": "i"}},
+                    {'usercode': {'$regex': s_query, "$options": "i"}},
+                ]
+            }
     else:
         # Default query data
         query_data = {
             '_id': {'$ne': ObjectId(adm['_id']), '$in': user_id_list}
         }
     # Process pagination
-    user_data, max_page = user_model.pagination(current_page, perpage, query_data)
-    logger.info(f"User: {user_data}")
+    user_list, max_page = user_model.pagination(current_page, perpage, query_data)
+    logger.info(f"User: {user_list}")
     # Loop through user to add more info
-    for user in user_data:
+    user_data = loop_through_user(user_list, _id, point_exchange)
+    # Put all require render data to context
+    context['user_list'] = user_data
+    context['event_name'] = current_event['event_name']
+    context['max_page'] = max_page
+    context['current_page'] = current_page
+    context['s_query'] = s_query
+    context['_id'] = _id
+    return render_template('admin/events/event_joins.html', context=context)
+
+
+def loop_through_user(user_list, _id, point_exchange):
+    for user in user_list:
         # Get join events to get info user join events
         event = join_event_model.get_one({'event_id': _id, 'user_id': str(user['_id'])})
         # Get user_point and turn_roll
@@ -201,14 +223,8 @@ def event_detail(_id):
                 'number_choices': number_choices,
                 'rest_choices': rest_choices
             })
-    # Put all require render data to context
-    context['user_list'] = user_data
-    context['event_name'] = current_event['event_name']
-    context['max_page'] = max_page
-    context['current_page'] = current_page
-    context['s_query'] = s_query
-    context['_id'] = _id
-    return render_template('admin/events/event_joins.html', context=context)
+    return user_list
+
 
 # def saveFile():
 # file_doc = request.files.get('desc_file')
@@ -222,3 +238,64 @@ def event_detail(_id):
 #     'file_pdf_doc': doc_name,
 #     'file_image_doc': img_name
 # })
+
+
+@events.route('/event-test/<_id>')
+def print_events_joins_data(_id):
+    # Create data frame from data
+    df_data = create_dataframe(_id)
+    # create output stream and ExcelWriter
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    # Write DataFrame into ExcelWriter
+    df_data.to_excel(writer, startrow=0, merge_cells=False, sheet_name="Sheet_1")
+    # Format Excel theo ý muốn
+    writer.close()
+    output.seek(0)
+    # Return and download file
+    return send_file(output, download_name="user.xlsx", as_attachment=True)
+
+
+def create_dataframe(_id):
+    # Get current event data
+    current_event = event_model.get_one({'_id': ObjectId(_id)})
+    point_exchange = current_event['point_exchange']
+    # Create first row title
+    title_row = ['#', 'Mã KH', 'Tên KH', 'Địa chỉ', 'SĐT', 'Tổng điểm', 'Tổng tem đạt',
+                 'Số điểm dư', 'Số tem đã chọn', 'Số tem dư', 'Các số đã chọn']
+    # Append first row to data list
+    data = [title_row]
+    # Get all user id were joined event
+    events_joined = join_event_model.get_many({'event_id': _id})
+    # Create list save all user_id
+    user_id_list = list()
+    # List all user was joined event
+    for event in events_joined:
+        # Get user id
+        user_id = ObjectId(event['user_id'])
+        user_id_list.append(user_id)
+    # Get list of user from list user_id
+    user_list = list(user_model.get_many({'_id': {'$in': user_id_list}}))
+    # Loop through user list to get data for print
+    for idx, user in enumerate(user_list):
+        # Get join events to get info user join events
+        event = join_event_model.get_one({'event_id': _id, 'user_id': str(user['_id'])})
+        # Get user_point and turn_roll
+        user_point = event['user_point']
+        turn_roll = event['turn_roll']
+        rest_point = user_point - (turn_roll * point_exchange)
+        # If user joined then get selected number and number choices
+        number_choices, rest_choices, selected_number = '', '', ''
+        if 'selected_number' in event and 'number_choices' in event:
+            selected_number = event['selected_number']
+            number_choices = event['number_choices']
+            rest_choices = turn_roll - number_choices
+        address = '' if 'address' not in user else user['address']
+        phone = '' if 'phone' not in user else user['phone']
+        # Create row data list for input data to each row
+        row_data = [str(idx + 1), user['usercode'], user['fullname'], address, phone, user_point, turn_roll,
+                    rest_point, number_choices, rest_choices, selected_number]
+        data.append(row_data)
+    # Create data frame from data list
+    df = pd.DataFrame(data)
+    return df
