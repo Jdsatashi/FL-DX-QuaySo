@@ -244,13 +244,14 @@ def loop_through_user(user_list, _id, point_exchange):
 def print_events_joins_data(_id):
     # Create data frame from data
     df_data = create_dataframe(_id)
-    # create output stream and ExcelWriter
+    # Create output stream and ExcelWriter
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine='xlsxwriter')
     # Write DataFrame into ExcelWriter
     df_data.to_excel(writer, startrow=0, merge_cells=False, sheet_name="Sheet_1")
-    # Format Excel theo ý muốn
+    # Close writer data to excel
     writer.close()
+    # Return to pointer which has all data of xlsx
     output.seek(0)
     # Return and download file
     return send_file(output, download_name="user.xlsx", as_attachment=True)
