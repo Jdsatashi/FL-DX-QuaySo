@@ -17,44 +17,65 @@ auth = Blueprint('user', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    # Get data form
     form = LoginForm()
+    # Process login
     if request.method == 'POST':
+        # Get data of user for prepare login
         username = str(form.username.data)
         password = form.password.data.encode("utf-8")
         remember_me = form.remember_me.data
+        # Try get user depend on username
         user = user_model.get_one({'username': {"$regex": username, "$options": "i"}})
+        # If form validated and submit
         if form.validate_on_submit():
+            # Check if user with user is existing
             if not user:
                 flash(f"Tài khoản không tồn tại.", "warning")
                 return redirect(url_for('user.login'))
+            # If username existed, then check password
             if bcrypt.checkpw(password, user["password"]):
+                # Create life-time for cookie
                 COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
+                # Add default user role if user not has a role
                 if "role_id" not in user:
                     user_model.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
+                # Print and show message when login successful
                 logger.info(f"User '{username.upper()}' đã đăng nhập.")
                 flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
+                # Check if user is admin
                 if user['role_id'] == role_admin_id:
                     session['is_admin'] = True
+                # Add session username as signed
                 session["username"] = user['username']
+                # Add require session data
                 user['_id'] = str(user["_id"])
                 session["_id"] = user["_id"]
+                # Session.permanent allow browser of user save session for forever or outdated session
                 session.permanent = True
+                # Set the lifetime of session
                 app.permanent_session_lifetime = timedelta(seconds=COOKIE_MAX_AGE)
                 return redirect(url_for('home'))
+            # Return with error when password wrong
             else:
                 flash(f"Mật khẩu không đúng, vui lòng thử lại.", "warning")
                 return redirect(url_for('user.login'))
+        # Return message if form not valid
         flash(f"Một số dữ liệu không đúng, vui lòng tử lại.", "warning")
         return redirect(url_for('user.login'))
+    # Render template if method = GET
     else:
         return render_template('user/login.html', form=form, title="Đăng nhập")
 
 
 @auth.route('/logout')
 def logout():
+    # Remove username and other session data
     if 'username' in session:
+        message_logger.info(f"User {session['username']} đã logout.")
         session.pop('username')
+        session.clear()
         return redirect(url_for('home'))
     return redirect(url_for('home'))
 
