@@ -237,7 +237,7 @@ def loop_through_user(user_list, _id, point_exchange):
 # })
 
 
-@events.route('/event-test/<_id>')
+@events.route('/event-print-user/<_id>')
 def print_events_joins_data(_id):
     # Create data frame from data
     df_data = create_dataframe(_id)
