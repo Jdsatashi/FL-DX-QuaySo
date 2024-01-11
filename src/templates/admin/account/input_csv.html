@@ -1,5 +1,20 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
+    <div class="w-full mt-4">
+        <div class="w-full flex justify-start">
+            <a href="{{ url_for('admin.account_manager') }}" class="flex justify-center items-center">
+                <svg class="w-3 h-3 text-blue-800 hover:text-blue-700 dark:text-white" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none" viewBox="0 0 12 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5 1 1 5l4 4m6-8L7 5l4 4"></path>
+                </svg>
+                <span class="text-blue-500 ms-2 underline hover:text-sky-400">
+                    Quản lý tài khoản
+                </span>
+            </a>
+        </div>
+    </div>
     <div class="flex justify-center items-center">
         <div class="card-simple rounded-lg md-max:mx-4 md-max:w-full w-[800px]">
             <div class="rounded mx-auto text-center text-4xl mt-4 mb-6 font-bold">
