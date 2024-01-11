@@ -34,27 +34,27 @@
                             <table class="me-8 md-max:me-0 w-[80%] md-max:w-full">
                                 <tbody>
                                 <tr class="li-item">
-                                    <td>Tổng tem:</td>
+                                    <td>Tổng tem đạt:</td>
                                     <td class="text-green-500 font-bold py-1 px-2 md-max:px-0 w-16 md-max:w-10">{{ infos[id]['turn_roll'] }}</td>
-                                    <td colspan="2">Tổng điểm: <span
+                                    <td colspan="2">Tổng số điểm: <span
                                             class="text-green-500 font-bold py-1 px-2">{{ infos[id].user_point }}</span></td>
                                 </tr>
                                 <tr class="li-item">
-                                    <td class="md-max:w-[108px]">Tem đã chọn:</td>
+                                    <td class="md-max:w-[108px]">Số tem đã chọn:</td>
                                     <td class="text-green-500 font-bold py-1 px-2 md-max:px-0">{{ infos[id]['number_choices'] }}</td>
                                     <td colspan="2">Điểm / tem: <span
                                             class="text-green-500 font-bold py-1 px-2">{{ infos[id]['point_exchange'] }}</span>
                                     </td>
                                 </tr>
                                 <tr class="li-item">
-                                    <td>Tem còn dư:</td>
+                                    <td>Số tem chưa chọn số:</td>
                                     <td class="text-red-500 font-bold py-1 px-2 md-max:px-0">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</td>
-                                    <td colspan="2">Điểm còn dư: <span
+                                    <td colspan="2">Số điểm dư: <span
                                             class="text-red-500 font-bold py-1 px-2T">{{ infos[id].user_point - (infos[id]['turn_roll'] * infos[id]['point_exchange']) }}</span>
                                     </td>
                                 </tr>
                                 <tr class="li-item">
-                                    <td class="w-[120px] md-max:w-[108px] flex items-start mt-1">Số đã chọn:
+                                    <td class="w-[120px] md-max:w-[108px] flex items-start mt-1">Các số đã chọn:
                                     </td>
                                     <td colspan="4"
                                         class="text-green-600 font-semibold py-1 px-2 md-max:px-0">{{ infos[id]['selected_number'] }}</td>

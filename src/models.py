@@ -8,11 +8,8 @@ class Models:
     def get_one(self, data_dict):
         return self.table.find_one(data_dict)
 
-    def get_all(self, options=None):
-        if options is None:
-            return self.table.find()
-        else:
-            return self.table.find(options)
+    def get_all(self):
+        return self.table.find()
 
     def get_many(self, data):
         return self.table.find(data)

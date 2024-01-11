@@ -218,9 +218,12 @@ def print_info(_id):
     user_joins = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     # Assign turn choice for user
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
+    # Get data from user joined event
     if 'selected_number' in rolled and 'number_choices' in rolled:
+        # Get list of selected number
         number_rolled = rolled['selected_number'].split(', ')
         turn_chosen = len(number_rolled)
+        # Data to print
         print_data = {
             'event_name': events['event_name'],
             'username': user['username'],
@@ -231,6 +234,7 @@ def print_info(_id):
             'turn_chosen': turn_chosen,
             'number_rolled_str': rolled['selected_number']
         }
+        # HTML template
         template = render_template(
             'template/pdf_output.html',
             data=print_data,
@@ -238,7 +242,7 @@ def print_info(_id):
             title="In file"
         )
         filename = f"Dongxanh-{events['event_name']}-{user['username']}.pdf"
-        # return template
+        # return template pdf
         message_logger.info(f"User {user['username']} đã in sự kiện {events['event_name']}.")
         return render_pdf(HTML(string=template))
     else:

@@ -1,5 +1,6 @@
 from _datetime import datetime
 from bson import ObjectId
+from bson.errors import InvalidId
 from flask import render_template, redirect, request, flash, url_for, Blueprint
 
 from src.logs import message_logger, logger
@@ -14,7 +15,6 @@ import traceback
 import pandas as pd
 
 admin = Blueprint('admin', __name__)
-# Assign user_model as account table model
 
 
 # Get all accounts
@@ -32,19 +32,25 @@ def account_manager():
     # Get current page for specific data
     current_page = request.args.get('page', 1, type=int)
     if s_query:
+        # Try crypt query if it's a _id return query _id
+        try:
+            query_data = {
+                '_id': ObjectId(s_query)
+            }
         # Get query data from query
-        query_data = {
-            '_id': {'$ne': ObjectId(adm['_id'])},
-            '$or': [
-                {'username': {'$regex': s_query, "$options": "i"}},
-                {'usercode': {'$regex': s_query, "$options": "i"}},
-                {'fullname': {'$regex': s_query, "$options": "i"}}
-            ]
-        }
+        except InvalidId:
+            query_data = {
+                '_id': {'$ne': ObjectId(adm['_id'])},
+                '$or': [
+                    {'username': {'$regex': s_query, "$options": "i"}},
+                    {'usercode': {'$regex': s_query, "$options": "i"}},
+                    {'fullname': {'$regex': s_query, "$options": "i"}}
+                ]
+            }
     else:
         # Default query data
         query_data = {'_id': {'$ne': ObjectId(adm['_id'])}}
-        # Get data accounts exclude admin accounts
+    # Query data and get total_pages
     account_data, total_pages = user_model.pagination(current_page, perpage, query_data, [('username', 1)])
     try:
         # Edit some sensitive data in account data
