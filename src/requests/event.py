@@ -1,11 +1,8 @@
 import traceback
-
-import numpy as np
 import pandas as pd
+
 from io import BytesIO
 from _datetime import datetime
-
-import xlsxwriter
 from bson import ObjectId
 from bson.errors import InvalidId
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_file
