@@ -165,10 +165,10 @@ def event_detail(_id):
     if s_query:
         # Get query data from query search
         query_data = {
-            '_id': ObjectId(s_query),
             '$or': [
                 {'username': {'$regex': s_query, "$options": "i"}},
                 {'usercode': {'$regex': s_query, "$options": "i"}},
+                {'_id': ObjectId(s_query)},
             ]
         }
     else:
