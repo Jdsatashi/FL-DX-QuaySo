@@ -185,7 +185,6 @@ def event_detail(_id):
         }
     # Process pagination
     user_list, max_page = user_model.pagination(current_page, perpage, query_data)
-    logger.info(f"User: {user_list}")
     # Loop through user to add more info
     user_data = loop_through_user(user_list, _id, point_exchange)
     # Put all require render data to context
