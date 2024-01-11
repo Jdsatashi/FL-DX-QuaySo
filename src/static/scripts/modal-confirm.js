@@ -37,9 +37,9 @@ function JdFormModal(info) {
             })
             // Add list data to input as string datatype
             inputModalForm.value = listValue.join(', ')
-            console.log(inputModalForm.value)
         } else {
-
+            // Warning if input length of number <= 0
+            alert("Bạn phải chọn ít nhất một số để có thể xác nhận.")
         }
     })
 
