@@ -87,6 +87,7 @@ def reset_password(_id):
             Markup(f'Bạn phải đăng nhập để thay đổi mật khẩu. <strong><a href="{url_for("user.login")}" style="color: '
                    '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
+    logger.info(f"User change password: {user}")
     is_admin = admin_authorize()
     logger.info(f"Authorize admin: {is_admin}")
     form = UpdatePasswordForm()
