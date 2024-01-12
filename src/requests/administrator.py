@@ -385,6 +385,10 @@ def account_edit(_id):
     )
 
 
+@admin.route('/account/reset-password/<string:_id>', methods=['POST', 'GET'])
+def account_reset_password(_id):
+    pass
+
 # Rename file if file exist in same path
 def check_file_name(path, file):
     file_name = file.filename
