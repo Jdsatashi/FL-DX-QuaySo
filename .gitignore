@@ -11,3 +11,6 @@ src/static/dist
 vercel.json
 *.log
 uploads/
+settings.yaml
+client_secrets.json
+credentials.json
