@@ -1,4 +1,6 @@
 from _datetime import datetime
+
+import flask
 from bson import ObjectId
 from bson.errors import InvalidId
 from flask import render_template, redirect, request, flash, url_for, Blueprint
@@ -64,7 +66,8 @@ def account_manager():
                 user_model.update(ObjectId(data['_id']), {'is_active': True})
                 data['is_active'] = True
         logger.info("Get all data account success.")
-        return render_template('admin/account/index.html', accounts=account_data, current_page=current_page,
+        return render_template('admin/account/index.html',
+                               accounts=account_data, current_page=current_page,
                                max_page=total_pages, s_query=s_query, title="Quản lý tài khoản")
     # Return error
     except Exception as e:
@@ -190,10 +193,9 @@ def account_add_list():
                     case _:
                         flash(f"Định dạng file phải là '.csv' hoặc '.xlsx'.", "warning")
                         return redirect(url_for('admin.account_add_list'))
-                # Get event name from event column at first row
-                event_name = csv_data.loc[0, 'event']
-                # Get event data from event name
-                event = event_model.get_one({'event_name': event_name})
+                # Get event name from form
+                event_id = flask.request.values.get('event_selected')
+                event = event_model.get_one({'_id': ObjectId(event_id)})
                 event_id = str(event['_id'])
                 exchange_point = event['point_exchange']
                 # Get current date time for create or update
@@ -236,27 +238,29 @@ def account_add_list():
                             logger.error(f'Error when adding user {data_dict["username"]}.\nError: {e}\n{error_info}"')
                             flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                             return redirect(url_for('admin.account_add_list'))
-                        # Get user points
-                        user_point = int(row['point_dm2'])
-                        # Get turn choices
-                        turn_choices = user_point // int(exchange_point)
-                        # Add data to event_assign dict
-                        event_assign.append({
-                            'user_id': str(user_id),
-                            'event_id': event_id,
-                            'user_point': user_point,
-                            'turn_roll': turn_choices,
-                            'date_created': now
-                        })
-                try:
-                    # Handing add data
-                    join_event_model.create_many(event_assign)
-                    logger.info("Assign users to event success")
-                # Return error
-                except Exception as e:
-                    error_info = traceback.format_exc()
-                    logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
-                    flash(f"Error when add file {uploaded_file.filename}!", 'warning')
+                        if event_id is not None:
+                            # Get user points
+                            user_point = int(row['point_dm2'])
+                            # Get turn choices
+                            turn_choices = user_point // int(exchange_point)
+                            # Add data to event_assign dict
+                            event_assign.append({
+                                'user_id': str(user_id),
+                                'event_id': event_id,
+                                'user_point': user_point,
+                                'turn_roll': turn_choices,
+                                'date_created': now
+                            })
+                if event_id is not None:
+                    try:
+                        # Handing add data
+                        join_event_model.create_many(event_assign)
+                        logger.info("Assign users to event success")
+                    # Return error
+                    except Exception as e:
+                        error_info = traceback.format_exc()
+                        logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
+                        flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                 flash(f"Added file: {uploaded_file.filename} successfully!", 'success')
                 return redirect(url_for('admin.account_add_list'))
             # Return error
@@ -265,7 +269,8 @@ def account_add_list():
                 logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
                 flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                 return redirect(url_for('admin.account_add_list'))
-    return render_template('admin/account/input_csv.html')
+    events = event_model.get_all()
+    return render_template('admin/account/input_csv.html', events=events)
 
 
 # Updating accounts

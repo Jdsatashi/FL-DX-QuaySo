@@ -24,7 +24,29 @@
                 <form method="POST" class="max-w-md mx-auto" enctype="multipart/form-data">
                     <fieldset>
                         <label for="csv_list" class="input-label">Danh sách user (File CSV, Excel...)</label>
-                        <input id="csv_list" name="csv_list" type="file" class="form-input-file">
+                        <input id="csv_list" name="csv_list" type="file" class="form-input-file"
+                               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+
+                        <div id="event-group" class="w-[90%] mx-auto mt-3">
+                            {% if events %}
+                                <div class="flex justify-between">
+                                    <h3 class="text-slate-700 text-lg">Sự kiện</h3>
+                                </div>
+                            {% endif %}
+                            {% for event in events %}
+                                <label for="{{ event._id }}">
+                                    <div class="flex justify-between items-center ps-4 border border-gray-200 rounded-lg dark:border-gray-700 mb-1">
+                                        <div class="w-auto py-3">
+                                            <input id="{{ event._id }}" type="radio"
+                                                   value="{{ event._id }}"
+                                                   name="event_selected"
+                                                   class="checkbox-input w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                            <span class="py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ event.event_name }}</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        </div>
 
                         <div class="mt-2 text-center mx-auto">
                             <button type="submit" class="btn-primary w-52 py-2.5">Thêm danh sách</button>
