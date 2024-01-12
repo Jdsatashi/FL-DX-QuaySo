@@ -91,7 +91,7 @@ def reset_password(_id):
     is_admin = admin_authorize()
     logger.info(f"Authorize admin: {is_admin}")
     form = UpdatePasswordForm()
-    if user['_id'] == _id and is_admin == False or is_admin:
+    if user['_id'] == _id or is_admin:
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
@@ -183,9 +183,6 @@ def admin_authorize():
     if 'password' in user:
         user.pop('password')
     # Compare if role_id of user is = role_id of role admin
-    is_role_admin = user['role_id']
-    if not is_role_admin == role_admin_id:
-        print(
-            f"Test role false: \nUser role: {is_role_admin}\nAdmin role: {role_admin_id}")
+    if not user['role_id'] == role_admin_id:
         return False
     return user
