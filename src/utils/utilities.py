@@ -48,13 +48,13 @@ def create_number_list(max_range: int, limit: int, event_id: str, user_id: str):
     if rolled:
         for roll in rolled:
             if 'selected_number' in roll and 'number_choices' in roll and roll['event_id'] == event_id:
-                list_selected.append(roll['selected_number'])
+                if roll['selected_number'] != '':
+                    list_selected.append(roll['selected_number'])
     # Add number was selected to list selected
     for number in list_selected:
         arr = number.split(', ')
         for i in arr:
-            if type(i) in [int, float]:
-                all_number_selected.append(int(i))
+            all_number_selected.append(int(i))
     # Dict for number selected
     for num in all_number_selected:
         if num not in unavailable_number:
@@ -73,6 +73,7 @@ def create_number_list(max_range: int, limit: int, event_id: str, user_id: str):
                     list_number[i] = limit - unavailable_number[i]
             else:
                 list_number[i] = limit
+    # logger.info(f"List avaiable number: {list_number}")
     return list_number.keys()
 
 
@@ -139,19 +140,28 @@ def auto_random(event_id):
         "event_id": event_id,
         "$expr": {"$gt": ["$turn_roll", "$number_choices"]},
         "turn_roll": {"$gt": 0},
+        "$and": [
+            {"number_choices": {"$exists": True}},
+            {"selected_number": {"$exists": True}}
+        ]
     })
     event_join = list(event_join)
     wasted_choice = list(wasted_choice)
-    logger.info(f"List user chưa chọn: {event_join}")
-    logger.info(f"List user còn lượt chọn: {wasted_choice}")
-    # Combine list of user not join and user not use all turn
-    data_list = event_join + wasted_choice
-    logger.info(f"Combine list: {data_list}")
+    if any(event_join):
+        logger.info("Event join ok")
+        handle_random_for_each_user(event_join, event, event_id)
+    if any(wasted_choice):
+        logger.info("Wasted join ok")
+        handle_random_for_each_user(wasted_choice, event, event_id)
+
+
+def handle_random_for_each_user(user_list, event, event_id):
     now = datetime.now()
-    for user in data_list:
+    for user in user_list:
         # Print user id
         number_choices = 0 if 'number_choices' not in user else user['number_choices']
         message_logger.info(f"User id: {user['user_id']} | Lượt chọn ban đầu: {user['turn_roll']} | Lượt đã chọn: {number_choices}.")
+        message_logger.info(f"Số đã chọn ban đầu: [{user['selected_number']}]")
         # Create available number dict
         number_list = create_number_list(event['range_number'], event['limit_repeat'], event_id, user['user_id'])
         # Get number of turn roll or the roll was not selected
@@ -160,12 +170,11 @@ def auto_random(event_id):
         message_logger.info(f"Lượt chọn khả thi: {turn_roll} lượt.")
         # Random number ticket
         list_selected = random.sample(number_list, turn_roll)
-        message_logger.info(f"Tổng số đã random: {len(list_selected)} số.")
         # Get finally list after random | can be all random number list or old number list + random list
         number_selected = list_selected \
             if 'number_choices' not in user else list_selected + list(map(int, user['selected_number'].split(', ')))
+        message_logger.info(f"Random {len(list_selected)} số: {list_selected}.")
         message_logger.info(f"Tổng số đã chọn + số random: {len(number_selected)}.")
-        message_logger.info(f"Các số random: {list_selected}.")
         # Change data array to string for saving to database
         list_selected_str = ', '.join(list(map(str, sorted(number_selected))))
         # Process updated

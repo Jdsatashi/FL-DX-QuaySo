@@ -49,7 +49,7 @@
                         </td>
                         <td class="px-6 py-4 ms-2">
                             <div class="flex items-center">
-                                {% if event['is_active'] %}
+                                {% if event.is_active %}
                                     <div class="h-2.5 w-2.5 sm-max:h-1.5 sm-max:w-3 sm-max:max-h-1.5 sm-max:max-w-3 rounded-full bg-green-500 me-2"></div>
                                     Đang diễn ra
                                 {% else %}
@@ -60,7 +60,10 @@
                         </td>
                         <td class="flex items-center px-6 py-4 ms-2">
                             <a href="{{ url_for('event.update', _id=event['_id']) }}"
-                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                               class="font-medium text-blue-600 dark:text-blue-500 me-2 hover:underline">Edit</a>
+                            <a href="{{ url_for('event.event_detail', _id=event['_id'], event_name=event['event_name'])}}"
+                               title="Chi tiết sự kiện {{ event.event_name }}"
+                               class="font-medium text-gray-800 dark:text-gray-700 hover:underline">Detail</a>
                         </td>
                     </tr>
                 {% endfor %}

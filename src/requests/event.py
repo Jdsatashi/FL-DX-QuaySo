@@ -1,11 +1,8 @@
 import traceback
-
-import numpy as np
 import pandas as pd
+
 from io import BytesIO
 from _datetime import datetime
-
-import xlsxwriter
 from bson import ObjectId
 from bson.errors import InvalidId
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_file
@@ -188,7 +185,6 @@ def event_detail(_id):
         }
     # Process pagination
     user_list, max_page = user_model.pagination(current_page, perpage, query_data)
-    logger.info(f"User: {user_list}")
     # Loop through user to add more info
     user_data = loop_through_user(user_list, _id, point_exchange)
     # Put all require render data to context
@@ -240,7 +236,7 @@ def loop_through_user(user_list, _id, point_exchange):
 # })
 
 
-@events.route('/event-test/<_id>')
+@events.route('/event-print-user/<_id>')
 def print_events_joins_data(_id):
     # Create data frame from data
     df_data = create_dataframe(_id)
