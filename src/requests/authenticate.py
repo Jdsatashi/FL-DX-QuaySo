@@ -87,9 +87,10 @@ def reset_password(_id):
         flash(Markup(f'Bạn phải đăng nhập để thay đổi mật khẩu. <strong><a href="{url_for("user.login")}" style="color: '
                      '#3a47a6">Click để đăng nhập</a></strong>'), 'warning')
         return redirect(url_for('home'))
-    # is_admin = admin_authorize()
+    is_admin = admin_authorize()
+    logger.info(f"Authorize admin: {is_admin}")
     form = UpdatePasswordForm()
-    if user['_id'] == _id: #or is_admin:
+    if user['_id'] == _id or is_admin:
         if request.method == 'POST':
             password = form.new_password.data
             hash_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
@@ -100,10 +101,10 @@ def reset_password(_id):
                         flash(f"Cập nhật nhật khẩu mới thành công.", "success")
                         message_logger.info(f"User '{user['username']}' đã thay đổi password.")
                         return redirect(url_for('home'))
-                    # elif is_admin:
-                    #     flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
-                    #     message_logger.info(f"Admin đã thay đổi password cho user '{user['username']}'.")
-                    #     return redirect(url_for('home'))
+                    elif is_admin:
+                        flash(f"Cập nhật mật khẩu thành công cho user: {user['username']}.", "success")
+                        message_logger.info(f"Admin đã thay đổi password cho user '{user['username']}'.")
+                        return redirect(url_for('home'))
                 except Exception as e:
                     logger.error(f"Error while reset password.\n{e}")
                     return redirect(url_for('home'))
