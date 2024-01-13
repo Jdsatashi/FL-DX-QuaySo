@@ -30,11 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// giftRuleBtn.onclick = function () {
-//     let giftRuleImg = document.getElementById('giftRuleImage')
-//     giftRuleImg.style.display = 'block'
-// }
-
 randomNumber.onclick = RandomChoice
 
 // Live searching navigate function
@@ -54,8 +49,6 @@ listItem.forEach((item) => {
             }
             if (turnChoose > 0) {
                 alert(`Bạn đã chọn ${turnChoose} số, loại bỏ số hiện tại để chọn số mới.`)
-            } else {
-                alert(`Bạn không có lượt chọn nào.`)
             }
         } else {
             clickAddItem(item, item_value)

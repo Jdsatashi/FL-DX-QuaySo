@@ -49,6 +49,7 @@ def roll_number(_id):
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
+    data = dict()
     # Get current event to choose number
     events = event_model.get_one({'_id': ObjectId(_id)})
     # Edit element of event
@@ -59,7 +60,6 @@ def roll_number(_id):
     # Format date follow by day-month-year for easily readable
     date_show = datetime.strptime(events['date_close'], '%Y-%m-%d').strftime('%d-%m-%Y')
     events.update({'date_show': date_show})
-    logger.debug(events['date_close'])
     # Get data rolled if user has joined event
     rolled = join_event_model.get_one({'user_id': user['_id'], 'event_id': _id})
     # Assign turn choice for user
@@ -91,7 +91,6 @@ def roll_number(_id):
             return redirect(url_for('roll_number', _id=_id))
         # Change data type of close_date value to datetime
         close_date = events['date_close']
-
         # Validate if current date > closure date
         if not events['is_active']:
             flash(f"Sự kiện được tạm dừng hoặc đã kết thúc.", 'warning')
@@ -151,20 +150,23 @@ def roll_number(_id):
         date_random = date_close - timedelta(days=3)
         date = date_random.strftime('%d-%m-%Y')
         # Data send to template
+        data.update({
+            'form': form,
+            'number_list': number_list,
+            'events': events,
+            'user': user,
+            '_id': _id,
+            'turn_chosen': turn_chosen,
+            'number_rolled': number_rolled,
+            'now': current_date,
+            'date_will_random': date
+        })
         # Logging data
         message_logger.info(f"{user['username']} vào trang chọn số.")
         return render_template(
             'choose_number/choose_number.html',
             title="Chọn số",
-            form=form,
-            number_list=number_list,
-            events=events,
-            user=user,
-            _id=_id,
-            turn_chosen=turn_chosen,
-            number_rolled=number_rolled,
-            now=current_date,
-            date_will_random=date
+            data=data
         )
 
 
