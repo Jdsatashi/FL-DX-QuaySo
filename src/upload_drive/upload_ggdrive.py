@@ -1,5 +1,6 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+import os
 
 from src import logs
 
@@ -10,7 +11,7 @@ def upload_to_drive(file_send, filename):
     drive = GoogleDrive(gg_auth)
 
     # Folder destination id
-    folder = '1MEuys73JRqC79dQnc0j95BXZK8tTFd6Y'
+    folder = os.environ.get('GG_DRIVE_FOLDER')
 
     # Handle create app log file and copy local content file
     file_app_log = drive.CreateFile({'parents': [{'id': folder}], 'title': filename['app_log_filename']})

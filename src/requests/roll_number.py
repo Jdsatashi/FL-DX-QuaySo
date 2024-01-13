@@ -9,7 +9,7 @@ from src.forms import NumberSelectedForm
 from src.app import app
 from src.logs import message_logger, logger
 from src.requests.authenticate import authorize_user
-from src.utils.constants import event_model, join_event_model, user_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
+from src.utils.constants import event_model, join_event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
 from src.utils.utilities import create_number_list
 
 
@@ -54,6 +54,7 @@ def roll_number(_id):
     # Edit element of event
     events['_id'] = str(events['_id'])
     events.pop('date_created')
+    # Get range number for generating number list
     max_range = MAX_NUMBER if 'range_number' not in events else events['range_number']
     # Format date follow by day-month-year for easily readable
     date_show = datetime.strptime(events['date_close'], '%Y-%m-%d').strftime('%d-%m-%Y')
@@ -66,6 +67,7 @@ def roll_number(_id):
     user['point'] = rolled['user_point']
     turn_chosen = 0
     number_rolled = []
+    # Check if user was rolled and add get number chosen
     if 'selected_number' in rolled and 'number_choices' in rolled:
         number_rolled = rolled['selected_number'].split(', ')
         if 'number_choices' not in rolled:
@@ -105,6 +107,7 @@ def roll_number(_id):
         }
         # Case first time choose number
         if 'selected_number' not in rolled and 'number_choices' not in rolled:
+            # Try handle add new rolled number and number choices
             try:
                 id_roll = str(rolled['_id'])
                 join_event_model.update(ObjectId(id_roll), form_data)
@@ -114,12 +117,14 @@ def roll_number(_id):
                 message_logger.info(
                     f"Sự kiện: {events['event_name']}: User '{user['username']}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
                 return redirect(url_for('roll_number', _id=_id))
+            # Return message with error
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
                 logger.error(f"Error when choosing number.\n{e}")
                 return redirect(url_for('choose_event'))
         # Case re-choice number
         else:
+            # Try handle update and replace old numbers
             try:
                 form_data.pop('date_created')
                 form_data.update({'date_updated': datetime.utcnow()})
@@ -131,6 +136,7 @@ def roll_number(_id):
                 message_logger.info(
                     f"Sự kiện: {events['event_name']}: User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
                 return redirect(url_for('roll_number', _id=_id))
+            # Return exception error
             except Exception as e:
                 flash("Lỗi server, vui lòng thử lại.")
                 logger.error(f"Error when re choosing number.\n{e}")
@@ -144,12 +150,14 @@ def roll_number(_id):
         # Date random to take random if user didn't select number
         date_random = date_close - timedelta(days=3)
         date = date_random.strftime('%d-%m-%Y')
+        # Data send to template
         # Logging data
         message_logger.info(f"{user['username']} vào trang chọn số.")
         return render_template(
             'choose_number/choose_number.html',
-            number_list=number_list, title="Chọn số",
+            title="Chọn số",
             form=form,
+            number_list=number_list,
             events=events,
             user=user,
             _id=_id,
@@ -170,12 +178,15 @@ def information():
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
+    # Create data dict to store data
     data = {}
-    list_event_joined = list()
 
+    list_event_joined = list()
+    # Get event user joined
     join_event = join_event_model.get_many({'user_id': user['_id']})
     for event in join_event:
         list_event_joined.append(event['event_id'])
+        # If user was selected number
         if 'selected_number' in event and 'number_choices' in event:
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
@@ -183,6 +194,7 @@ def information():
                 'selected_number': ', '.join(sorted(event['selected_number'].split(', '), key=int)),
                 'user_point': event['user_point']
             }
+        # When user was not selected number
         else:
             data[event['event_id']] = {
                 'turn_roll': int(event['turn_roll']),
@@ -190,6 +202,7 @@ def information():
                 'selected_number': '',
                 'user_point': event['user_point']
             }
+    # Get event user was joined
     for id_event in list_event_joined:
         event = event_model.get_one(ObjectId(id_event))
         data[id_event].update({
@@ -198,13 +211,14 @@ def information():
             'event_active': event['is_active'],
             'point_exchange': event['point_exchange']
         })
+    # Return render template and log info
     message_logger.info(f"User {user['username']} tiến vào trang thông tin")
     return render_template('choose_number/info.html', infos=data, user=user, title="Thông tin sự kiện")
 
 
 @app.route('/thong-tin/prints/<string:_id>')
 def print_info(_id):
-    # authorize user
+    # Authorize user
     user = authorize_user()
     if not user:
         flash(Markup(
@@ -242,7 +256,7 @@ def print_info(_id):
             title="In file"
         )
         filename = f"Dongxanh-{events['event_name']}-{user['username']}.pdf"
-        # return template pdf
+        # Return template pdf
         message_logger.info(f"User {user['username']} đã in sự kiện {events['event_name']}.")
         return render_pdf(HTML(string=template))
     else:
