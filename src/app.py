@@ -117,8 +117,8 @@ scheduler.add_job(
 scheduler.add_job(
     func=upload_daily_log,
     trigger="cron",
-    hour="12",
-    minute="38",
+    hour="23",
+    minute="59",
     timezone="Asia/Ho_Chi_Minh",
 )
 

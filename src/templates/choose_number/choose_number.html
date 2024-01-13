@@ -115,7 +115,7 @@
                                 </div>
                                 {% if data.turn_chosen > 0 %}
                                     <div class="mb-4 mt-1 element-center md-max:hidden">
-                                        <a href="{{ url_for('print_info', _id=events['_id']) }}"
+                                        <a href="{{ url_for('print_info', _id=data.events['_id']) }}"
                                            class="flex font-medium text-base text-green-600 hover:text-emerald-500"
                                            title="File pdf">
                                             <svg class="w-4 h-4 mt-1 me-1 text-green-600 hover:text-emerald-500 dark:text-white"
