@@ -169,7 +169,6 @@ def handle_random_for_each_user(user_list, event, event_id):
             if number_choices == 0 else user['turn_roll'] - user['number_choices']
         message_logger.info(f"Lượt chọn khả thi: {turn_roll} lượt.")
         # Random number ticket
-        logger.info(f"Turn roll: {turn_roll} | Length: {len(number_list)}")
         list_selected = number_list if turn_roll > len(number_list) else random.sample(number_list, turn_roll)
         if any(list_selected):
             # Get finally list after random | can be all random number list or old number list + random list
@@ -194,7 +193,6 @@ def handle_random_for_each_user(user_list, event, event_id):
         else:
             message_logger.info(f"Số lượng tem đã hết.")
             break
-
 
 
 def update_user_role(_id):
