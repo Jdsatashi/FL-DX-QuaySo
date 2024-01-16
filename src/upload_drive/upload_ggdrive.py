@@ -16,8 +16,8 @@ def upload_to_drive(file_send, filename):
     folder = os.environ.get('GG_DRIVE_FOLDER')
 
     today = datetime.now()
-    app_log = today.strftime('%d-%m-%Y') + '_' + filename['app_log_filename']
-    msg_log = today.strftime('%d-%m-%Y') + '_' + filename['msg_filename']
+    app_log = filename['app_log_filename']
+    msg_log = filename['msg_filename']
     app_log_path = file_send['app_log_path']
     msg_log_path = file_send['msg_log_path']
     # Handle create app log file and copy local content file
@@ -30,6 +30,6 @@ def upload_to_drive(file_send, filename):
     file_msg_log.SetContentFile(filename=msg_log_path)
     logs.logger.info(f"Uploading file log {msg_log} to drive.")
 
-    # Uploading to drive
+    # Uploading to drive asd
     file_app_log.Upload()
     file_msg_log.Upload()

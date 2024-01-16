@@ -1,3 +1,5 @@
+import os
+import traceback
 from _datetime import datetime
 import bcrypt
 
@@ -18,7 +20,8 @@ def add_default_role():
 
 
 def create_admin_account():
-    admin = ACCOUNT_TABLE.find_one({'username': 'ADMIN'})
+    admin_username = os.environ.get('ADMIN_USER')
+    admin = ACCOUNT_TABLE.find_one({'username': admin_username})
     if not admin:
         role_admin_id = is_admin
         logger.info(f"is_admin: {is_admin}")
@@ -27,15 +30,16 @@ def create_admin_account():
             role_admin = ROLE_TABLE.find_one({'role': 'admin'})
             role_admin_id = str(role_admin['_id']) if role_admin else ROLE_TABLE.find_one(
                 {'role': 'admin'})
-        password = 'dxAdministrator'.encode("utf-8")
-        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
         try:
+            admin_password = os.environ.get('ADMIN_PASSWORD')
+            hashed_password = bcrypt.hashpw(admin_password.encode('utf-8'), bcrypt.gensalt())
             ACCOUNT_TABLE.insert_one({
-                "username": 'ADMIN',
+                "username": admin_username,
                 "password": hashed_password,
                 "role_id": role_admin_id,
                 "date_created": datetime.utcnow()
             })
             message_logger.info("Added admin account.")
         except Exception as e:
-            logger.error("Create admin errors. ", e)
+            error = traceback.format_exc()
+            logger.error("Create admin errors. ", f"Error type: {e}", f"\n{error}")
