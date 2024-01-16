@@ -61,6 +61,7 @@ def upload_daily_log():
         {'msg_log_path': logs.msg_path_file, 'app_log_path': logs.app_log_path_file},
         {'msg_filename': logs.msg_file, 'app_log_filename': logs.app_log_file, 'file_path': logs.log_folder_path}
         )
+    logs.logger.info("End process upload logs to drive.")
 
 
 # Daily jobs function asd
@@ -98,15 +99,19 @@ def check_active():
             logs.message_logger.info(f"Auto random event '{event['event_name']}' in the last 3 days.")
             auto_random(str(event['_id']))
             auto_random(str(event['_id']))
+    # Refresh new logs for everyday
+    logs.create_log()
+    logs.logger.info(f"New logs file.")
+    logs.message_logger.info(f"New message logs file.")
 
 
-# Date time to proceed daily jobs
+# Date time to proceed daily jobs test
 scheduler.add_job(
     func=check_active,
     trigger="cron",
     hour="0",
-    minute="4",
-    second="00",
+    minute="0",
+    second="25",
     timezone="Asia/Ho_Chi_Minh",
 )
 
