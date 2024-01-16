@@ -22,18 +22,18 @@ def create_log():
     new_logger.setLevel(logging.DEBUG)
     new_logger.addHandler(consoleHandler)
 
-    fileHandler = RotatingFileHandler(app_log_path)
+    fileHandler = RotatingFileHandler(app_log_path, encoding='utf-8')
     new_logger.addHandler(fileHandler)
     fileHandler.setFormatter(logFormat)
 
     # Create custom message log
     msg_logger = logging.getLogger('message_logger')
-    message_log_handler = RotatingFileHandler(msg_path)
+    message_log_handler = RotatingFileHandler(msg_path, encoding='utf-8')
     message_log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(message)s')
     msg_logger.setLevel(logging.INFO)
     message_log_handler.setFormatter(message_log_formatter)
     msg_logger.addHandler(message_log_handler)
-    return new_logger, msg_logger, msg_filename, app_log_filename, msg_path, app_log_path
+    return new_logger, msg_logger, msg_filename, app_log_filename, msg_path, app_log_path, today
 
 
-logger, message_logger, msg_file, app_log_file, msg_path_file, app_log_path_file = create_log()
+logger, message_logger, msg_file, app_log_file, msg_path_file, app_log_path_file, log_date = create_log()

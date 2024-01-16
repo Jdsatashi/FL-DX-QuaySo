@@ -100,9 +100,11 @@ def check_active():
             auto_random(str(event['_id']))
             auto_random(str(event['_id']))
     # Refresh new logs for everyday
-    logs.create_log()
-    logs.logger.info(f"New logs file.")
-    logs.message_logger.info(f"New message logs file.")
+    today = now.strftime('%d-%m-%Y')
+    if today > logs.log_date:
+        logs.create_log()
+        logs.logger.info(f"New logs file.")
+        logs.message_logger.info(f"New message logs file.")
 
 
 # Date time to proceed daily jobs test
@@ -111,7 +113,7 @@ scheduler.add_job(
     trigger="cron",
     hour="0",
     minute="0",
-    second="25",
+    second="15",
     timezone="Asia/Ho_Chi_Minh",
 )
 
