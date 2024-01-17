@@ -1,38 +1,39 @@
 import logging
 import os
-from datetime import datetime, time
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
+from datetime import datetime
+from logging.handlers import RotatingFileHandler
 from log_files.logs_path import log_folder_path
 
-today = datetime.today().strftime("%d-%m-%Y")
 
-msg_file = 'message.log'
-app_log_file = 'info.log'
+def create_log():
+    today = datetime.today().strftime("%d-%m-%Y")
 
-msg_path_file = os.path.join(log_folder_path, msg_file)
-app_log_path_file = os.path.join(log_folder_path, app_log_file)
+    msg_filename = today + '_message.log'
+    app_log_filename = today + '_info.log'
 
-backup_time1 = time(12, 0, 15)
-backup_time2 = time(12, 0, 30)
+    msg_path = os.path.join(log_folder_path, msg_filename)
+    app_log_path = os.path.join(log_folder_path, app_log_filename)
+
+    # Terminal logger
+    new_logger = logging.getLogger()
+    logFormat = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormat)
+    new_logger.setLevel(logging.DEBUG)
+    new_logger.addHandler(consoleHandler)
+
+    fileHandler = RotatingFileHandler(app_log_path)
+    new_logger.addHandler(fileHandler)
+    fileHandler.setFormatter(logFormat)
+
+    # Create custom message log
+    msg_logger = logging.getLogger('message_logger')
+    message_log_handler = RotatingFileHandler(msg_path)
+    message_log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(message)s')
+    msg_logger.setLevel(logging.INFO)
+    message_log_handler.setFormatter(message_log_formatter)
+    msg_logger.addHandler(message_log_handler)
+    return new_logger, msg_logger, msg_filename, app_log_filename, msg_path, app_log_path
 
 
-# Terminal logger
-logger = logging.getLogger()
-logFormat = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
-consoleHandler = logging.StreamHandler()
-consoleHandler.setFormatter(logFormat)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(consoleHandler)
-
-fileHandler = TimedRotatingFileHandler(app_log_path_file, when="midnight", interval=30, backupCount=30)
-logger.addHandler(fileHandler)
-fileHandler.setFormatter(logFormat)
-
-
-# Create custom message log
-message_logger = logging.getLogger('message_logger')
-message_log_handler = TimedRotatingFileHandler(msg_path_file, when="midnight", interval=30, backupCount=30)
-message_log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(message)s')
-message_logger.setLevel(logging.INFO)
-message_log_handler.setFormatter(message_log_formatter)
-message_logger.addHandler(message_log_handler)
+logger, message_logger, msg_file, app_log_file, msg_path_file, app_log_path_file = create_log()
