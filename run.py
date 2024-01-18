@@ -2,6 +2,7 @@ import os
 
 from src.app import app
 
+app.logger.info('Starting webapp.')
 
 FLASK_PORT = os.environ.get('FLASK_RUN_PORT')
 FLASK_HOST = os.environ.get('FLASK_RUN_HOST')

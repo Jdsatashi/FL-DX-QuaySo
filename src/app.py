@@ -59,11 +59,11 @@ def upload_daily_log():
     logs.logger.info("Upload daily log files to drive.")
     upload_ggdrive.upload_to_drive(
         {'msg_log_path': logs.msg_path_file, 'app_log_path': logs.app_log_path_file},
-        {'msg_filename': logs.msg_file, 'app_log_filename': logs.app_log_file}
+        {'msg_filename': logs.msg_file, 'app_log_filename': logs.app_log_file, 'file_path': logs.log_folder_path}
         )
 
 
-# Daily jobs function
+# Daily jobs function asd
 def check_active():
     # Assign event and user model
     event_model = Models(table=EVENT_TABLE)
@@ -91,10 +91,7 @@ def check_active():
         logs.message_logger.info(f"Update '{event['event_name']}' daily.")
         # Check and update all users numbers selected
         update_user_join(str(event['_id']))
-        logs.message_logger.info(
-            f"Check time: Closedate: {close_date} | Now: {current_date} | Last 3 closedate: {last_3_date.strftime('%Y-%m-%d')}"
-            f"\n{close_date >= current_date} | {close_date > last_3_date.strftime('%Y-%m-%d')}",
-        )
+
         logs.message_logger.info(f"Event id: {str(event['_id'])}")
         # Handle auto selected numbers for user
         if close_date >= current_date > last_3_date.strftime('%Y-%m-%d'):
@@ -108,8 +105,8 @@ scheduler.add_job(
     func=check_active,
     trigger="cron",
     hour="0",
-    minute="1",
-    # second="25",
+    minute="4",
+    second="00",
     timezone="Asia/Ho_Chi_Minh",
 )
 
