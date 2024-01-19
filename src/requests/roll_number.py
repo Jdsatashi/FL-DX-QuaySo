@@ -6,8 +6,7 @@ from flask_weasyprint import render_pdf, HTML
 from markupsafe import Markup
 
 from src.forms import NumberSelectedForm
-from src.app import app
-from src.logs import message_logger, logger
+from src.app import app, message_logger, logger
 from src.requests.authenticate import authorize_user
 from src.utils.constants import event_model, join_event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
 from src.utils.utilities import create_number_list

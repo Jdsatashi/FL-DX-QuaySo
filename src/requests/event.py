@@ -8,7 +8,7 @@ from bson.errors import InvalidId
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_file
 
 from src.forms import EventForm
-from src.logs import logger
+from src.app import logger
 from src.requests.authenticate import admin_authorize
 from src.utils.constants import event_model, join_event_model, user_model
 from src.utils.utilities import update_user_join, create_folder

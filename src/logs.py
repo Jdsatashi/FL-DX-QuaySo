@@ -14,7 +14,7 @@ def create_log():
     msg_path = os.path.join(log_folder_path, msg_filename)
     app_log_path = os.path.join(log_folder_path, app_log_filename)
 
-    # Terminal logger
+    # Terminal logger a
     new_logger = logging.getLogger()
     logFormat = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
     consoleHandler = logging.StreamHandler()
@@ -33,7 +33,13 @@ def create_log():
     msg_logger.setLevel(logging.INFO)
     message_log_handler.setFormatter(message_log_formatter)
     msg_logger.addHandler(message_log_handler)
-    return new_logger, msg_logger, msg_filename, app_log_filename, msg_path, app_log_path, today
+    return new_logger, msg_logger, msg_filename, app_log_filename, today
 
 
-logger, message_logger, msg_file, app_log_file, msg_path_file, app_log_path_file, log_date = create_log()
+def clear_log_handlers(log):
+    for handler in log.handlers:
+        log.removeHandler(handler)
+
+
+if __name__ == '__main__':
+    logger, message_logger, msg_file, app_log_file, log_date = create_log()

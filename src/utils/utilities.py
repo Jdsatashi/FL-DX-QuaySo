@@ -1,8 +1,7 @@
 from _datetime import datetime
 from bson import ObjectId
 
-from src import logs
-from src.logs import logger, message_logger
+from src.app import logger, message_logger
 from src.utils.constants import join_event_model, role_model, event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUM, \
     user_model
 
@@ -27,7 +26,7 @@ def create_folder(folder_name):
     uploads_event_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'uploads')
     year_path = os.path.join(uploads_event_folder, str(year))
     folder_path = os.path.join(year_path, folder_name)
-    logs.logger.info(f"Make folder {folder_path}")
+    logger.info(f"Make folder {folder_path}")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
     return folder_path

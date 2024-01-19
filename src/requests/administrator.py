@@ -5,7 +5,7 @@ from bson import ObjectId
 from bson.errors import InvalidId
 from flask import render_template, redirect, request, flash, url_for, Blueprint
 
-from src.logs import message_logger, logger
+from src.app import message_logger, logger
 from src.requests.authenticate import admin_authorize
 from src.forms import CreateAccountForm, UpdateAccountForm
 from src.utils.constants import user_model, event_model, join_event_model

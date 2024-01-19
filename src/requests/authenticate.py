@@ -3,9 +3,8 @@ from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
 from markupsafe import Markup
 
-from src.app import app
+from src.app import app, message_logger, logger
 from src.forms import LoginForm, UpdatePasswordForm, UpdateInfoAccountForm
-from src.logs import message_logger, logger
 from src.utils.constants import user_model
 from src.utils.utilities import role_auth_id, role_admin_id
 

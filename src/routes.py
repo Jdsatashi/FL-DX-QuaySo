@@ -1,7 +1,6 @@
 from flask import render_template, session
 
-from src.app import app
-from src.logs import message_logger
+from src.app import app, message_logger
 from src.requests.authenticate import authorize_user
 
 

@@ -17,6 +17,7 @@ if not os.path.exists("log_files"):
 
 # Add custom logging
 from src import logs
+logger, message_logger, msg_file, app_log_file, log_date = logs.create_log()
 
 # Create app
 app = Flask(__name__)
@@ -56,15 +57,13 @@ from src.upload_drive import upload_ggdrive
 
 # Upload daily log_files
 def upload_daily_log():
-    logs.create_log()
     upload_ggdrive.upload_to_drive(
-        {'msg_log_path': logs.msg_path_file, 'app_log_path': logs.app_log_path_file},
-        {'msg_filename': logs.msg_file, 'app_log_filename': logs.app_log_file, 'file_path': logs.log_folder_path}
+        msg_file, app_log_file, logs.log_folder_path
         )
-    logs.logger.info("End process upload logs to drive.")
+    logger.info("End process upload logs to drive.")
 
 
-# Daily jobs function asd
+# Daily jobs function
 def check_active():
     # Assign event and user model
     event_model = Models(table=EVENT_TABLE)
@@ -89,22 +88,25 @@ def check_active():
         # Change active status for event
         is_active = False if current_date > close_date else True
         event_model.update(event['_id'], {'is_active': is_active})
-        logs.message_logger.info(f"Update '{event['event_name']}' daily.")
+        message_logger.info(f"Update '{event['event_name']}' daily.")
         # Check and update all users numbers selected
         update_user_join(str(event['_id']))
 
-        logs.message_logger.info(f"Event id: {str(event['_id'])}")
+        message_logger.info(f"Event id: {str(event['_id'])}")
         # Handle auto selected numbers for user
         if close_date >= current_date > last_3_date.strftime('%Y-%m-%d'):
-            logs.message_logger.info(f"Auto random event '{event['event_name']}' in the last 3 days.")
+            message_logger.info(f"Auto random event '{event['event_name']}' in the last 3 days.")
             auto_random(str(event['_id']))
             auto_random(str(event['_id']))
     # Refresh new logs for everyday
     today = now.strftime('%d-%m-%Y')
-    if today > logs.log_date:
+    if today > log_date:
+        logs.clear_log_handlers(logger)
+        logs.clear_log_handlers(message_logger)
+        logger.info(f"Clear old logs file.")
         logs.create_log()
-        logs.logger.info(f"New logs file.")
-        logs.message_logger.info(f"New message logs file.")
+        logger.info(f"New logs file.")
+        message_logger.info(f"New message logs file.")
 
 
 # Date time to proceed daily jobs test

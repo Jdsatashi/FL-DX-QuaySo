@@ -5,7 +5,7 @@ import bcrypt
 
 from src.mongodb import ROLE_TABLE, ACCOUNT_TABLE
 from src.utils.utilities import role_admin_id as is_admin
-from src.logs import message_logger, logger
+from src.app import message_logger, logger
 
 
 def add_default_role():
