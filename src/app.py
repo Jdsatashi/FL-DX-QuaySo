@@ -6,9 +6,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import os
 
 from src.utils.constants import DATE_RANDOM
+from src.utils.env import SECRET_KEY
 
 # Loading environment variables
 load_dotenv()
+
+# Create database mongodb and tables/collections
+from src import mongodb
 
 # Add schedular
 scheduler = BackgroundScheduler()
@@ -24,15 +28,12 @@ logger, message_logger, msg_file, app_log_file, log_date = logs.create_log()
 # Create app
 app = Flask(__name__)
 
-# Create database mongodb and tables/collections
-from src import mongodb
-
 # Create absolutely paths to local storage
 uploads_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'src', 'static', 'uploads')
 
 # Add configuration for Flask
 app.config.from_mapping(
-    SECRET_KEY=os.environ.get('SECRET_KEY'),
+    SECRET_KEY=SECRET_KEY,
     UPLOAD_FOLDER=uploads_folder
 )
 

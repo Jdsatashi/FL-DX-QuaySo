@@ -1,12 +1,10 @@
 import os
 
 from src.app import app
+from src.utils.env import FLASK_DEBUG, FLASK_PORT, FLASK_HOST
 
-app.logger.info('Starting webapp.')
+app.logger.info('Starting webapp via development server.')
 
-FLASK_PORT = os.environ.get('FLASK_RUN_PORT')
-FLASK_HOST = os.environ.get('FLASK_RUN_HOST')
-FLASK_DEBUG = os.environ.get('FLASK_DEBUG')
 
 if __name__ == '__main__':
     app.run(
