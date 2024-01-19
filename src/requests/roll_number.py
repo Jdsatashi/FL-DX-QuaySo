@@ -8,7 +8,7 @@ from markupsafe import Markup
 from src.forms import NumberSelectedForm
 from src.app import app, message_logger, logger
 from src.requests.authenticate import authorize_user
-from src.utils.constants import event_model, join_event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
+from src.utils.constants import event_model, join_event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER, DATE_RANDOM
 from src.utils.utilities import create_number_list
 
 
@@ -146,7 +146,7 @@ def roll_number(_id):
         current_date = datetime.now().strftime('%Y-%m-%d')
         date_close = datetime.strptime(events['date_close'], "%Y-%m-%d")
         # Date random to take random if user didn't select number
-        date_random = date_close - timedelta(days=3)
+        date_random = date_close - timedelta(days=DATE_RANDOM)
         date = date_random.strftime('%d-%m-%Y')
         # Data send to template
         data.update({
@@ -158,7 +158,8 @@ def roll_number(_id):
             'turn_chosen': turn_chosen,
             'number_rolled': number_rolled,
             'now': current_date,
-            'date_will_random': date
+            'date_will_random': date,
+            'random_before': DATE_RANDOM
         })
         # Logging data
         message_logger.info(f"{user['username']} vào trang chọn số.")

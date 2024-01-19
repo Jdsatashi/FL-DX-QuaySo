@@ -5,6 +5,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 import os
 
+from src.utils.constants import DATE_RANDOM
+
 # Loading environment variables
 load_dotenv()
 
@@ -84,7 +86,7 @@ def check_active():
         # Format to close date to datetime data type
         close_datetime = datetime.strptime(close_date, '%Y-%m-%d')
         # Get 3 dates before date close
-        last_3_date = close_datetime - timedelta(days=3)
+        last_3_date = close_datetime - timedelta(days=DATE_RANDOM)
         # Change active status for event
         is_active = False if current_date > close_date else True
         event_model.update(event['_id'], {'is_active': is_active})
