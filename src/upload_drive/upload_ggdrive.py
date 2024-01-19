@@ -11,7 +11,6 @@ def upload_to_drive(file_send, filename):
     # Authorize with Google
     gg_auth = GoogleAuth()
     drive = GoogleDrive(gg_auth)
-
     # Folder destination id
     folder = os.environ.get('GG_DRIVE_FOLDER')
 
@@ -20,6 +19,9 @@ def upload_to_drive(file_send, filename):
     msg_log = filename['msg_filename']
     app_log_path = file_send['app_log_path']
     msg_log_path = file_send['msg_log_path']
+    logs.logger.info(f"Current date: {today}")
+    logs.logger.info(f"File name: app - {app_log}; msg - {msg_log}.\nApp path: {app_log_path}\nMsg path: {msg_log_path}")
+
     # Handle create app log file and copy local content file
     file_app_log = drive.CreateFile({'parents': [{'id': folder}], 'title': app_log})
     file_app_log.SetContentFile(filename=app_log_path)
