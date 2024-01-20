@@ -56,7 +56,7 @@ from src.upload_drive import upload_ggdrive
 
 # Upload daily log_files
 def upload_daily_log():
-    logs.logger.info("Upload daily log files to drive.")
+    logs.create_log()
     upload_ggdrive.upload_to_drive(
         {'msg_log_path': logs.msg_path_file, 'app_log_path': logs.app_log_path_file},
         {'msg_filename': logs.msg_file, 'app_log_filename': logs.app_log_file, 'file_path': logs.log_folder_path}
