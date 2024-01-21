@@ -83,25 +83,25 @@ def update_user_join(_id):
     # Get main event
     main_event = event_model.get_one({'_id': ObjectId(_id)})
     # Copy dict and remove unused field
-    data_event = main_event.copy()
     for i in ['_id', 'date_start', 'date_created']:
-        data_event.pop(i)
+        main_event.pop(i)
     # Get event range number, if not get the default range
-    if 'range_number' not in data_event:
-        data_event['range_number'] = MAX_NUM
+    if 'range_number' not in main_event:
+        main_event['range_number'] = MAX_NUM
     # Get users id of users chosen
     event_join = join_event_model.get_many({
         "event_id": _id, "number_choices": {"$exists": True}, "selected_number": {"$exists": True}
     })
     # Loop through event_join get each user data
     for user in event_join:
+        turn_roll = user['user_point'] // main_event['point_exchange']
         logger.info(f"User id: {user['user_id']} | {user['turn_roll']}")
         # Get list number selected
         selected_number = list(map(int, user['selected_number'].split(', ')))
         # Handle user:
         message_logger.info(f"Before update user: {user['selected_number']}")
         # Remove number > event range number
-        while selected_number[len(selected_number) - 1] > data_event['range_number']:
+        while selected_number[len(selected_number) - 1] > main_event['range_number']:
             message_logger.info(f"Removed number: [{selected_number[len(selected_number) - 1]}]")
             selected_number.pop()
         # Combine new list to string
@@ -109,11 +109,24 @@ def update_user_join(_id):
         # Try update new data
         try:
             join_event_model.update(user['_id'], {
+                'turn_roll': turn_roll,
                 'number_choices': len(selected_number),
                 'selected_number': selected_number_str
             })
             message_logger.info(f"After update user: {selected_number_str}")
         # When get error => export message
+        except Exception as e:
+            error_msg = traceback.format_exc()
+            logger.error(f"Error when update user join automatic.\nError: '{e}'\n{error_msg}")
+    event_join2 = join_event_model.get_many({
+        "event_id": _id, "number_choices": {"$exists": False}, "selected_number": {"$exists": False}
+    })
+    for user in event_join2:
+        turn_roll = user['user_point'] // main_event['point_exchange']
+        try:
+            join_event_model.update(user['_id'], {
+                'turn_roll': turn_roll
+            })
         except Exception as e:
             error_msg = traceback.format_exc()
             logger.error(f"Error when update user join automatic.\nError: '{e}'\n{error_msg}")
