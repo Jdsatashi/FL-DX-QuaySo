@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 import os
 
-from src.utils.constants import DATE_RANDOM
+from src.utils.constants import DATE_RANDOM, RAMDOM_HOUR, RANDOM_MINUTE
 from src.utils.env import SECRET_KEY
 
 # Loading environment variables
@@ -84,23 +84,13 @@ def check_active():
     for event in events:
         # Get date close for comparing
         close_date = event['date_close']
-        # Format to close date to datetime data type
-        close_datetime = datetime.strptime(close_date, '%Y-%m-%d')
-        # Get 3 dates before date close
-        last_random_date = close_datetime - timedelta(days=DATE_RANDOM)
         # Change active status for event
         is_active = False if current_date > close_date else True
         event_model.update(event['_id'], {'is_active': is_active})
         message_logger.info(f"Update '{event['event_name']}' daily.")
         # Check and update all users numbers selected
         update_user_join(str(event['_id']))
-
         message_logger.info(f"Event id: {str(event['_id'])}")
-        # Handle auto selected numbers for user
-        if current_date > last_random_date.strftime('%Y-%m-%d'):
-            message_logger.info(f"Auto random event '{event['event_name']}' in the last 3 days.")
-            # auto_random(str(event['_id']))
-            # auto_random(str(event['_id']))
     # Refresh new logs for everyday
     today = now.strftime('%d-%m-%Y')
     if today > log_date:
@@ -114,6 +104,39 @@ def check_active():
         message_logger.info(f"New message logs file.")
 
 
+def random_schedular():
+    events = list(EVENT_TABLE.find())
+    logger.info(f"Event data: {list(events)}")
+    now = datetime.now()
+    current_date = now.strftime('%Y-%m-%d')
+    if len(events) > 1:
+        logger.info("If")
+        for event in events:
+            check_for_random(event, current_date)
+    elif len(events) == 1:
+        logger.info("Else")
+        check_for_random(events[0], current_date)
+    else:
+        logger.error("Error when get 'events' for auto random")
+
+
+def check_for_random(event, current_date):
+    logger.info(f"loop event")
+    # Get date close for comparing
+    close_date = event['date_close']
+    # Format to close date to datetime data type
+    close_datetime = datetime.strptime(close_date, '%Y-%m-%d')
+    # Get dates before date close
+    last_random_date = close_datetime - timedelta(days=DATE_RANDOM)
+    test = current_date == last_random_date.strftime('%Y-%m-%d')
+    logger.info(f"Test: {test}")
+    # Handle auto selected numbers for user
+    if current_date == last_random_date.strftime('%Y-%m-%d'):
+        message_logger.info(f"Auto random event '{event['event_name']}' in the last this days.")
+        auto_random(str(event['_id']))
+        auto_random(str(event['_id']))
+random_schedular()
+
 # Date time to proceed daily jobs test
 scheduler.add_job(
     func=check_active,
@@ -121,6 +144,16 @@ scheduler.add_job(
     hour="0",
     minute="0",
     second="15",
+    timezone="Asia/Ho_Chi_Minh",
+)
+
+# Process auto random
+scheduler.add_job(
+    func=random_schedular,
+    trigger="cron",
+    hour=str(RAMDOM_HOUR),
+    minute=str(RANDOM_MINUTE),
+    second="00",
     timezone="Asia/Ho_Chi_Minh",
 )
 

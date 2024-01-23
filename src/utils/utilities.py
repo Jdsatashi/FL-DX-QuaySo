@@ -176,6 +176,7 @@ def handle_random_for_each_user(user_list, event, event_id):
         message_logger.info(f"Số đã chọn ban đầu: [{user.get('selected_number', 0)}]")
         # Create available number dict
         number_list = create_number_list(event['range_number'], event['limit_repeat'], event_id, user['user_id'])
+        number_list = list(number_list)
         # Get number of turn roll or the roll was not selected
         turn_roll = user['user_point'] // event['point_exchange'] \
             if number_choices == 0 else user['turn_roll'] - user['number_choices']
