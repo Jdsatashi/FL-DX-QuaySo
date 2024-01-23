@@ -87,7 +87,7 @@ def check_active():
         # Format to close date to datetime data type
         close_datetime = datetime.strptime(close_date, '%Y-%m-%d')
         # Get 3 dates before date close
-        last_3_date = close_datetime - timedelta(days=DATE_RANDOM)
+        last_random_date = close_datetime - timedelta(days=DATE_RANDOM)
         # Change active status for event
         is_active = False if current_date > close_date else True
         event_model.update(event['_id'], {'is_active': is_active})
@@ -97,16 +97,18 @@ def check_active():
 
         message_logger.info(f"Event id: {str(event['_id'])}")
         # Handle auto selected numbers for user
-        if close_date >= current_date > last_3_date.strftime('%Y-%m-%d'):
+        if current_date > last_random_date.strftime('%Y-%m-%d'):
             message_logger.info(f"Auto random event '{event['event_name']}' in the last 3 days.")
-            auto_random(str(event['_id']))
-            auto_random(str(event['_id']))
+            # auto_random(str(event['_id']))
+            # auto_random(str(event['_id']))
     # Refresh new logs for everyday
     today = now.strftime('%d-%m-%Y')
     if today > log_date:
+        # clear old logs
         logs.clear_log_handlers(logger)
         logs.clear_log_handlers(message_logger)
         logger.info(f"Clear old logs file.")
+        # Create new logs
         logs.create_log()
         logger.info(f"New logs file.")
         message_logger.info(f"New message logs file.")

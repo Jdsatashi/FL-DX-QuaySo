@@ -154,7 +154,7 @@ def event_detail(_id):
     current_page = request.args.get('page', 1, type=int)
     # Get current event to get name and point exchange
     current_event = event_model.get_one({'_id': ObjectId(_id)})
-    point_exchange = current_event['point_exchange']
+    point_exchange = current_event.get('point_exchange', None)
     # Get all user was joined event
     events_joined = join_event_model.get_many({'event_id': _id})
     # List user id
@@ -244,7 +244,11 @@ def print_events_joins_data(_id):
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine='xlsxwriter')
     # Write DataFrame into ExcelWriter
-    df_data.to_excel(writer, startrow=0, merge_cells=False, sheet_name="Sheet_1")
+    df_data.to_excel(writer, startrow=0, merge_cells=False, sheet_name="Sheet_1", index=False, header=False)
+    workbook = writer.book
+    worksheet = writer.sheets["Sheet_1"]
+    worksheet.set_column(2, 2, 20)
+    worksheet.set_column(3, 3, 60)
     # Close writer data to excel
     writer.close()
     # Return to pointer which has all data of xlsx
@@ -254,12 +258,8 @@ def print_events_joins_data(_id):
 
 
 def create_dataframe(_id):
-    # Get current event data
-    current_event = event_model.get_one({'_id': ObjectId(_id)})
-    point_exchange = current_event['point_exchange']
     # Create first row title
-    title_row = ['#', 'Mã KH', 'Tên KH', 'Địa chỉ', 'SĐT', 'Tổng điểm', 'Tổng tem đạt',
-                 'Số điểm dư', 'Số tem đã chọn', 'Số tem dư', 'Các số đã chọn']
+    title_row = ['Mã KH', 'Đã chọn', 'Tên KH', 'Địa chỉ']
     # Append first row to data list
     data = [title_row]
     # Get all user id were joined event
@@ -277,22 +277,15 @@ def create_dataframe(_id):
     for idx, user in enumerate(user_list):
         # Get join events to get info user join events
         event = join_event_model.get_one({'event_id': _id, 'user_id': str(user['_id'])})
-        # Get user_point and turn_roll
-        user_point = event['user_point']
-        turn_roll = event['turn_roll']
-        rest_point = user_point - (turn_roll * point_exchange)
-        # If user joined then get selected number and number choices
-        number_choices, rest_choices, selected_number = '', '', ''
-        if 'selected_number' in event and 'number_choices' in event:
-            selected_number = event['selected_number']
-            number_choices = event['number_choices']
-            rest_choices = turn_roll - number_choices
-        address = '' if 'address' not in user else user['address']
-        phone = '' if 'phone' not in user else user['phone']
-        # Create row data list for input data to each row
-        row_data = [str(idx + 1), user['usercode'], user['fullname'], address, phone, user_point, turn_roll,
-                    rest_point, number_choices, rest_choices, selected_number]
-        data.append(row_data)
+        # If user joined then get selected number and loop through for columns data
+        selected_number = event.get('selected_number', None)
+        address = user.get('address', '')
+        if selected_number is not None:
+            selected_number_list = map(int, selected_number.split(', '))
+            for indx, number in enumerate(selected_number_list):
+                # Create row data list for input data to each row
+                row_data = [user['usercode'], number, user.get('fullname', ''), address]
+                data.append(row_data)
     # Create data frame from data list
     df = pd.DataFrame(data)
     return df

@@ -183,6 +183,7 @@ def handle_random_for_each_user(user_list, event, event_id):
         # Random number ticket
         list_selected = number_list if turn_roll > len(number_list) else random.sample(number_list, turn_roll)
         if any(list_selected):
+            list_selected = list(list_selected)
             # Get finally list after random | can be all random number list or old number list + random list
             number_selected = list_selected \
                 if 'number_choices' not in user else list_selected + list(map(int, user['selected_number'].split(', ')))
