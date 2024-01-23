@@ -15,7 +15,7 @@
     }
 
     .card-header {
-        @apply w-auto shadow-sm border-b-2 border-green-300 border-opacity-50
+        @apply w-auto shadow-sm border-b-2 border-slate-400 border-opacity-50
     }
 
     .card-title {
