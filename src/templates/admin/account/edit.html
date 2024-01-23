@@ -52,6 +52,33 @@
                                     {{ form.usercode(class="form-input", placeholder="Mã khách hàng", value=account.usercode, style="text-transform:uppercase") }}
                                 {% endif %}
                             </div>
+                            <div class="form-group">
+                                {{ form.fullname.label(class="input-label") }}
+                                {% if form.fullname.errors %}
+                                    {{ form.fullname(class="form-input is-invalid", style="text-transform:uppercase") }}
+                                    {% for error in form.fullname.errors %}
+                                        <div class="invalid-feedback">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ form.fullname(class="form-input", placeholder="Họ và tên", value=account.fullname, style="text-transform:uppercase") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.address.label(class="input-label") }}
+                                {% if form.address.errors %}
+                                    {{ form.address(class="form-input is-invalid") }}
+                                    {% for error in form.address.errors %}
+                                        <div class="invalid-feedback">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ form.address(class="form-input", placeholder="Địa chỉ", value=account.address) }}
+                                {% endif %}
+                            </div>
                             <div class="element-center">
                                 <label class="relative inline-flex items-center ms-2 mt-2 mb-2 cursor-pointer">
                                     <input type="checkbox" id="is_active" name="is_active" value="True"

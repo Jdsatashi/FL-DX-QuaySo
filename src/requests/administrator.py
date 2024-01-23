@@ -98,6 +98,8 @@ def account_create():
             "username": str(form.username.data).upper(),
             "usercode": form.usercode.data.upper(),
             "password": hashed_password,
+            "fullname": form.fullname.data,
+            "address": form.address.data,
             "role_id": role_auth_id,
             "is_active": True,
             "date_created": datetime.utcnow()
@@ -315,6 +317,8 @@ def account_edit(_id):
         form_data = {
             "username": str(form.username.data).upper(),
             "usercode": form.usercode.data.upper(),
+            "fullname": form.fullname.data,
+            "address": form.address.data,
             "is_active": form.is_active.data,
             "date_updated": datetime.utcnow()
         }
