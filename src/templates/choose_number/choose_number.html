@@ -10,42 +10,47 @@
 {% endblock header %}
 
 {% block content %}
-    <!-- Card modal -->
-    <div id="overlay" tabindex="-1"
-         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
-    >
-        <div class="grid place-items-center mt-24 md-max:mt-0 pb-24">
-            <div class="card-simple rounded-lg lg:w-[760px] md-max:w-full" id="main-modal">
-                <div class="w-full h-full">
-                    <div class="card-header rounded-t-lg bg-green-500 mb-1">
-                        <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
-                    </div>
-                    <div class="card-content bg-white mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
-                        <div class="element-center">
-                            <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
+    <!-- Main content -->
+    <div id="main-content" x-data="dataInit" x-init="initializeDesktop">
+        <!-- Card modal -->
+        <div id="overlay" tabindex="-1" x-show="model_confirm" x-cloak x-transition.delay.75ms
+             class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
+        >
+            <div class="grid place-items-center mt-24 md-max:mt-0 pb-24">
+                <div class="card-simple rounded-lg lg:w-[760px] md-max:w-full" id="main-modal"
+                     @click.away="model_confirm = false">
+                    <div class="w-full h-full">
+                        <div class="card-header rounded-t-lg bg-green-500 mb-1">
+                            <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
                         </div>
-                        <div class="flex justify-center mt-3 w-auto">
-                            <div id="confirm-result"
-                                 class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-3 xl-max:text-xl">
+                        <div class="card-content bg-white mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
+                            <div class="element-center">
+                                <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
                             </div>
-                        </div>
-                        <div class="flex items-end justify-center me-4">
-                            <button type="button" class="button-simple" id="close-modal-btn">Hủy
-                            </button>
-                            <form id="modal-form" method="post" action="">
-                                {{ data.form.csrf_token() }}
-                                {{ data.form.number(id="modal-input", style="display: none") }}
-                                {{ data.form.submit(class="btn-primary ms-3", id="submit-modal-btn") }}
-                            </form>
+                            <div class="flex justify-center mt-3 w-auto">
+                                <div id="confirm-result"
+                                     class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-3 xl-max:text-xl">
+                                    <template x-for="number in current_selecting">
+                                        <p class="item-list-result item-confirm-modal" x-text="number">
+                                        </p>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-center me-4">
+                                <button type="button" class="button-simple" @click="model_confirm = false">Hủy
+                                </button>
+                                <form id="modal-form" method="post" action="">
+                                    {{ data.form.csrf_token() }}
+                                    <input type="hidden" name="number" class="hidden" x-show="false"
+                                           :value="current_selecting.join(', ')">
+                                    {{ data.form.submit(class="btn-primary ms-3", id="submit-modal-btn") }}
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Main content -->
-    <div id="main-content">
         <div class="w-auto h-auto md-max:h-fl md-max:w-fl -z-50">
             <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
         </div>
@@ -55,19 +60,19 @@
                     <div class="w-full h-full">
                         <div class="card-header rounded-md bg-green-100 mb-1">
                             <div class="flex justify-center items-center">
-                                <h3 class="text-2xl font-bold mt-2 md-max:text-3xl">Sự
-                                    kiện:
-                                    {{ data.events['event_name'] }}</h3>
+                                <h3 class="text-2xl font-bold mt-2 md-max:text-3xl"
+                                    x-text="'Sự kiện: ' + data.event_name"></h3>
                             </div>
                             <p class="w-auto text-base text-center md-max:text-md mb-4">Kết thúc: Hết ngày <span
-                                    class="font-medium">{{ data.events.date_show }}</span></p>
+                                    class="font-medium" x-text="data.date_end"></span></p>
                         </div>
                         <div id="alert-1"
                              class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                              role="alert">
                             <div class="ms-3 text-sm font-medium">
-                                Lưu ý: Những tem chưa chọn số sẽ được tự động chọn vào ngày {{ data.date_will_random }}
-                                ({{ data.random_before }} ngày trước khi kết thúc).
+                                Lưu ý: Những tem chưa chọn số sẽ được tự động chọn vào ngày <span
+                                    x-text="data.date_random"></span>
+                                (<span x-text="data.before_date"></span> ngày trước khi kết thúc).
                             </div>
                             <button type="button"
                                     class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
@@ -93,46 +98,39 @@
                                 <p class="hidden" id="date-close">{{ data.events.date_close }}</p>
                                 <p class="w-auto text-xl text-center md-max:text-2xl sm-max:mb-2">Tài khoản
                                     "{{ data.user['username'] }}"</p>
-                                <div class="element-center" x-data="{
-                                    'user_point': '{{ data.user.point }}',
-                                    'turn_roll': '{{ data.user.turn_roll }}',
-                                    'turn_chosen': '{{ data.turn_chosen }}',
-                                    'point_exchange': '{{ data.events.point_exchange }}',
-                                    'desktop': window.innerWidth >= 1024
-                                }"
-                                     x-init="initializeDesktop"
-                                >
+                                <!-- Data number chosen info -->
+                                <div class="element-center">
                                     <template x-if="desktop">
                                         <table id="info-table" class="w-[400px] md-max:w-auto" x-cloak>
                                             <tbody>
                                             <tr class="gray-text ">
                                                 <td>Tổng tem đạt: <span
                                                         class="text-green-500 md-max:text-center font-bold py-1 px-2 md-max:px-0 w-16 md-max:w-10"
-                                                        x-text="turn_roll"></span>
+                                                        x-text="data.turn_roll"></span>
                                                 </td>
                                                 <td colspan="2">Tổng số điểm: <span
                                                         class="text-green-500 font-bold py-1 px-2"
-                                                        x-text="user_point"></span>
+                                                        x-text="data.user_point"></span>
                                                 </td>
                                             </tr>
                                             <tr class="gray-text ">
                                                 <td class="md-max:w-[120px]">Số tem đã chọn:
                                                     <span class="text-green-500 md-max:text-center font-bold py-1 px-2 md-max:px-0"
-                                                          x-text="turn_chosen"></span>
+                                                          x-text="data.turn_chosen"></span>
                                                 </td>
                                                 <td colspan="2" class="hidden">Điểm / tem: <span
                                                         class="text-green-500 font-bold py-1 px-2"
-                                                        x-text="point_exchange"></span>
+                                                        x-text="data.point_exchange"></span>
                                                 </td>
                                             </tr>
                                             <tr class="gray-text ">
                                                 <td>Số tem chưa chọn số:
                                                     <span class="text-red-500 md-max:text-center font-bold py-1 px-2 md-max:px-0"
-                                                          x-text="turn_roll - turn_chosen"></span>
+                                                          x-text="data.turn_roll - data.turn_chosen"></span>
                                                 </td>
                                                 <td colspan="2">Số điểm dư: <span
                                                         class="text-red-500 font-bold py-1 px-2"
-                                                        x-text="user_point - (turn_roll * point_exchange)"></span>
+                                                        x-text="data.user_point - (data.turn_roll * data.point_exchange)"></span>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -142,33 +140,33 @@
                                         <div x-cloak>
                                             <p class="gray-text">Tổng tem đạt: <span
                                                     class="text-green-500 md-max:text-center font-bold py-1 px-2 md-max:px-0 w-16 md-max:w-10"
-                                                    x-text="turn_roll"></span>
+                                                    x-text="data.turn_roll"></span>
                                             </p>
                                             <p class="gray-text">Tổng số điểm: <span
                                                     class="text-green-500 font-bold py-1 px-2"
-                                                    x-text="user_point"></span>
+                                                    x-text="data.user_point"></span>
                                             </p>
                                             <p class="gray-text">Số tem đã chọn:
                                                 <span class="text-green-500 md-max:text-center font-bold py-1 px-2 md-max:px-0"
-                                                      x-text="turn_chosen"></span>
+                                                      x-text="data.turn_chosen"></span>
                                             </p>
-                                            <p class="gray-text">Điểm / tem: <span
+                                            <p class="gray-text hidden">Điểm / tem: <span
                                                     class="text-green-500 font-bold py-1 px-2"
-                                                    x-text="point_exchange"></span>
+                                                    x-text="data.point_exchange"></span>
                                             </p>
                                             <p class="gray-text">Số tem chưa chọn số:
                                                 <span class="text-red-500 md-max:text-center font-bold py-1 px-2 md-max:px-0"
-                                                      x-text="turn_roll - turn_chosen"></span>
+                                                      x-text="data.turn_roll - data.turn_chosen"></span>
                                             </p>
                                             <p class="gray-text">Số điểm dư: <span
                                                     class="text-red-500 font-bold py-1 px-2"
-                                                    x-text="user_point - (turn_roll * point_exchange)"></span>
+                                                    x-text="data.user_point - (data.turn_roll * data.point_exchange)"></span>
                                             </p>
                                         </div>
                                     </template>
-
                                 </div>
-                                {% if data.turn_chosen > 0 %}
+                                <!-- Print button -->
+                                <template x-if="data.turn_chosen > 0">
                                     <div class="mb-4 mt-1 element-center md-max:hidden">
                                         <a href="{{ url_for('print_info', _id=data.events['_id']) }}"
                                            class="flex font-medium text-base text-green-600 hover:text-emerald-500"
@@ -182,7 +180,7 @@
                                             </svg>
                                             <span>Bản in tem.</span></a>
                                     </div>
-                                {% endif %}
+                                </template>
                             </div>
                             {% if data.now <= data.events.date_close %}
                                 <div class="element-center max-w-sm mx-auto">
@@ -190,10 +188,11 @@
                                         <label for="input-search-number"
                                                class="block mb-2 text-sm font-medium md:text-base md-max:text-xl text-gray-900 dark:text-white text-center">Nhập
                                             số cần tìm</label>
-                                        <input type="number" id="input-search-number"
+                                        <input type="number"
                                                class="input-e w-[300px] md-max:w-full md-max:text-xl xl-max:text-xl"
                                                placeholder="Tìm số"
                                                title="Nhập số cần tìm"
+                                               x-model="search_value"
                                         >
                                     </div>
                                 </div>
@@ -203,17 +202,40 @@
                                         <h4 class="text-base text-center" style="display: none;">Các số đã chọn</h4>
                                     </div>
                                     <div class="flex justify-center w-auto">
-                                        <div id="show-selected-number"
-                                             class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+                                        <div class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
+
+                                            <template id="show-selected-number" x-for="number in current_selecting"
+                                                      :key="number">
+                                                <p :id="'li-result-' + number" class="item-card"
+                                                   :title="'Số ' + number">
+                                                    <span class="item-list" x-text="number"></span>
+                                                    <button :id="'btn-remove-' + number" class="item-button"
+                                                            :title="'Bỏ chọn số ' + number"
+                                                            @click="removeSelectingNumber(number)"
+                                                    >
+                                                        <svg class="w-2 h-2" aria-hidden="true"
+                                                             xmlns="http://www.w3.org/2000/svg"
+                                                             fill="none"
+                                                             viewBox="0 0 14 14">
+                                                            <path stroke="currentColor" stroke-linecap="round"
+                                                                  stroke-linejoin="round"
+                                                                  stroke-width="2"
+                                                                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                                                        </svg>
+                                                    </button>
+                                                </p>
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="element-center mb-3">
                                     <button type="button" class="button-simple-green" id="open-modal-btn"
-                                            title="Xác nhận chọn số">
+                                            title="Xác nhận chọn số"
+                                            @click="openConfirmModel"
+                                    >
                                         Xác nhận
                                     </button>
-                                    <button type="button" id="randNum" title="Chọn ngẫu nhiên một số"
+                                    <button type="button" title="Chọn ngẫu nhiên một số" @click="randomNumber()"
                                             class="mt-2 rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-300 hover:ring-1 hover:ring-slate-400 ms-2 md-max:ms-1 md-max:px-2 md-max:w-auto">
                                         Ngẫu nhiên
                                     </button>
@@ -248,50 +270,118 @@
                         </div>
                         <h3 class="text-2xl">Các số khả dụng:</h3>
                     </div>
+
                     <div class="w-auto mx-32 my-4 grid grid-cols-10 lg-max:mx-4 lg-max:grid-cols-6">
-                        {% for number in data.number_list %}
-                            <p id="li-{{ number }}"
-                               class="group-item"
-                               title="Nhấn để chọn số"
-                            >{{ number }}</p>
-                        {% endfor %}
+                        <template x-for="number in number_list" :key="number">
+                            <p
+                                    class="group-item"
+                                    title="Nhấn để chọn số"
+                                    :id="'li-' + number"
+                                    x-text="number"
+                                    @click="selectingNumber(number)"
+                                    x-show="number.toLowerCase().includes(search_value.toLowerCase())"
+                                    x-transition:leave-end="opacity-0 scale-90"
+                            ></p>
+                        </template>
                     </div>
-                    {#                    <div x-data="{'number_list': '{{ data.number_list }}'.replace(/\[|\]/g, '').split(', ')}" class="w-auto mx-32 my-4 grid grid-cols-10 lg-max:mx-4 lg-max:grid-cols-6">#}
-                    {#                            <template x-for="number in number_list" :key="number">#}
-                    {#                                <p#}
-                    {#                                    class="group-item"#}
-                    {#                                    title="Nhấn để chọn số"#}
-                    {#                                    :id="'li-' + number"#}
-                    {#                                    x-text="number"#}
-                    {#                            ></p>#}
-                    {#                            </template>#}
-                    {#                    </div>#}
                 </div>
             {% endif %}
         </div>
     </div>
-    {% if data.now <= data.events.date_close %}
-        <script type="text/javascript" src="{{ url_for('static', filename='scripts/modal-confirm.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='scripts/svg.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='scripts/number-search.js') }}"></script>
-        <script type="text/javascript">
-            function initializeDesktop() {
-                let _this = this
-                window.addEventListener('resize', function () {
-                    _this.desktop = window.innerWidth >= 1024;
-                });
-            }
+    <script type="text/javascript">
+        let dataList = '{{ data.number_list }}'.replace(/\[|\]/g, '')
+        let arrData = dataList.split(', ')
+        let listUsedSelected = '{{ data.number_rolled }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
+        listUsedSelected = listUsedSelected.split(',')
 
-            JdFormModal({
-                idOpenModal: 'open-modal-btn',
-                idCloseModal: 'close-modal-btn',
-                idModalParent: 'overlay',
-                idMainModal: 'main-modal',
-                idShowNumberToConfirm: 'show-selected-number',
-                idModalForm: 'modal-form',
-                idModalInput: 'modal-input',
-                idModalConfirm: 'confirm-result'
+        function dataInit() {
+            return {
+                data: {
+                    'event_name': '{{ data.events.event_name }}',
+                    'date_end': '{{ data.events.date_show }}',
+                    'date_random': '{{ data.date_will_random }}',
+                    'before_date': '{{ data.random_before }}',
+                    'user_point': parseInt('{{ data.user.point }}'),
+                    'turn_roll': parseInt('{{ data.user.turn_roll }}'),
+                    'turn_chosen': parseInt('{{ data.turn_chosen }}'),
+                    'point_exchange': parseInt('{{ data.events.point_exchange }}'),
+                },
+                'number_list': arrData,
+                'number_selected': listUsedSelected,
+                'used_selected': [],
+                'current_selecting': [],
+                'desktop': window.innerWidth >= 1024,
+                'model_confirm': false,
+                'search_value': '',
+                'random_loop': 0,
+                // Functions
+                selectingNumber: function (number) {
+                    if (!this.current_selecting.includes(number)) {
+                        console.log("Adding")
+                        const rmIdxValue = this.number_list.indexOf(number)
+                        if (rmIdxValue > -1) {
+                            this.number_list.splice(rmIdxValue, 1)
+                        }
+                        this.current_selecting.push(number)
+                        this.resetSearchQuery()
+                    } else {
+                        alert(`Không thể thêm số ${number}`)
+                    }
+                },
+                removeSelectingNumber: function (number) {
+                    if (!this.number_list.includes(number)) {
+                        console.log("Removing")
+                        const rmIdxValue = this.current_selecting.indexOf(number)
+                        if (rmIdxValue > -1) {
+                            this.current_selecting.splice(rmIdxValue, 1)
+                        }
+                        this.number_list.push(number)
+                        this.number_list.sort(function (a, b) {
+                            return a - b
+                        })
+                    }
+                },
+                openConfirmModel: function () {
+                    if (this.current_selecting.length > 0) {
+                        this.model_confirm = true
+                    } else {
+                        alert("Bạn phải chọn ít nhất một số để có thể xác nhận.")
+                    }
+                },
+                resetSearchQuery: function () {
+                    if (this.search_value !== '') {
+                        this.search_value = ''
+                    }
+                },
+                randomNumber: function () {
+                    this.resetSearchQuery()
+                    this.random_loop += 1
+                    let min = 1
+                    let max = this.number_list.length
+                    let randomNum = Math.floor(Math.random() * (max - min + 1) + min)
+                    let randomValue = this.number_list[randomNum - 1]
+
+                    if (this.data.turn_roll === 0) {
+                        alert("Bạn không có lượt chọn nào.")
+                    } else {
+                        if (this.data.turn_roll > this.current_selecting.length) {
+                            if (!this.current_selecting.includes(randomValue)) {
+                                this.selectingNumber(randomValue)
+                            }
+                        } else {
+                            alert(`Bạn đã chọn ${this.current_selecting.length} số, loại bỏ số hiện tại để chọn số mới.`)
+                        }
+                    }
+                }
+            }
+        }
+
+        function initializeDesktop() {
+            let _this = this
+            window.addEventListener('resize', function () {
+                _this.desktop = window.innerWidth >= 1024
             })
-        </script>
-    {% endif %}
+            _this.current_selecting = [..._this.number_selected]
+        }
+    </script>
 {% endblock %}

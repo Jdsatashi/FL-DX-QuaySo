@@ -189,4 +189,8 @@
     .paginate-item-active {
         @apply z-20 flex items-center font-medium justify-center px-4 h-10 leading-tight text-slate-800 bg-emerald-100 border border-gray-300 hover:bg-emerald-200 hover:text-gray-800 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
     }
+
+    .item-confirm-modal {
+        @apply text-center w-[64px] md-max:w-auto md-max:text-lg md-max:m-1 bg-white m-2 p-2 text-base ring-1 ring-gray-400
+    }
 }
