@@ -2040,6 +2040,21 @@ input:checked + .toggle-bg {
   }
 }
 
+.gray-text {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  --tw-text-opacity: 1;
+  color: rgb(71 85 105 / var(--tw-text-opacity));
+}
+
+@media (max-width: 767px) {
+  .gray-text {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
 .paginate-group {
   display: flex;
   height: 2.5rem;
@@ -4688,10 +4703,6 @@ input:checked + .toggle-bg {
 
   .md-max\:mt-24 {
     margin-top: 6rem;
-  }
-
-  .md-max\:block {
-    display: block;
   }
 
   .md-max\:hidden {
