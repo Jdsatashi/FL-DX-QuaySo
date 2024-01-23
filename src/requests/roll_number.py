@@ -151,7 +151,7 @@ def roll_number(_id):
         # Data send to template
         data.update({
             'form': form,
-            'number_list': number_list,
+            'number_list': list(number_list),
             'events': events,
             'user': user,
             '_id': _id,
