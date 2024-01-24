@@ -72,7 +72,6 @@
                             <div class="ms-3 text-sm font-medium">
                                 Lưu ý: Những tem chưa chọn số sẽ được tự động chọn vào ngày <span
                                     x-text="data.date_random"></span>
-                                (<span x-text="data.before_date"></span> ngày trước khi kết thúc).
                             </div>
                             <button type="button"
                                     class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
@@ -280,7 +279,7 @@
                                     title="Nhấn để chọn số"
                                     :id="'li-' + number"
                                     x-text="number"
-                                    @click="selectingNumber(number)"
+                                    @click="validateSelectNumber(number)"
                                     x-show="number.toLowerCase().includes(search_value.toLowerCase())"
                                     x-transition:leave-end="opacity-0 scale-90"
                             ></p>
@@ -319,7 +318,7 @@
                 // Functions
                 selectingNumber: function (number) {
                     if (!this.current_selecting.includes(number)) {
-                        switch (typeof number){
+                        switch (typeof number) {
                             case 'number':
                                 break
                             case 'string':
@@ -340,7 +339,7 @@
                 },
                 removeSelectingNumber: function (number) {
                     if (!this.number_list.includes(number)) {
-                        switch (typeof number){
+                        switch (typeof number) {
                             case 'number':
                                 break
                             case 'string':
@@ -384,13 +383,16 @@
                     if (this.data.turn_roll === 0) {
                         alert("Bạn không có lượt chọn nào.")
                     } else {
-                        if (this.data.turn_roll > this.current_selecting.length) {
-                            if (!this.current_selecting.includes(randomValue)) {
-                                this.selectingNumber(randomValue)
-                            }
-                        } else {
-                            alert(`Bạn đã chọn ${this.current_selecting.length} số, loại bỏ số hiện tại để chọn số mới.`)
+                        this.validateSelectNumber(randomValue)
+                    }
+                },
+                validateSelectNumber: function (number) {
+                    if (this.data.turn_roll > this.current_selecting.length) {
+                        if (!this.current_selecting.includes(number)) {
+                            this.selectingNumber(number)
                         }
+                    } else {
+                        alert(`Bạn đã chọn ${this.current_selecting.length} số, loại bỏ số hiện tại để chọn số mới.`)
                     }
                 }
             }
@@ -401,13 +403,13 @@
             window.addEventListener('resize', function () {
                 _this.desktop = window.innerWidth >= 1024
             })
-            if(_this.number_selected.length == 1 && _this.number_selected[0] == ''){
+            if (_this.number_selected.length == 1 && _this.number_selected[0] == '') {
                 _this.number_selected = []
             }
-            if(_this.number_selected.some(value => value === '')){
+            if (_this.number_selected.some(value => value === '')) {
                 _this.number_selected.filter(value => value !== '')
             }
-            if(_this.data.turn_chosen > 0){
+            if (_this.data.turn_chosen > 0) {
                 _this.current_selecting = [..._this.number_selected]
             }
         }
