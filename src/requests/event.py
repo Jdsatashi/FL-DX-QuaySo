@@ -238,6 +238,11 @@ def loop_through_user(user_list, _id, point_exchange):
 
 @events.route('/event-print-user/<_id>')
 def print_events_joins_data(_id):
+    # Get event names
+    event_names = event_model.get_one({'_id': ObjectId(_id)}).get('event_name')
+    filename = event_names.split(' ')
+    # Restructure filename
+    filename = '-'.join(filename) + '.xlsx'
     # Create data frame from data
     df_data = create_dataframe(_id)
     # Create output stream and ExcelWriter
@@ -254,7 +259,7 @@ def print_events_joins_data(_id):
     # Return to pointer which has all data of xlsx
     output.seek(0)
     # Return and download file
-    return send_file(output, download_name="user.xlsx", as_attachment=True)
+    return send_file(output, download_name=filename, as_attachment=True)
 
 
 def create_dataframe(_id):
