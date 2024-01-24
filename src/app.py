@@ -135,7 +135,7 @@ def check_for_random(event, current_date):
         message_logger.info(f"Auto random event '{event['event_name']}' in the last this days.")
         auto_random(str(event['_id']))
         auto_random(str(event['_id']))
-random_schedular()
+
 
 # Date time to proceed daily jobs test
 scheduler.add_job(
