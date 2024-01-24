@@ -183,11 +183,11 @@
     }
 
     .paginate-item {
-        @apply flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+        @apply flex items-center justify-center px-4 h-10  md-max:h-8 md-max:px-2.5 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
     }
 
     .paginate-item-active {
-        @apply z-20 flex items-center font-medium justify-center px-4 h-10 leading-tight text-slate-800 bg-emerald-100 border border-gray-300 hover:bg-emerald-200 hover:text-gray-800 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+        @apply z-20 flex items-center font-medium justify-center px-4 h-10  md-max:h-8 md-max:px-2.5 leading-tight text-slate-800 bg-emerald-100 border border-gray-300 hover:bg-emerald-200 hover:text-gray-800 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
     }
 
     .item-confirm-modal {
