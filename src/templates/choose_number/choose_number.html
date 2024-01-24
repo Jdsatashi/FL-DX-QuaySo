@@ -401,6 +401,12 @@
             window.addEventListener('resize', function () {
                 _this.desktop = window.innerWidth >= 1024
             })
+            if(_this.number_selected.length == 1 && _this.number_selected[0] == ''){
+                _this.number_selected = []
+            }
+            if(_this.number_selected.some(value => value === '')){
+                _this.number_selected.filter(value => value !== '')
+            }
             if(_this.data.turn_chosen > 0){
                 _this.current_selecting = [..._this.number_selected]
             }
