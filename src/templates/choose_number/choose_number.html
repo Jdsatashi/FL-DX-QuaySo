@@ -319,7 +319,15 @@
                 // Functions
                 selectingNumber: function (number) {
                     if (!this.current_selecting.includes(number)) {
-                        console.log("Adding")
+                        switch (typeof number){
+                            case 'number':
+                                break
+                            case 'string':
+                                break
+                            default:
+                                console.log(`Number '${number}' is errored.`)
+                                alert(`Không thể thêm số ${number}`)
+                        }
                         const rmIdxValue = this.number_list.indexOf(number)
                         if (rmIdxValue > -1) {
                             this.number_list.splice(rmIdxValue, 1)
@@ -332,7 +340,15 @@
                 },
                 removeSelectingNumber: function (number) {
                     if (!this.number_list.includes(number)) {
-                        console.log("Removing")
+                        switch (typeof number){
+                            case 'number':
+                                break
+                            case 'string':
+                                break
+                            default:
+                                console.log(`Number '${number}' is errored.`)
+                                alert(`Không thể bỏ số ${number}`)
+                        }
                         const rmIdxValue = this.current_selecting.indexOf(number)
                         if (rmIdxValue > -1) {
                             this.current_selecting.splice(rmIdxValue, 1)
@@ -341,6 +357,8 @@
                         this.number_list.sort(function (a, b) {
                             return a - b
                         })
+                    } else {
+                        alert(`Không thể bỏ số ${number}`)
                     }
                 },
                 openConfirmModel: function () {
@@ -383,7 +401,9 @@
             window.addEventListener('resize', function () {
                 _this.desktop = window.innerWidth >= 1024
             })
-            _this.current_selecting = [..._this.number_selected]
+            if(_this.data.turn_chosen > 0){
+                _this.current_selecting = [..._this.number_selected]
+            }
         }
     </script>
 {% endblock %}
