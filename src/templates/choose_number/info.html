@@ -1,4 +1,7 @@
 {% extends 'layouts/layout.html' %}
+{% block header %}
+    <script src="//unpkg.com/alpinejs" defer></script>
+{% endblock %}
 {% block content %}
     <div class="w-full h-full">
         <h1 class="text-3xl my-4 mx-8 font-bold text-center">Các sự kiện bạn tham gia.</h1>
@@ -31,36 +34,55 @@
                                     sự kiện này</p>
                             {% endif %}
                             <p class="text-base text-slate-800 font-bold">Bạn có:</p>
-                            <table class="me-8 md-max:me-0 w-[80%] md-max:w-full">
-                                <tbody>
-                                <tr class="li-item">
-                                    <td>Tổng tem đạt:</td>
-                                    <td class="text-green-500 font-bold py-1 px-2 md-max:px-0 w-16 md-max:w-10">{{ infos[id]['turn_roll'] }}</td>
-                                    <td colspan="2">Tổng số điểm: <span
-                                            class="text-green-500 font-bold py-1 px-2">{{ infos[id].user_point }}</span></td>
-                                </tr>
-                                <tr class="li-item">
-                                    <td class="md-max:w-[108px]">Số tem đã chọn:</td>
-                                    <td class="text-green-500 font-bold py-1 px-2 md-max:px-0">{{ infos[id]['number_choices'] }}</td>
-                                    <td colspan="2">Điểm / tem: <span
-                                            class="text-green-500 font-bold py-1 px-2">{{ infos[id]['point_exchange'] }}</span>
-                                    </td>
-                                </tr>
-                                <tr class="li-item">
-                                    <td>Số tem chưa chọn số:</td>
-                                    <td class="text-red-500 font-bold py-1 px-2 md-max:px-0">{{ infos[id]['turn_roll'] - infos[id]['number_choices'] }}</td>
-                                    <td colspan="2">Số điểm dư: <span
-                                            class="text-red-500 font-bold py-1 px-2T">{{ infos[id].user_point - (infos[id]['turn_roll'] * infos[id]['point_exchange']) }}</span>
-                                    </td>
-                                </tr>
-                                <tr class="li-item">
-                                    <td class="w-[120px] md-max:w-[108px] flex items-start mt-1">Các số đã chọn:
-                                    </td>
-                                    <td colspan="4"
-                                        class="text-green-600 font-semibold py-1 px-2 md-max:px-0">{{ infos[id]['selected_number'] }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div x-data="{
+                                'turn_roll': '{{ infos[id].turn_roll }}',
+                                'user_point': '{{ infos[id].user_point }}',
+                                'number_choice': '{{ infos[id].number_choices }}',
+                                'point_exchange': '{{ infos[id].point_exchange }}',
+                                'selected_number': '{{ infos[id].selected_number }}',
+                                'is_desktop': window.innerWidth >= 1024
+                            }">
+                                <table class="me-8 md-max:me-0 w-[80%] md-max:w-full">
+                                    <tbody>
+                                    <tr class="li-item">
+                                        <td>Tổng tem đạt:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2"
+                                            x-text="turn_roll"></td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Tổng số điểm:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2"
+                                            x-text="user_point"></td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Điểm / tem:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2"
+                                            x-text="point_exchange"></td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Số tem đã chọn:</td>
+                                        <td class="text-green-500 font-bold py-1 px-2"
+                                            x-text="number_choice"></td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Số tem chưa chọn số:</td>
+                                        <td class="text-red-500 font-bold py-1 px-2"
+                                            x-text="turn_roll - number_choice"></td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td>Số điểm dư:</td>
+                                        <td class="text-red-500 font-bold py-1 px-2"
+                                            x-text="user_point - (turn_roll * point_exchange)"></td>
+                                    </tr>
+                                    <tr class="li-item">
+                                        <td colspan="2">Các số đã chọn: <span
+                                                class="text-green-600 font-semibold py-1 px-2 md-max:px-0"
+                                                x-text="selected_number"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             {% if infos[id]['selected_number'] != '' and infos[id]['number_choices'] > 0 %}
                                 <div class="mb-4 mt-1 md-max:hidden">
                                     <a href="{{ url_for('print_info', _id=id) }}"
