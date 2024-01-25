@@ -8,7 +8,8 @@ from markupsafe import Markup
 from src.forms import NumberSelectedForm
 from src.app import app, message_logger, logger
 from src.requests.authenticate import authorize_user
-from src.utils.constants import event_model, join_event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER, DATE_RANDOM
+from src.utils.constants import event_model, join_event_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER, DATE_RANDOM, \
+    RAMDOM_HOUR
 from src.utils.utilities import create_number_list
 
 
@@ -159,6 +160,7 @@ def roll_number(_id):
             'number_rolled': number_rolled,
             'now': current_date,
             'date_will_random': date,
+            'time_random': RAMDOM_HOUR,
             'random_before': DATE_RANDOM
         })
         # Logging data
