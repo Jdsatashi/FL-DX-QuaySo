@@ -11,7 +11,7 @@ from src.forms import EventForm
 from src.app import logger
 from src.requests.authenticate import admin_authorize
 from src.utils.constants import event_model, join_event_model, user_model
-from src.utils.utilities import update_user_join, create_folder
+from src.utils.utilities import update_user_join, create_folder, handle_random_for_each_user
 
 events = Blueprint('event', __name__)
 
@@ -294,3 +294,16 @@ def create_dataframe(_id):
     # Create data frame from data list
     df = pd.DataFrame(data)
     return df
+
+
+@events.route('/random/<event_id>/<user_id>/<int:turn_rand>', methods=['POST'])
+def random_event(event_id, user_id, turn_rand):
+    # Authorize is admin
+    is_admin = admin_authorize()
+    if not is_admin:
+        flash("Bạn không được phép truy cập vào trang này.", 'danger')
+        return redirect(url_for('home'))
+    now = datetime.now()
+    event = event_model.get_one({'_id': ObjectId(event_id)})
+    user_join = join_event_model.get_one({'event_id': event_id, 'user_id': user_id})
+    rand_list = handle_random_for_each_user(user_join, event, now, turn_rand)

@@ -203,8 +203,7 @@ def handle_random_for_each_user(user, event, now, set_turn=None):
     if set_turn is not None:
         if turn_roll > set_turn:
             turn_roll = int(set_turn)
-        message = f"Số tem random phải nhỏ hơn tổng tem của user."
-        return False, message
+        return []
     logger.debug(f"Turn roll: {turn_roll}")
     # Random number ticket
     list_selected = number_list if turn_roll > len(number_list) else random.sample(number_list, turn_roll)
@@ -235,10 +234,10 @@ def handle_random_for_each_user(user, event, now, set_turn=None):
         except Exception as e:
             error_msg = traceback.format_exc()
             logger.error(f"Error while randomly number for user.\n Error: {e}\n{error_msg}")
-        return True
+        return list_selected
     else:
         message_logger.info(f"Số lượng tem đã hết.")
-        return False
+        return []
 
 
 def update_user_role(_id):

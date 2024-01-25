@@ -147,7 +147,7 @@ scheduler.add_job(
     second="15",
     timezone="Asia/Ho_Chi_Minh",
 )
-random_schedular()
+
 # Process auto random
 scheduler.add_job(
     func=random_schedular,
