@@ -105,33 +105,34 @@ def check_active():
 
 
 def random_schedular():
+    # Get all event
     events = list(EVENT_TABLE.find())
-    logger.info(f"Event data: {list(events)}")
+    # Get current date
     now = datetime.now()
     current_date = now.strftime('%Y-%m-%d')
+    # If events have multi event
     if len(events) > 1:
-        logger.info("If")
         for event in events:
             check_for_random(event, current_date)
+    # If events have 1 event
     elif len(events) == 1:
-        logger.info("Else")
         check_for_random(events[0], current_date)
     else:
         logger.error("Error when get 'events' for auto random")
 
 
 def check_for_random(event, current_date):
-    logger.info(f"loop event")
     # Get date close for comparing
     close_date = event['date_close']
     # Format to close date to datetime data type
     close_datetime = datetime.strptime(close_date, '%Y-%m-%d')
     # Get dates before date close
     last_random_date = close_datetime - timedelta(days=DATE_RANDOM)
-    test = current_date == last_random_date.strftime('%Y-%m-%d')
-    logger.info(f"Test: {test}")
     # Handle auto selected numbers for user
     if current_date == last_random_date.strftime('%Y-%m-%d'):
+        # Check event
+        message_logger.info(f"Checking event: {event['event_name']}")
+        update_user_join(str(event['_id']))
         message_logger.info(f"Auto random event '{event['event_name']}' in the last this days.")
         auto_random(str(event['_id']))
         auto_random(str(event['_id']))
@@ -146,7 +147,7 @@ scheduler.add_job(
     second="15",
     timezone="Asia/Ho_Chi_Minh",
 )
-
+random_schedular()
 # Process auto random
 scheduler.add_job(
     func=random_schedular,
