@@ -11,6 +11,9 @@
                 <thead class="table-1-h">
                 <tr>
                     <th scope="col" class="px-6 py-3">
+                        In
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         Sự kiện
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -35,8 +38,19 @@
                 <tbody>
                 {% for event in events %}
                     <tr class="table-1-b">
+                        <td>
+                            <a href="{{ url_for('event.print_events_joins_data', _id=event._id) }}"
+                               class="flex justify-center items-center">
+                            <svg class="w-4 h-4 mt-1 me-1 text-blue-600 hover:text-sky-500 dark:text-white"
+                                 aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"></path>
+                                <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"></path>
+                            </svg>
+                            </a>
+                        </td>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <a href="{{ url_for('event.event_detail', _id=event['_id'], event_name=event['event_name'])}}">{{ event.event_name }}</a>
+                            <a href="{{ url_for('event.event_detail', _id=event['_id'], event_name=event['event_name']) }}">{{ event.event_name }}</a>
                         </th>
                         <td class="px-6 py-4 ms-2">
                             {{ event.date_close }}
@@ -61,7 +75,7 @@
                         <td class="flex items-center px-6 py-4 ms-2">
                             <a href="{{ url_for('event.update', _id=event['_id']) }}"
                                class="font-medium text-blue-600 dark:text-blue-500 me-2 hover:underline">Edit</a>
-                            <a href="{{ url_for('event.event_detail', _id=event['_id'], event_name=event['event_name'])}}"
+                            <a href="{{ url_for('event.event_detail', _id=event['_id'], event_name=event['event_name']) }}"
                                title="Chi tiết sự kiện {{ event.event_name }}"
                                class="font-medium text-gray-800 dark:text-gray-700 hover:underline">Detail</a>
                         </td>
