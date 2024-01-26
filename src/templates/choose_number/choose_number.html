@@ -12,6 +12,30 @@
 {% block content %}
     <!-- Main content -->
     <div id="main-content" x-data="dataInit" x-init="initializeDesktop">
+        <!-- Flash modal -->
+        <div tabindex="-1" x-show="fModel" x-cloak x-transition.delay.100ms
+             class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full">
+            <div class="grid place-items-center mt-40 sm-max:mt-28">
+                <div class="card-simple rounded-md lg:w-[760px] md-max:w-auto" @click.away="fModel = false">
+                    <div class="w-full h-full">
+                        <div :class="`card-header rounded-t-md ${ fModel_category } mb-1`">
+                            <h2 :class="`card-title text-${ fModel_category }`">
+                                <span x-text="fModel_category === 'warning' ? 'Cảnh báo' : 'Thành công'"></span>
+                            </h2>
+                        </div>
+                        <div class="card-content mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
+                            <div class="element-center">
+                                <p class="w-auto text-xl md-max:text-2xl" x-text="fModel_message"></p>
+                            </div>
+                            <div class="flex items-center justify-center me-4">
+                                <button type="button" class="button-simple" @click="fModel = false">Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Card modal -->
         <div id="overlay" tabindex="-1" x-show="model_confirm" x-cloak x-transition.delay.75ms
              class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
@@ -39,12 +63,13 @@
                             <div class="flex items-end justify-center me-4">
                                 <button type="button" class="button-simple" @click="model_confirm = false">Hủy
                                 </button>
-                                <form id="modal-form" method="post" action="">
-                                    {{ data.form.csrf_token() }}
-                                    <input type="hidden" name="number" class="hidden" x-show="false"
-                                           :value="current_selecting.join(', ')">
-                                    {{ data.form.submit(class="btn-primary ms-3", id="submit-modal-btn") }}
-                                </form>
+                                {#                                <form id="modal-form" method="post" action="">#}
+                                {#                                    {{ data.form.csrf_token() }}#}
+                                {#                                    <input type="hidden" name="number" class="hidden" x-show="false"#}
+                                {#                                           :value="current_selecting.join(', ')">#}
+                                {#                                    {{ data.form.submit(class="btn-primary ms-3", id="submit-modal-btn") }}#}
+                                {#                                </form>#}
+                                <button class="btn-primary ms-3" @click="saveSelectNumber()">Xác nhận</button>
                             </div>
                         </div>
                     </div>
@@ -87,7 +112,7 @@
                         </div>
                         <div class="card-content bg-white mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
                             <p class="mt1 mb-2 text-md font-medium text-slate-700 text-center">Thời gian còn lại:
-                                    <span class="text-red-600" x-text="count_down"></span>
+                                <span class="text-red-600" x-text="count_down"></span>
                             </p>
                             <div class="mb-4">
                                 <p class="hidden" id="turn_choose">{{ data.user['turn_roll'] }}</p>
@@ -292,6 +317,8 @@
         let listUsedSelected = '{{ data.number_rolled }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
         listUsedSelected = listUsedSelected.split(',')
 
+        let currentUrl = window.location.href
+
         function dataInit() {
             return {
                 data: {
@@ -313,6 +340,9 @@
                 'search_value': '',
                 'random_loop': 0,
                 'count_down': '',
+                'fModel': false,
+                'fModel_message': '',
+                'fModel_category': '',
                 // Functions
                 selectingNumber: function (number) {
                     if (!this.current_selecting.includes(number)) {
@@ -415,6 +445,29 @@
                             _this.count_down = "Kết thúc";
                         }
                     }, 500);
+                },
+                async saveSelectNumber() {
+                    const data = {'list_number_selected': this.current_selecting.join(', ')}
+                    await fetch(currentUrl, {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            "Content-type": "application/json; charset=UTF-8",
+                        },
+                    })
+                        .then((response) => response.json())
+                        .then(result => {
+                            console.log(result);
+                            this.current_selecting = result.data.number_selected
+                            this.number_selected = result.data.number_selected
+                            this.model_confirm = false
+                            this.fModel = true
+                            this.fModel_message = result.data.message
+                            this.fModel_category = result.data.status
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 }
             }
         }
@@ -434,7 +487,6 @@
             if (_this.data.turn_chosen > 0) {
                 _this.current_selecting = [..._this.number_selected]
             }
-
         }
     </script>
 {% endblock %}

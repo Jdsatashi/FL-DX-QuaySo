@@ -1,5 +1,5 @@
 from bson import ObjectId
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from _datetime import datetime, timedelta
 
 from flask_weasyprint import render_pdf, HTML
@@ -74,13 +74,20 @@ def roll_number(_id):
 			rolled['number_choices'] = len(number_rolled)
 		turn_chosen = rolled['number_choices']
 	# Get the form data
-	form = NumberSelectedForm()
+	# form = NumberSelectedForm()
+	form = ''
 	if request.method == 'POST':
-		data = insert_select_number(form, user, events, rolled, _id, max_range)
+		# str_list_number = form.number.data
+		str_list_number = request.json.get('list_number_selected')
+		data = insert_select_number(str_list_number, user, events, rolled, _id, max_range)
 		message = data.get('message')
 		category = data.get('status')
-		flash(f"{message}", f"{category}")
-		return redirect(url_for('roll_number', _id=_id))
+		# flash(f"{message}", f"{category}")
+		# return redirect(url_for('roll_number', _id=_id))
+		return jsonify({
+			'message': 'Roll number successfully.',
+			'data': data
+		})
 	else:
 		# Create a number list for user can choose
 		number_list = create_number_list(max_range, events['limit_repeat'], _id, user['_id'])
@@ -113,9 +120,9 @@ def roll_number(_id):
 		)
 
 
-def insert_select_number(form, user, event, user_event, event_id, max_range):
+def insert_select_number(str_number_list, user, event, user_event, event_id, max_range):
 	# Get the list and use set to remove duplicates values
-	list_selected = set(form.number.data.split(', '))
+	list_selected = set(str_number_list.split(', '))
 	list_selected = list(list_selected)
 	# Validate if number selected more than turn choices
 	if len(list_selected) > int(user['turn_roll']):
@@ -159,14 +166,15 @@ def insert_select_number(form, user, event, user_event, event_id, max_range):
 				f"Sự kiện: {event['event_name']}: User '{user['username']}' đã chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
 			return {
 				'message': f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{event['event_name'].upper()}' thành công.",
-				'status': 'success'
+				'status': 'success',
+				'number_selected': list_selected
 			}
 		# Return message with error
 		except Exception as e:
 			logger.error(f"Error when choosing number.\n{e}")
 			return {
 				'message': "Lỗi server, vui lòng thử lại.",
-				'status': 'success'
+				'status': 'warning'
 			}
 	# Case re-choice number
 	else:
@@ -176,14 +184,12 @@ def insert_select_number(form, user, event, user_event, event_id, max_range):
 			form_data.update({'date_updated': datetime.utcnow()})
 			id_roll = str(user_event['_id'])
 			join_event_model.update(ObjectId(id_roll), form_data)
-			flash(
-				f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{event['event_name'].upper()}' thành công.",
-				"success")
 			message_logger.info(
 				f"Sự kiện: {event['event_name']}: User '{user['username'].upper()}' đã cập nhật chọn [{form_data['number_choices']}] số [{form_data['selected_number']}].")
 			return {
 				'message': f"Chọn các số [{form_data['selected_number']}] cho sự kiện '{event['event_name'].upper()}' thành công.",
-				'status': 'success'
+				'status': 'success',
+				'number_selected': list_selected
 			}
 		# Return exception error
 		except Exception as e:
@@ -191,7 +197,7 @@ def insert_select_number(form, user, event, user_event, event_id, max_range):
 			logger.error(f"Error when re choosing number.\n{e}")
 			return {
 				'message': "Lỗi server, vui lòng thử lại.",
-				'status': 'success'
+				'status': 'warning'
 			}
 
 
@@ -207,7 +213,7 @@ def information():
 		return redirect(url_for('home'))
 	# Create data dict to store data
 	data = {}
-	
+
 	list_event_joined = list()
 	# Get event user joined
 	join_event = join_event_model.get_many({'user_id': user['_id']})
