@@ -88,6 +88,9 @@
                     <th scope="col" class="px-3 py-3 text-end">
                         Các số đã chọn
                     </th>
+                    <th scope="col" class="px-6 py-3">
+                        Actions
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -146,6 +149,11 @@
                                 <span class="text-red-600">0</span>
                             {% endif %}
                         </td>
+                        <td>
+                            <a href="{{ url_for('event.user_join_event_detail', event_id=context._id, user_id=acc._id) }}"
+                               title="Chi tiết user"
+                               class="element-center font-medium text-gray-800 dark:text-gray-700 hover:underline">Detail</a>
+                        </td>
                     </tr>
                     {% if 'selected_number' in acc %}
                         {% if 'number_choices' in acc %}
@@ -162,6 +170,7 @@
                 </tbody>
             </table>
         </div>
+        <!-- Pagination bar -->
         <div class="element-center lg:m-8 w-auto mt-4">
             <ul class="paginate-group">
                 {% if context.current_page > 1 %}

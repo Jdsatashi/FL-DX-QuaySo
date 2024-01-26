@@ -1,0 +1,256 @@
+{% extends 'layouts/layout.html' %}
+{% block header %}
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+    <script src="//unpkg.com/alpinejs" defer></script>
+{% endblock header %}
+{% block content %}
+    <div class="w-full h-full" x-data="data" x-init="initial">
+        <h1 class="text-3xl my-4 mx-8 md-max:mx-2 font-bold text-center">Username: {{ context.user.username }}</h1>
+        <div class="grid grid-cols-12 gap-2 md-max:grid-cols-1">
+            <div class="col-span-4 md-max:col-span-1">
+                <div class="card-simple rounded-md w-full md-max:mx-4 md-max:my-4 md-max:w-auto md-max:rounded-none">
+                    <div class="card-header">
+                        <h3 class="card-title text-center">{{ context.event.event_name }}</h3>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <table class="me-8 md-max:me-0 w-[80%] md-max:w-full">
+                                <tbody>
+                                <tr class="li-item">
+                                    <td>Usercode:</td>
+                                    <td class="text-green-500 font-bold py-1 px-2"
+                                        x-text="usercode"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td colspan="2">Địa chỉ: <span class="text-gray-900" x-text="address"></span></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Tổng số điểm:</td>
+                                    <td class="text-green-500 font-bold py-1 px-2"
+                                        x-text="user_point"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Tổng tem đạt:</td>
+                                    <td class="text-green-500 font-bold py-1 px-2"
+                                        x-text="turn_roll"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Tổng số điểm:</td>
+                                    <td class="text-green-500 font-bold py-1 px-2"
+                                        x-text="user_point"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Điểm / tem:</td>
+                                    <td class="text-green-500 font-bold py-1 px-2"
+                                        x-text="point_exchange"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Số tem đã chọn:</td>
+                                    <td class="text-green-500 font-bold py-1 px-2"
+                                        x-text="number_choice"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Số tem chưa chọn số:</td>
+                                    <td class="text-red-500 font-bold py-1 px-2"
+                                        x-text="turn_roll - number_choice"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td>Số điểm dư:</td>
+                                    <td class="text-red-500 font-bold py-1 px-2"
+                                        x-text="user_point - (turn_roll * point_exchange)"></td>
+                                </tr>
+                                <tr class="li-item">
+                                    <td colspan="2">Các số đã chọn: <span
+                                            class="text-green-600 font-semibold py-1 px-2 md-max:px-0"
+                                            x-text="selected_number"></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-8 md-max:col-span-1">
+                <div class="card-simple rounded-md w-auto md-max:mx-4 md-max:my-4 md-max:rounded-none">
+                    <div class="card-header flex justify-between items-center">
+                        <h3 class="card-title">Chọn số cho user</h3>
+                        <button class="text-sm py-1.5 px-2.5 bg-slate-900 text-white hover:bg-slate-700 rounded-md mx-8 md-max:mx-4">Update</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <input type="number"
+                                       class="input-e w-[160px] md-max:w-auto"
+                                       placeholder="Tìm số"
+                                       title="Nhập số cần tìm"
+                                       x-model="search_query">
+                            </div>
+                            <div class="flex items-center">
+                                <input type="number" class="input-e p-1 w-16 h-[88%] my-auto rounded-sm md-max:w-auto"
+                                       x-model="random_time"
+                                       title="Số tem random" min="1" :max="turn_roll - number_choice">
+                                <button class="button-simple px-2 py-1 rounded-sm h-[88%] my-auto"
+                                        @click="randomNumber"
+                                >Random
+                                </button>
+                            </div>
+                        </div>
+                        <div x-show="current_selecting.length > 0" x-cloak>
+                            <h2 class="text-md font-medium">Các số đã chọn:</h2>
+                            <div class="grid grid-cols-8 md-max:grid-cols-6">
+                                <template x-for="number in current_selecting" :key="number">
+                                    <p class="group-item rounded-none" @click="removeSelectingNumber(number)"
+                                       x-text="number"></p>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="mt-3 mb-3">
+                            <h3 class="text-md font-medium">
+                                Số khả thi
+                            </h3>
+                            <div class="h-64 overflow-y-scroll">
+                                <div class="w-auto mx-12 my-4 grid grid-cols-10 gap-2 md-max:gap-1 lg-max:mx-4 lg-max:grid-cols-6">
+                                    <template x-for="number in number_list">
+                                        <p class="group-item"
+                                           title="Nhấn để chọn số"
+                                           :id="'li-' + number"
+                                           @click="validateSelectNumber(number)"
+                                           x-show="number.toLowerCase().includes(search_query.toLowerCase())"
+                                           x-text="number"></p>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        let dataList = '{{ context.number_list }}'.replace(/\[|\]/g, '')
+        let arrData = dataList.split(', ')
+        let listUsedSelected = '{{ context.user.number_rolled }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
+        listUsedSelected = listUsedSelected.split(',')
+        console.log(arrData)
+        const data = {
+            'turn_roll': '{{ context.user_event.turn_roll }}',
+            'user_point': '{{ context.user_event.user_point }}',
+            'number_choice': '{{ context.user_event.number_choices }}',
+            'point_exchange': '{{ context.event.point_exchange }}',
+            'selected_number': '{{ context.user_event.selected_number }}',
+            'usercode': '{{ context.user.usercode }}',
+            'address': '{{ context.user.address }}',
+            'search_query': '',
+            'number_list': arrData,
+            'number_selected': listUsedSelected,
+            'current_selecting': [],
+            'random_time': 1,
+            // Functions
+            selectingNumber: function (number) {
+                console.log(number)
+                if (!this.current_selecting.includes(number)) {
+                    switch (typeof number) {
+                        case 'number':
+                            break
+                        case 'string':
+                            break
+                        default:
+                            console.log(`Number '${number}' is errored.`)
+                            alert(`Không thể thêm số ${number}`)
+                    }
+                    const rmIdxValue = this.number_list.indexOf(number)
+                    if (rmIdxValue > -1) {
+                        this.number_list.splice(rmIdxValue, 1)
+                    }
+                    this.current_selecting.push(number)
+                    this.resetSearchQuery()
+                } else {
+                    alert(`Không thể thêm số ${number}`)
+                }
+            },
+            removeSelectingNumber: function (number) {
+                console.log(this.current_selecting)
+                if (!this.number_list.includes(number)) {
+                    switch (typeof number) {
+                        case 'number':
+                            break
+                        case 'string':
+                            break
+                        default:
+                            console.log(`Number '${number}' is errored.`)
+                            alert(`Không thể bỏ số ${number}`)
+                    }
+                    const rmIdxValue = this.current_selecting.indexOf(number)
+                    if (rmIdxValue > -1) {
+                        this.current_selecting.splice(rmIdxValue, 1)
+                    }
+                    this.number_list.push(number)
+                    this.number_list.sort(function (a, b) {
+                        return a - b
+                    })
+                } else {
+                    alert(`Không thể bỏ số ${number}`)
+                }
+            },
+            resetSearchQuery: function () {
+                if (this.search_query !== '') {
+                    this.search_query = ''
+                }
+            },
+            validateSelectNumber: function (number) {
+                if (this.turn_roll > this.current_selecting.length) {
+                    if (!this.current_selecting.includes(number)) {
+                        this.selectingNumber(number)
+                    }
+                } else {
+                    alert(`Bạn đã chọn ${this.current_selecting.length} số, loại bỏ số hiện tại để chọn số mới.`)
+                }
+            },
+            randomNumber: function () {
+                this.resetSearchQuery()
+                console.log(this.random_time)
+                if(this.random_time <= 0){
+                    this.random_time = 1
+                }
+                if (this.random_time === 1) {
+                    this.handleRandom()
+                } else if (this.random_time > 1) {
+                    if (this.random_time > (this.turn_roll - this.turn_chosen)) {
+                        this.random_time = this.turn_roll - this.turn_chosen
+                    }
+                    for (let i = 0; i < this.random_time; i++) {
+                        this.handleRandom()
+                    }
+                }
+            },
+            handleRandom: function () {
+                let min = 1
+                let max = this.number_list.length
+                let randomNum = Math.floor(Math.random() * (max - min + 1) + min)
+                let randomValue = this.number_list[randomNum - 1]
+                this.validateSelectNumber(randomValue)
+            }
+        }
+
+        function initial() {
+            const _this = this
+            if (_this.number_selected.length === 1 && _this.number_selected[0] === '') {
+                _this.number_selected = []
+            }
+            if (_this.number_selected.some(value => value === '')) {
+                _this.number_selected.filter(value => value !== '')
+            }
+            if (_this.number_choice > 0) {
+                _this.current_selecting = [..._this.number_selected]
+            }
+            if (isNaN(_this.turn_chosen)) {
+                _this.turn_chosen = 0
+            }
+        }
+    </script>
+{% endblock %}
