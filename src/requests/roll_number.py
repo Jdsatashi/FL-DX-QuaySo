@@ -80,8 +80,6 @@ def roll_number(_id):
 		# str_list_number = form.number.data
 		str_list_number = request.json.get('list_number_selected')
 		data = insert_select_number(str_list_number, user, events, rolled, _id, max_range)
-		message = data.get('message')
-		category = data.get('status')
 		# flash(f"{message}", f"{category}")
 		# return redirect(url_for('roll_number', _id=_id))
 		return jsonify({
@@ -120,14 +118,14 @@ def roll_number(_id):
 		)
 
 
-def insert_select_number(str_number_list, user, event, user_event, event_id, max_range):
+def insert_select_number(str_number_list, user, event, user_event, max_range):
 	# Get the list and use set to remove duplicates values
 	list_selected = set(str_number_list.split(', '))
 	list_selected = list(list_selected)
 	# Validate if number selected more than turn choices
-	if len(list_selected) > int(user['turn_roll']):
+	if len(list_selected) > int(user_event['turn_roll']):
 		return {
-			'message': f"Bạn chỉ được chọn {user['turn_roll']} số.",
+			'message': f"Bạn chỉ được chọn {user_event['turn_roll']} số.",
 			'status': 'warning'
 		}
 	# Sorting data number selected

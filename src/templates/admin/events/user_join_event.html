@@ -79,7 +79,11 @@
                 <div class="card-simple rounded-md w-auto md-max:mx-4 md-max:my-4 md-max:rounded-none">
                     <div class="card-header flex justify-between items-center">
                         <h3 class="card-title">Chọn số cho user</h3>
-                        <button class="text-sm py-1.5 px-2.5 bg-slate-900 text-white hover:bg-slate-700 rounded-md mx-8 md-max:mx-4">Update</button>
+                        <button
+                                @click="insertNumberSelected()"
+                                class="text-sm py-1.5 px-2.5 bg-slate-900 text-white hover:bg-slate-700 rounded-md mx-8 md-max:mx-4">
+                            Chọn số
+                        </button>
                     </div>
                     <div class="card-content">
                         <div class="flex justify-between items-center">
@@ -102,7 +106,7 @@
                         </div>
                         <div x-show="current_selecting.length > 0" x-cloak>
                             <h2 class="text-md font-medium">Các số đã chọn:</h2>
-                            <div class="grid grid-cols-8 md-max:grid-cols-6">
+                            <div class="grid grid-cols-8 gap-1 md-max:grid-cols-6">
                                 <template x-for="number in current_selecting" :key="number">
                                     <p class="group-item rounded-none" @click="removeSelectingNumber(number)"
                                        x-text="number"></p>
@@ -134,9 +138,9 @@
     <script type="text/javascript">
         let dataList = '{{ context.number_list }}'.replace(/\[|\]/g, '')
         let arrData = dataList.split(', ')
-        let listUsedSelected = '{{ context.user.number_rolled }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
+        let listUsedSelected = '{{ context.user_event.selected_number }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
         listUsedSelected = listUsedSelected.split(',')
-        console.log(arrData)
+        const apiURL = window.location.href + '/select'
         const data = {
             'turn_roll': '{{ context.user_event.turn_roll }}',
             'user_point': '{{ context.user_event.user_point }}',
@@ -214,7 +218,7 @@
             randomNumber: function () {
                 this.resetSearchQuery()
                 console.log(this.random_time)
-                if(this.random_time <= 0){
+                if (this.random_time <= 0) {
                     this.random_time = 1
                 }
                 if (this.random_time === 1) {
@@ -234,11 +238,30 @@
                 let randomNum = Math.floor(Math.random() * (max - min + 1) + min)
                 let randomValue = this.number_list[randomNum - 1]
                 this.validateSelectNumber(randomValue)
+            },
+            async insertNumberSelected() {
+                const data = {'str_number_list': this.current_selecting.join(', ')}
+                await fetch(apiURL, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                    }
+                })
+                    .then((response) => response.json())
+                    .then(result => {
+                        alert(result.data.message)
+                        console.log(result)
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             }
         }
 
         function initial() {
             const _this = this
+            console.log(this.number_selected)
             if (_this.number_selected.length === 1 && _this.number_selected[0] === '') {
                 _this.number_selected = []
             }

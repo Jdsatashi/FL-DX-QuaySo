@@ -10,6 +10,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from src.forms import EventForm
 from src.app import logger
 from src.requests.authenticate import admin_authorize
+from src.requests.roll_number import insert_select_number
 from src.utils.constants import event_model, join_event_model, user_model, MAX_NUMBER_RANGE_DEFAULT as MAX_NUMBER
 from src.utils.utilities import update_user_join, create_folder, handle_random_for_each_user, create_number_list
 
@@ -320,15 +321,13 @@ def user_join_event_detail(event_id, user_id):
     return render_template('admin/events/user_join_event.html', context=context)
 
 
-@events.route('/user-join-event/details/<event_id>||<user_id>')
+@events.route('/user-join-event/details/<event_id>||<user_id>/select', methods=['POST'])
 def select_number(event_id, user_id):
     # Authorize is admin
     is_admin = admin_authorize()
     if not is_admin:
         flash("Bạn không được phép truy cập vào trang này.", 'danger')
         return redirect(url_for('home'))
-    # Create context for send data to template
-    context = {}
     # Get data event, user, user_event and string their _id
     event = event_model.get_one({'_id': ObjectId(event_id)})
     user = user_model.get_one({'_id': ObjectId(user_id)})
@@ -336,21 +335,11 @@ def select_number(event_id, user_id):
     event['_id'] = str(event['_id'])
     user['_id'] = str(user['_id'])
     user_event['_id'] = str(user_event['_id'])
-
-@events.route('/random/<event_id>/<user_id>/<int:turn_rand>', methods=['POST'])
-def random_event(event_id, user_id, turn_rand):
-    # Authorize is admin
-    is_admin = admin_authorize()
-    if not is_admin:
-        flash("Bạn không được phép truy cập vào trang này.", 'danger')
-        return redirect(url_for('home'))
-    now = datetime.now()
-    event = event_model.get_one({'_id': ObjectId(event_id)})
-    user_join = join_event_model.get_one({'event_id': event_id, 'user_id': user_id})
-    rand_list = handle_random_for_each_user(user_join, event, now, turn_rand)
+    str_number_list = request.json.get('str_number_list')
+    max_range = event.get('rang_number', MAX_NUMBER)
+    logger.info('test this: ' + str_number_list)
+    data = insert_select_number(str_number_list, user, event, user_event, max_range)
     return jsonify({
-        "message": f"Random for user '{user_id}' successfully.",
-        "data": {
-            "random_list": rand_list
-        }
+        'message': 'Select number successful',
+        'data': data
     })
