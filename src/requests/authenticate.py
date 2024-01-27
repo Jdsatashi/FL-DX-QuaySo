@@ -140,7 +140,6 @@ def information(_id):
         if form.validate_on_submit():
             try:
                 form_data = {
-                    'fullname': form.fullname.data,
                     'email': form.email.data,
                     'phone': form.phone.data,
                     'address': form.address.data,

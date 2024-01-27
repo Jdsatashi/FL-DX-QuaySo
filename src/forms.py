@@ -32,7 +32,6 @@ class UpdatePasswordForm(FlaskForm):
 
 
 class UpdateInfoAccountForm(FlaskForm):
-    fullname = StringField("Họ và tên")
     phone = StringField("SĐT", validators=[Length(max=13)])
     address = StringField("Địa chỉ")
     email = EmailField("Email")

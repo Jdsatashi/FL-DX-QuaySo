@@ -203,7 +203,6 @@ def account_add_list():
                 event_assign = []
                 # Loop through data in csv file
                 for i, row in csv_data.iterrows():
-                    logger.info(f"i value: {i} | Row:\n{row}")
                     if int(i) > 0:
                         # Hashing password for user
                         hashed_password = bcrypt.hashpw(row['usercode'].lower().encode("utf-8"), bcrypt.gensalt())
