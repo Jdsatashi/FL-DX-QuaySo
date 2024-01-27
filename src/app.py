@@ -138,7 +138,7 @@ def check_for_random(event, current_date):
         auto_random(str(event['_id']))
 
 
-# Date time to proceed daily jobs test
+# Date time to proceed daily jobs test / fix error
 scheduler.add_job(
     func=check_active,
     trigger="cron",
