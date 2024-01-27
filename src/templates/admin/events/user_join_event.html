@@ -154,6 +154,7 @@
         let arrData = dataList.split(', ')
         let listUsedSelected = '{{ context.user_event.selected_number }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
         listUsedSelected = listUsedSelected.split(',')
+        console.log(listUsedSelected)
         const apiURL = window.location.href + '/select'
         const data = {
             'turn_roll': '{{ context.user_event.turn_roll }}',
