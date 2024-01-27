@@ -79,9 +79,7 @@ def roll_number(_id):
 	if request.method == 'POST':
 		# str_list_number = form.number.data
 		str_list_number = request.json.get('list_number_selected')
-		data = insert_select_number(str_list_number, user, events, rolled, _id, max_range)
-		# flash(f"{message}", f"{category}")
-		# return redirect(url_for('roll_number', _id=_id))
+		data = insert_select_number(str_list_number, user, events, rolled, max_range)
 		return jsonify({
 			'message': 'Roll number successfully.',
 			'data': data

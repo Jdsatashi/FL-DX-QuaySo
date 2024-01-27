@@ -2570,10 +2570,6 @@ input:checked + .toggle-bg {
   margin-top: 10rem;
 }
 
-.mt-0\.5 {
-  margin-top: 0.125rem;
-}
-
 .block {
   display: block;
 }
@@ -2982,6 +2978,14 @@ input:checked + .toggle-bg {
   justify-content: space-between;
 }
 
+.gap-0 {
+  gap: 0px;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }
@@ -2992,14 +2996,6 @@ input:checked + .toggle-bg {
 
 .gap-4 {
   gap: 1rem;
-}
-
-.gap-1 {
-  gap: 0.25rem;
-}
-
-.gap-0 {
-  gap: 0px;
 }
 
 .-space-x-px > :not([hidden]) ~ :not([hidden]) {
@@ -4880,20 +4876,20 @@ input:checked + .toggle-bg {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
-  .md-max\:gap-2 {
-    gap: 0.5rem;
-  }
-
-  .md-max\:gap-1 {
-    gap: 0.25rem;
-  }
-
   .md-max\:gap-0 {
     gap: 0px;
   }
 
   .md-max\:gap-0\.5 {
     gap: 0.125rem;
+  }
+
+  .md-max\:gap-1 {
+    gap: 0.25rem;
+  }
+
+  .md-max\:gap-2 {
+    gap: 0.5rem;
   }
 
   .md-max\:rounded-none {

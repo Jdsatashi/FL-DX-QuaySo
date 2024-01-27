@@ -9,6 +9,20 @@
 {% endblock header %}
 {% block content %}
     <div class="w-full h-full" x-data="data" x-init="initial">
+        <div class="w-full flex justify-start">
+            <a href="{{ url_for('event.event_detail', _id=context.event._id) }}"
+               class="flex justify-center items-center">
+                <svg class="w-3 h-3 text-blue-800 hover:text-blue-700 dark:text-white" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none" viewBox="0 0 12 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5 1 1 5l4 4m6-8L7 5l4 4"></path>
+                </svg>
+                <span class="text-blue-500 ms-2 underline hover:text-sky-400">
+                    {{ context.event.event_name }}
+                </span>
+            </a>
+        </div>
         <h1 class="text-3xl my-4 mx-8 md-max:mx-2 font-bold text-center">Username: {{ context.user.username }}</h1>
         <div class="grid grid-cols-12 gap-2 md-max:grid-cols-1">
             <div class="col-span-4 md-max:col-span-1">
@@ -18,7 +32,7 @@
                     </div>
                     <div class="card-content">
                         <div>
-                            <table class="me-8 md-max:me-0 w-[80%] md-max:w-full">
+                            <table class="me-8 md-max:me-0 w-full">
                                 <tbody>
                                 <tr class="li-item">
                                     <td>Usercode:</td>
@@ -156,7 +170,6 @@
             'random_time': 1,
             // Functions
             selectingNumber: function (number) {
-                console.log(number)
                 if (!this.current_selecting.includes(number)) {
                     switch (typeof number) {
                         case 'number':
@@ -172,13 +185,13 @@
                         this.number_list.splice(rmIdxValue, 1)
                     }
                     this.current_selecting.push(number)
+                    this.number_choice = this.current_selecting.length
                     this.resetSearchQuery()
                 } else {
                     alert(`Không thể thêm số ${number}`)
                 }
             },
             removeSelectingNumber: function (number) {
-                console.log(this.current_selecting)
                 if (!this.number_list.includes(number)) {
                     switch (typeof number) {
                         case 'number':
@@ -211,13 +224,10 @@
                     if (!this.current_selecting.includes(number)) {
                         this.selectingNumber(number)
                     }
-                } else {
-                    alert(`Bạn đã chọn ${this.current_selecting.length} số, loại bỏ số hiện tại để chọn số mới.`)
                 }
             },
             randomNumber: function () {
                 this.resetSearchQuery()
-                console.log(this.random_time)
                 if (this.random_time <= 0) {
                     this.random_time = 1
                 }
@@ -225,10 +235,16 @@
                     this.handleRandom()
                 } else if (this.random_time > 1) {
                     if (this.random_time > (this.turn_roll - this.turn_chosen)) {
+                        console.log(this.random_time, this.turn_roll, this.turn_chosen)
                         this.random_time = this.turn_roll - this.turn_chosen
                     }
-                    for (let i = 0; i < this.random_time; i++) {
-                        this.handleRandom()
+                    console.log(this.random_time, this.turn_roll, this.turn_chosen)
+                    if (this.current_selecting.length >= this.turn_roll) {
+                        alert(`Bạn đã chọn ${this.current_selecting.length} số, loại bỏ số hiện tại để chọn số mới.`)
+                    } else {
+                        for (let i = 0; i < this.random_time; i++) {
+                            this.handleRandom()
+                        }
                     }
                 }
             },
@@ -251,7 +267,9 @@
                     .then((response) => response.json())
                     .then(result => {
                         alert(result.data.message)
-                        console.log(result)
+                        this.number_selected = result.data.number_selected
+                        this.current_selecting = [...this.number_selected]
+                        this.number_choice = this.current_selecting.length
                     })
                     .catch(error => {
                         console.error('Error:', error);

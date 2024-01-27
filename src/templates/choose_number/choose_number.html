@@ -69,7 +69,7 @@
                                 {#                                           :value="current_selecting.join(', ')">#}
                                 {#                                    {{ data.form.submit(class="btn-primary ms-3", id="submit-modal-btn") }}#}
                                 {#                                </form>#}
-                                <button class="btn-primary ms-3" @click="saveSelectNumber()">Xác nhận</button>
+                                <button class="btn-primary ms-3 w-32 md-max:w-auto" @click="saveSelectNumber()">Xác nhận</button>
                             </div>
                         </div>
                     </div>
@@ -352,7 +352,6 @@
                             case 'string':
                                 break
                             default:
-                                console.log(`Number '${number}' is errored.`)
                                 alert(`Không thể thêm số ${number}`)
                         }
                         const rmIdxValue = this.number_list.indexOf(number)
@@ -373,7 +372,6 @@
                             case 'string':
                                 break
                             default:
-                                console.log(`Number '${number}' is errored.`)
                                 alert(`Không thể bỏ số ${number}`)
                         }
                         const rmIdxValue = this.current_selecting.indexOf(number)
@@ -457,15 +455,17 @@
                     })
                         .then((response) => response.json())
                         .then(result => {
-                            console.log(result);
-                            this.current_selecting = result.data.number_selected
                             this.number_selected = result.data.number_selected
+                            this.current_selecting = result.data.number_selected
+                            this.data.turn_chosen = this.current_selecting.length
                             this.model_confirm = false
                             this.fModel = true
                             this.fModel_message = result.data.message
                             this.fModel_category = result.data.status
                         })
                         .catch(error => {
+                            this.model_confirm = false
+                            alert('Server gặp lỗi, vui lòng thử lại sau.')
                             console.error('Error:', error);
                         });
                 }
