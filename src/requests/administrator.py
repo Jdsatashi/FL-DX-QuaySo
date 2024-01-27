@@ -185,7 +185,7 @@ def account_add_list():
                     error_info = traceback.format_exc()
                     logger.error(f'Error save file.\nError: {e}\n{error_info}"')
                 # Column name
-                col_name = ['usercode', 'fullname', 'point_dm2', 'address', 'event']
+                col_name = ['nvtt', 'fullname', 'usercode', 'area', 'area_detail', 'point_dm2', 'turn', 'point_rest', 'a']
                 # Check extension match with pandas reader type
                 match ext:
                     case '.xlsx':
@@ -198,13 +198,12 @@ def account_add_list():
                 # Get event name from form
                 event_id = flask.request.values.get('event_selected')
                 event = event_model.get_one({'_id': ObjectId(event_id)})
-                event_id = str(event['_id'])
-                exchange_point = event['point_exchange']
                 # Get current date time for create or update
                 now = datetime.utcnow()
                 event_assign = []
                 # Loop through data in csv file
                 for i, row in csv_data.iterrows():
+                    logger.info(f"i value: {i} | Row:\n{row}")
                     if int(i) > 0:
                         # Hashing password for user
                         hashed_password = bcrypt.hashpw(row['usercode'].lower().encode("utf-8"), bcrypt.gensalt())
@@ -213,7 +212,8 @@ def account_add_list():
                             'username': row['usercode'].upper(),
                             'usercode': row['usercode'].upper(),
                             'password': hashed_password,
-                            'address': row['address'],
+                            'area': row['area'],
+                            'area_detail': row['area_detail'],
                             'fullname': row['fullname'],
                             'role_id': role_auth_id,
                             'is_active': True
@@ -240,7 +240,8 @@ def account_add_list():
                             logger.error(f'Error when adding user {data_dict["username"]}.\nError: {e}\n{error_info}"')
                             flash(f"Error when add file {uploaded_file.filename}!", 'warning')
                             return redirect(url_for('admin.account_add_list'))
-                        if event_id is not None:
+                        if event is not None:
+                            exchange_point = 0 if event is None else event.get('point_exchange')
                             # Get user points
                             user_point = int(row['point_dm2'])
                             # Get turn choices
@@ -253,7 +254,7 @@ def account_add_list():
                                 'turn_roll': turn_choices,
                                 'date_created': now
                             })
-                if event_id is not None:
+                if event is not None:
                     try:
                         # Handing add data
                         join_event_model.create_many(event_assign)
