@@ -315,7 +315,6 @@ def user_join_event_detail(event_id, user_id):
     user_event['_id'] = str(user_event['_id'])
     # Get range of number
     max_range = event.get('range_number', MAX_NUMBER)
-    logger.info(f'Max_range: {max_range}')
     # Create list avaiable number
     number_list = list(create_number_list(max_range, event.get('limit_repeat', 1), event_id, user_id))
     context.update({'event': event, 'user': user, 'user_event': user_event, 'number_list': number_list})
