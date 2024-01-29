@@ -458,6 +458,8 @@
                             this.fModel = true
                             this.fModel_message = result.data.message
                             this.fModel_category = result.data.status
+                            console.log(this.number_selected.length)
+                            this.data.turn_chosen = this.number_selected.length
                         })
                         .catch(error => {
                             this.model_confirm = false
