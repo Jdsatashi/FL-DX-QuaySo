@@ -286,6 +286,8 @@ def create_dataframe(_id):
         # If user joined then get selected number and loop through for columns data
         selected_number = event.get('selected_number', None)
         address = user.get('address', '')
+        if address == '':
+            address = user.get('area_detail', '') + ', ' + user.get('area', '')
         if selected_number is not None:
             selected_number_list = map(int, selected_number.split(', '))
             for indx, number in enumerate(selected_number_list):

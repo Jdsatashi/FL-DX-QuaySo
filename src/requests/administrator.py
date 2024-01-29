@@ -212,7 +212,7 @@ def account_add_list():
                             'username': row['usercode'].upper(),
                             'usercode': row['usercode'].upper(),
                             'password': hashed_password,
-                            'address': row['area'] + ' - ' + row['area_detail'],
+                            'address':  row['area_detail'] + ', ' + row['area'],
                             'fullname': row['fullname'],
                             'role_id': role_auth_id,
                             'is_active': True
