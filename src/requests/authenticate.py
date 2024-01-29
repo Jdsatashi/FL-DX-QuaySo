@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 from datetime import timedelta
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session
@@ -5,6 +7,7 @@ from markupsafe import Markup
 
 from src.app import app, message_logger, logger
 from src.forms import LoginForm, UpdatePasswordForm, UpdateInfoAccountForm
+from src.mongodb import ACCOUNT_TABLE
 from src.utils.constants import user_model
 from src.utils.utilities import role_auth_id, role_admin_id
 
@@ -34,13 +37,16 @@ def login():
             # If username existed, then check password
             if bcrypt.checkpw(password, user["password"]):
                 # Create life-time for cookie
-                COOKIE_MAX_AGE = 7 * 24 * 3600 if remember_me else 12 * 3600
+                COOKIE_MAX_AGE = 24 * 3600 if remember_me else 4 * 3600
+                # COOKIE_MAX_AGE = 30
                 # Add default user role if user not has a role
                 if "role_id" not in user:
                     user_model.update(ObjectId(user["_id"]), {'role_id': role_auth_id})
                 message_logger.info(f"User '{username.upper()}' đã đăng nhập.")
-                # Print and show message when login successful
-                logger.info(f"User '{username.upper()}' đã đăng nhập.")
+                browser_id = secrets.token_hex(32)
+
+                user = user_model.update(ObjectId(user["_id"]), {'logged_in': browser_id})
+                session['browser_id'] = browser_id
                 flash(f"Đăng nhập thành công, xin chào '{username.upper()}'.", "success")
                 # Check if user is admin
                 if user['role_id'] == role_admin_id:
@@ -72,6 +78,8 @@ def logout():
     # Remove username and other session data
     if 'username' in session:
         message_logger.info(f"User {session['username']} đã logout.")
+        if 'browser_id' in session:
+            ACCOUNT_TABLE.update_one({'_id': ObjectId(session["_id"])}, {"$unset": {"logged_in": ''}})
         session.pop('username')
         session.clear()
         return redirect(url_for('home'))
@@ -161,8 +169,16 @@ def authorize_user():
     if 'username' in session:
         account_data = user_model.get_one({'username': session['username']})
         if account_data is None:
+            logger.info(F"Here 2")
             session.pop('username')
             return authorize_user()
+        logger.info(F"Data: {account_data}")
+        if account_data.get('logged_in') != session.get('browser_id'):
+            logger.info(F"Here 3")
+            session.pop('username')
+            session.pop('browser_id')
+            session.clear()
+            return False
         account_data['_id'] = str(account_data['_id'])
         # Remove sensitive data password
         if 'password' in account_data:

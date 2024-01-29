@@ -1,7 +1,7 @@
 import traceback
 
 from bson import ObjectId
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, jsonify, session
 from _datetime import datetime, timedelta
 
 from flask_weasyprint import render_pdf, HTML
@@ -21,7 +21,7 @@ def choose_event():
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để chọn sự kiện quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn chưa đăng nhập hoặc đã đăng nhập ở trình duyệt khác. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
@@ -44,11 +44,12 @@ def choose_event():
 
 @app.route('/quay-so/<string:_id>', methods=['GET', 'POST'])
 def roll_number(_id):
+
     # authorize user
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để quay số. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn chưa đăng nhập hoặc đã đăng nhập ở trình duyệt khác. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
@@ -176,7 +177,7 @@ def insert_select_number(str_number_list, user, event, user_event, max_range):
     logger.info(f"invalid number {invalid_number}")
     if any(invalid_number):
         return {
-            'message': f"Các số {invalid_number} đã được chọn.",
+            'message': f"Số {invalid_number} đã được chọn, vui lòng chọn số khác.",
             'status': 'warning',
             'number_selected': user_was_selected
         }
@@ -252,7 +253,7 @@ def information():
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để xem thông tin sự kiện. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn chưa đăng nhập hoặc đã đăng nhập ở trình duyệt khác. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
@@ -302,7 +303,7 @@ def print_info(_id):
     user = authorize_user()
     if not user:
         flash(Markup(
-            f'Bạn phải đăng nhập để in thông tin. <strong><a href="{url_for("user.login")}" style="color: '
+            f'Bạn chưa đăng nhập hoặc đã đăng nhập ở trình duyệt khác. <strong><a href="{url_for("user.login")}" style="color: '
             f'#3a47a6">Click để đăng nhập</a></strong>'),
             'warning')
         return redirect(url_for('home'))
