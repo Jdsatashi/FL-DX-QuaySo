@@ -300,7 +300,8 @@
                 'fModel_message': '',
                 'fModel_category': '',
                 // Functions
-                selectingNumber: function (number) {
+                selectingNumber: async function (number) {
+                    await this.getListApi()
                     if (!this.current_selecting.includes(number)) {
                         switch (typeof number) {
                             case 'number':
@@ -316,12 +317,13 @@
                         }
                         this.current_selecting.push(number)
                         this.resetSearchQuery()
-                        this.saveSelectNumber()
+                        await this.saveSelectNumber()
                     } else {
                         alert(`Không thể thêm số ${number}`)
                     }
                 },
-                removeSelectingNumber: function (number) {
+                removeSelectingNumber: async function (number) {
+                    await this.getListApi()
                     if (!this.number_list.includes(number)) {
                         switch (typeof number) {
                             case 'number':
@@ -339,7 +341,7 @@
                         this.number_list.sort(function (a, b) {
                             return a - b
                         })
-                        this.saveSelectNumber()
+                        await this.saveSelectNumber()
                     } else {
                         alert(`Không thể bỏ số ${number}`)
                     }
@@ -438,6 +440,7 @@
                                 this.number_list = []
                             }
                             this.current_selecting = [...this.used_selected]
+                            console.log(this.current_selecting)
                             this.data.turn_chosen = this.current_selecting.length
                         })
                         .catch(error => {
