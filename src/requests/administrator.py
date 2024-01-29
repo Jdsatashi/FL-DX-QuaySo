@@ -203,7 +203,7 @@ def account_add_list():
                 event_assign = []
                 # Loop through data in csv file
                 for i, row in csv_data.iterrows():
-                    logger.info(f"i value: {i}| Row:\n {row}")
+                    # logger.info(f"i value: {i}| Row:\n {row}")
                     if int(i) > 0:
                         # Hashing password for user
                         hashed_password = bcrypt.hashpw(row['usercode'].lower().encode("utf-8"), bcrypt.gensalt())
@@ -247,23 +247,22 @@ def account_add_list():
                             # Get turn choices
                             turn_choices = user_point // int(exchange_point)
                             # Add data to event_assign dict
-                            event_assign.append({
+                            event_join_data = {
                                 'user_id': str(user_id),
                                 'event_id': event_id,
                                 'user_point': user_point,
                                 'turn_roll': turn_choices,
-                                'date_created': now
-                            })
-                if event is not None:
-                    try:
-                        # Handing add data
-                        join_event_model.create_many(event_assign)
-                        logger.info("Assign users to event success")
-                    # Return error
-                    except Exception as e:
-                        error_info = traceback.format_exc()
-                        logger.error(f'Error when upload csv list.\nError: {e}\n{error_info}"')
-                        flash(f"Error when add file {uploaded_file.filename}!", 'warning')
+                            }
+                            event_join_exist = join_event_model.get_one({'event_id': event_id, 'user_id': str(user_id)})
+                            logger.info(f"Event join data: {event_join_exist}")
+                            if event_join_exist is None:
+                                logger.info(f"Assign user to event")
+                                event_join_data.update({'date_created': now})
+                                join_event_model.create(event_join_data)
+                            else:
+                                logger.info(f"Update event of user: point {event_join_exist['user_point']} to {user_point}")
+                                event_join_data.update({'date_updated': now})
+                                join_event_model.update(event_join_exist['_id'], event_join_data)
                 flash(f"Added file: {uploaded_file.filename} successfully!", 'success')
                 return redirect(url_for('admin.account_add_list'))
             # Return error

@@ -34,13 +34,14 @@
                                     sự kiện này</p>
                             {% endif %}
                             <p class="text-base text-slate-800 font-bold">Bạn có:</p>
+                            <p>{{ infos[id].selected_number }}</p>
                             <div x-data="{
                                 'turn_roll': '{{ infos[id].turn_roll }}',
                                 'user_point': '{{ infos[id].user_point }}',
                                 'number_choice': '{{ infos[id].number_choices }}',
                                 'point_exchange': '{{ infos[id].point_exchange }}',
                                 'selected_number': '{{ infos[id].selected_number }}',
-                            }">
+                            }" x-init="console.log(this.selected_number)">
                                 <table class="me-8 md-max:me-0 w-[80%] md-max:w-full">
                                     <tbody>
                                     <tr class="li-item">

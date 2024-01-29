@@ -45,6 +45,7 @@ def create_number_list(max_range: int, limit: int, event_id: str, user_id: str):
                 user_selected.append(int(number))
             except ValueError:
                 continue
+    logger.info(f"Number selected: {user_selected}")
     # rolled get all number was chosen
     rolled = join_event_model.get_all()
     if rolled:

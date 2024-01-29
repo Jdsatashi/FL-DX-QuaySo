@@ -1,3 +1,5 @@
+import traceback
+
 from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from _datetime import datetime, timedelta
@@ -52,11 +54,12 @@ def roll_number(_id):
 	data = dict()
 	# Get current event to choose number
 	events = event_model.get_one({'_id': ObjectId(_id)})
+	logger.info(f"Event data: {events}")
 	# Edit element of event
 	events['_id'] = str(events['_id'])
 	events.pop('date_created')
 	# Get range number for generating number list
-	max_range = MAX_NUMBER if 'range_number' not in events else events['range_number']
+	max_range = events.get('range_number', MAX_NUMBER)
 	# Format date follow by day-month-year for easily readable
 	date_show = datetime.strptime(events['date_close'], '%Y-%m-%d').strftime('%d-%m-%Y')
 	events.update({'date_show': date_show})
@@ -117,21 +120,47 @@ def roll_number(_id):
 
 
 def insert_select_number(str_number_list, user, event, user_event, max_range):
+	number_list = list(create_number_list(max_range, event['limit_repeat'], event['_id'], user['_id']))
+	# logger.info(f"Original list: {number_list}")
 	# Get the list and use set to remove duplicates values
 	list_selected = set(str_number_list.split(', '))
 	list_selected = list(list_selected)
+	invalid_number = []
+	user_was_selected = []
+	if 'selected_number' in user_event:
+		user_was_selected = user_event['selected_number'].split(', ')
 	# Validate if number selected more than turn choices
 	if len(list_selected) > int(user_event['turn_roll']):
 		return {
 			'message': f"Bạn chỉ được chọn {user_event['turn_roll']} số.",
-			'status': 'warning'
+			'status': 'warning',
+			'number_selected': user_was_selected
 		}
 	# Sorting data number selected
 	list_selected = sorted(list_selected, key=int)
 	if int(list_selected[len(list_selected) - 1]) > max_range:
 		return {
 			'message': f"Lựa chọn không hợp lệ, vui lòng chọn lại.",
-			'status': 'warning'
+			'status': 'warning',
+			'number_selected': user_was_selected
+		}
+	check_list_selected = list(map(int, list_selected))
+	user_was_selected = list(map(int, user_was_selected))
+	logger.info(user_was_selected)
+	number_list = number_list + user_was_selected
+	logger.info(f"List of number {number_list}")
+	for i in check_list_selected:
+		logger.info(f"Type of i: {type(i)} | type of compare: {type(number_list)}")
+		if i not in number_list:
+			invalid_number.append(i)
+		else:
+			continue
+	logger.info(f"invalid number {invalid_number}")
+	if any(invalid_number):
+		return {
+			'message': f"Các số [{invalid_number}] đã được chọn.",
+			'status': 'warning',
+			'number_selected': user_was_selected
 		}
 	# Change data type of close_date value to datetime
 	close_date = event['date_close']
@@ -170,7 +199,8 @@ def insert_select_number(str_number_list, user, event, user_event, max_range):
 			logger.error(f"Error when choosing number.\n{e}")
 			return {
 				'message': "Lỗi server, vui lòng thử lại.",
-				'status': 'warning'
+				'status': 'warning',
+				'number_selected': user_was_selected
 			}
 	# Case re-choice number
 	else:
@@ -189,11 +219,12 @@ def insert_select_number(str_number_list, user, event, user_event, max_range):
 			}
 		# Return exception error
 		except Exception as e:
-			flash("Lỗi server, vui lòng thử lại.")
-			logger.error(f"Error when re choosing number.\n{e}")
+			error_info = traceback.format_exc()
+			logger.error(f"Error when re choosing number.\n{e} | Error: {error_info}")
 			return {
 				'message': "Lỗi server, vui lòng thử lại.",
-				'status': 'warning'
+				'status': 'warning',
+				'number_selected': user_was_selected
 			}
 
 
@@ -209,12 +240,13 @@ def information():
 		return redirect(url_for('home'))
 	# Create data dict to store data
 	data = {}
-
+	
 	list_event_joined = list()
 	# Get event user joined
 	join_event = join_event_model.get_many({'user_id': user['_id']})
 	for event in join_event:
 		list_event_joined.append(event['event_id'])
+		logger.info(f"Event join: {event}")
 		# If user was selected number
 		if 'selected_number' in event and 'number_choices' in event:
 			data[event['event_id']] = {
@@ -240,6 +272,7 @@ def information():
 			'event_active': event['is_active'],
 			'point_exchange': event['point_exchange']
 		})
+	logger.info(f'Data: {data}')
 	# Return render template and log info
 	message_logger.info(f"User {user['username']} tiến vào trang thông tin")
 	return render_template('choose_number/info.html', infos=data, user=user, title="Thông tin sự kiện")

@@ -336,7 +336,7 @@ def select_number(event_id, user_id):
     user['_id'] = str(user['_id'])
     user_event['_id'] = str(user_event['_id'])
     str_number_list = request.json.get('str_number_list')
-    max_range = event.get('rang_number', MAX_NUMBER)
+    max_range = event.get('range_number', MAX_NUMBER)
     logger.info('test this: ' + str_number_list)
     data = insert_select_number(str_number_list, user, event, user_event, max_range)
     return jsonify({
