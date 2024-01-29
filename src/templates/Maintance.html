@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/tailwind.min.css') }}">
+</head>
+<body>
+<div class="w-full element-center">
+    <div class="card-simple w-[480px] rounded-md md-max:w-full mt-36 md-max:mt-24 z-10">
+        <div class="my-12 mx-20 md-max:my-8 md-max:mx-16">
+            <div class="element-center mt-2 mb-4">
+                <h1 class="font-bold text-5xl">Lỗi: {{ error_code }}</h1>
+            </div>
+            <div>
+                <p class="font-medium text-slate-700"><b class="text-lg">Bảo trì</b></p>
+            </div>
+            <div class="flex justify-end mt-4">
+                <p class="font-medium">Hệ thống tạm bảo trì để cập nhập, vui lòng quay lại vào khoảng 2.00pm.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+</html>

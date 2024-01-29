@@ -7,12 +7,13 @@ from src.requests.authenticate import authorize_user
 # function to home page
 @app.route('/')
 def home():
-    user = authorize_user()
-    if user:
-        if '_id' in session:
-            session['_id'] = str(user['_id'])
-        message_logger.info(f"{user['username']} đã tiến vào trang chủ.")
-    return render_template('home.html', title='Trang chủ')
+    # user = authorize_user()
+    # if user:
+    #     if '_id' in session:
+    #         session['_id'] = str(user['_id'])
+    #     message_logger.info(f"{user['username']} đã tiến vào trang chủ.")
+    # return render_template('home.html', title='Trang chủ')
+    return render_template('Maintance.html')
 
 
 # function handle error 404
@@ -47,7 +48,7 @@ def service_unavailable(e):
 
 from src.requests import authenticate, roll_number, administrator, event
 
-auth_route = authenticate
-roll_number_route = roll_number
-admin_route = administrator
-event_route = event
+# auth_route = authenticate
+# roll_number_route = roll_number
+# admin_route = administrator
+# event_route = event
