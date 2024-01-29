@@ -37,6 +37,39 @@
             </div>
         </div>
         <!-- Card modal -->
+        <div id="overlay" tabindex="-1" x-show="model_confirm" x-cloak x-transition.delay.75ms
+             class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 bg-slate-700 bg-opacity-75 justify-center items-center w-full md:inset-0 h-full"
+        >
+            <div class="grid place-items-center mt-24 md-max:mt-0 pb-24">
+                <div class="card-simple rounded-lg lg:w-[760px] md-max:w-full" id="main-modal"
+                     @click.away="model_confirm = false">
+                    <div class="w-full h-full">
+                        <div class="card-header rounded-t-lg bg-green-500 mb-1">
+                            <h2 class="card-title text-white">Xác nhận lựa chọn.</h2>
+                        </div>
+                        <div class="card-content bg-white mt-4 w-auto h-auto ring-1 ring-amber-100 ring-opacity-10">
+                            <div class="element-center">
+                                <p class="w-auto text-xl md-max:text-2xl">Các số đã chọn:</p>
+                            </div>
+                            <div class="flex justify-center mt-3 w-auto">
+                                <div id="confirm-result"
+                                     class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-3 xl-max:text-xl">
+                                    <template x-for="number in current_selecting">
+                                        <p class="item-list-result item-confirm-modal" x-text="number">
+                                        </p>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-center me-4">
+                                <button type="button" class="button-simple" @click="model_confirm = false">Hủy
+                                </button>
+                                <button class="btn-primary ms-3 w-32 md-max:w-auto" @click="saveSelectNumber()">Xác nhận</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="w-auto h-auto md-max:h-fl md-max:w-fl -z-50">
             <img src="{{ url_for('static', filename='assets/background.jpg') }}" alt="Background">
         </div>
@@ -72,8 +105,7 @@
                             </button>
                         </div>
                         <div class="card-content bg-white mt-4 w-auto mb-4 h-auto ring-1 ring-amber-100 ring-opacity-10">
-                            <p class="mt1 mb-2 text-md font-medium text-slate-700 text-center" x-show="desktop">Thời
-                                gian còn lại:
+                            <p class="mt1 mb-2 text-md font-medium text-slate-700 text-center" x-show="desktop">Thời gian còn lại:
                                 <span class="text-red-600" x-text="count_down"></span>
                             </p>
                             <div class="mb-4">
@@ -188,7 +220,9 @@
                                     </div>
                                     <div class="flex justify-center w-auto">
                                         <div class="w-auto md-max:w-full grid grid-cols-5 md-max:grid-cols-4 xl-max:text-xl">
-                                            <template x-for="number in current_selecting">
+
+                                            <template id="show-selected-number" x-for="number in current_selecting"
+                                                      :key="number">
                                                 <p :id="'li-result-' + number" class="item-card"
                                                    :title="'Số ' + number">
                                                     <span class="item-list" x-text="number"></span>
@@ -251,7 +285,7 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <h3 class="text-2xl">Các số khả dụng: </h3>
+                        <h3 class="text-2xl">Các số khả dụng:</h3>
                     </div>
 
                     <div class="w-auto mx-32 my-4 grid grid-cols-10 gap-2 md-max:gap-0.5 lg-max:mx-4 lg-max:grid-cols-6">
@@ -277,10 +311,7 @@
         let listUsedSelected = '{{ data.number_rolled }}'.replace(/[\[\] ']/g, '').replace(/&#39;/g, "'").replace(/[\[\] ']/g, '')
         listUsedSelected = listUsedSelected.split(',')
 
-        const list_api = window.location.protocol + '//' + window.location.host + '/api/number_list/' + '{{ data._id }}'
-
         let currentUrl = window.location.href
-
 
         function dataInit() {
             return {
@@ -294,14 +325,14 @@
                     'turn_chosen': parseInt('{{ data.turn_chosen }}'),
                     'point_exchange': parseInt('{{ data.events.point_exchange }}'),
                 },
-                'number_list': [],
+                'number_list': arrData,
+                'number_selected': listUsedSelected,
                 'used_selected': [],
                 'current_selecting': [],
                 'desktop': window.innerWidth >= 1024,
                 'model_confirm': false,
                 'search_value': '',
                 'random_loop': 0,
-                'total_available_number': 0,
                 'count_down': '',
                 'fModel': false,
                 'fModel_message': '',
@@ -323,7 +354,6 @@
                         }
                         this.current_selecting.push(number)
                         this.resetSearchQuery()
-                        this.saveSelectNumber()
                     } else {
                         alert(`Không thể thêm số ${number}`)
                     }
@@ -346,7 +376,6 @@
                         this.number_list.sort(function (a, b) {
                             return a - b
                         })
-                        this.saveSelectNumber()
                     } else {
                         alert(`Không thể bỏ số ${number}`)
                     }
@@ -378,7 +407,7 @@
                     }
                 },
                 validateSelectNumber: function (number) {
-                    if (this.data.turn_roll <= 0) {
+                    if (this.data.turn_roll <= 0){
                         alert(`Bạn không có lượt chọn số.`)
                     } else if (this.data.turn_roll > this.current_selecting.length) {
                         if (!this.current_selecting.includes(number)) {
@@ -422,41 +451,19 @@
                     })
                         .then((response) => response.json())
                         .then(result => {
+                            this.number_selected = result.data.number_selected
                             this.current_selecting = result.data.number_selected
                             // this.data.turn_chosen = this.current_selecting.length
-                            // this.model_confirm = false
+                            this.model_confirm = false
+                            this.fModel = true
+                            this.fModel_message = result.data.message
                             this.fModel_category = result.data.status
-                            if (this.fModel_category === 'warning' || this.fModel_category === 'danger') {
-                                this.fModel = true
-                                this.fModel_message = result.data.message
-                            }
-                            this.data.turn_chosen = this.current_selecting.length
-                            refreshList(this)
+                            console.log(this.number_selected.length)
+                            this.data.turn_chosen = this.number_selected.length
                         })
                         .catch(error => {
                             this.model_confirm = false
                             //alert('Server gặp lỗi, vui lòng thử lại sau.')
-                            console.error('Error:', error);
-                        });
-                },
-                getListApi: async function () {
-                    await fetch(list_api, {
-                        method: 'GET'
-                    })
-                        .then(response => response.json())
-                        .then(response => {
-                            this.number_list = response.data.pickable_numbers.join(', ').split(', ')
-                            this.used_selected = response.data.user_selected.join(', ').split(', ')
-                            if(response.data.user_selected.length === 0){
-                                this.used_selected = []
-                            }
-                            if(response.data.pickable_numbers.length === 0){
-                                this.number_list = []
-                            }
-                            this.current_selecting = [...this.used_selected]
-                        })
-                        .catch(error => {
-                            this.model_confirm = false
                             console.error('Error:', error);
                         });
                 }
@@ -469,24 +476,14 @@
             window.addEventListener('resize', function () {
                 _this.desktop = window.innerWidth >= 1024
             })
-            refreshList(_this)
-            setInterval(() => refreshList(_this), 30000)
-        }
-
-        function refreshList(_this) {
-            _this.getListApi()
-            if (_this.current_selecting.length === 1 && _this.current_selecting[0] === '') {
-                _this.current_selecting = []
+            if (_this.number_selected.length == 1 && _this.number_selected[0] == '') {
+                _this.number_selected = []
             }
-            if (_this.current_selecting.some(value => value === '')) {
-                _this.current_selecting.filter(value => value !== '')
+            if (_this.number_selected.some(value => value === '')) {
+                _this.number_selected.filter(value => value !== '')
             }
-
-            if (_this.number_list.length === 1 && _this.number_list[0] === '') {
-                _this.number_list = []
-            }
-            if (_this.number_list.some(value => value === '')) {
-                _this.number_list.filter(value => value !== '')
+            if (_this.data.turn_chosen > 0) {
+                _this.current_selecting = [..._this.number_selected]
             }
         }
     </script>

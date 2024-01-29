@@ -45,7 +45,7 @@ def create_number_list(max_range: int, limit: int, event_id: str, user_id: str):
                 user_selected.append(int(number))
             except ValueError:
                 continue
-    logger.info(f"Number selected: {user_selected}")
+    logger.info(f"Number user selected: {user_selected}")
     # rolled get all number was chosen
     rolled = join_event_model.get_all()
     if rolled:
@@ -58,6 +58,10 @@ def create_number_list(max_range: int, limit: int, event_id: str, user_id: str):
         arr = number.split(', ')
         for i in arr:
             all_number_selected.append(int(i))
+    logger.info(f"Các số đã được chọn")
+    logger.info(f"Tổng số tem đã chọn: {len(all_number_selected)}")
+    logger.info(f"Tổng số tem: {max_range * limit}")
+    logger.info(f"Số tem khả thi: {(max_range * limit) - len(all_number_selected)}")
     # Dict for number selected
     for num in all_number_selected:
         if num not in unavailable_number:
@@ -105,26 +109,26 @@ def update_user_join(_id):
         except ValueError:
             selected_number = None
             message_logger.info(f"User have selected_number is '' (None string).")
-            # Handle user:
-            message_logger.info(f"Before update user: {user['selected_number']}")
-            # Remove number > event range number
-            while selected_number is not None and  len(selected_number) > 0 and selected_number[len(selected_number) - 1] > main_event['range_number']:
-                message_logger.info(f"Removed number: [{selected_number[len(selected_number) - 1]}]")
-                selected_number.pop()
-            # Combine new list to string
-            selected_number_str = ', '.join(map(str, selected_number)) if selected_number is not None else None
-            # Try update new data
-            try:
-                join_event_model.update(user['_id'], {
-                    'turn_roll': turn_roll,
-                    'number_choices': len(selected_number),
-                    'selected_number': selected_number_str
-                })
-                message_logger.info(f"After update user: {selected_number_str}")
-            # When get error => export message
-            except Exception as e:
-                error_msg = traceback.format_exc()
-                logger.error(f"Error when update user join automatic.\nError: '{e}'\n{error_msg}")
+        # Handle user:
+        message_logger.info(f"Before update user: {user['selected_number']}")
+        # Remove number > event range number
+        while selected_number is not None and len(selected_number) > 0 and selected_number[len(selected_number) - 1] > main_event['range_number']:
+            message_logger.info(f"Removed number: [{selected_number[len(selected_number) - 1]}]")
+            selected_number.pop()
+        # Combine new list to string
+        selected_number_str = ', '.join(map(str, selected_number)) if selected_number is not None else None
+        # Try update new data
+        try:
+            join_event_model.update(user['_id'], {
+                'turn_roll': turn_roll,
+                'number_choices': len(selected_number),
+                'selected_number': selected_number_str
+            })
+            message_logger.info(f"After update user: {selected_number_str}")
+        # When get error => export message
+        except Exception as e:
+            error_msg = traceback.format_exc()
+            logger.error(f"Error when update user join automatic.\nError: '{e}'\n{error_msg}")
     event_join2 = join_event_model.get_many({
         "event_id": _id, "number_choices": {"$exists": False}, "selected_number": {"$exists": False}
     })
