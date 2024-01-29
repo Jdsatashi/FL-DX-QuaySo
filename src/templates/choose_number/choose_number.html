@@ -454,6 +454,7 @@
                                 this.number_list = []
                             }
                             this.current_selecting = [...this.used_selected]
+                            this.data.turn_chosen = this.current_selecting.length
                         })
                         .catch(error => {
                             this.model_confirm = false
