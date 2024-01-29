@@ -212,12 +212,6 @@
                                     </div>
                                 </div>
                                 <div class="element-center mb-3">
-                                    <button type="button" class="button-simple-green" id="open-modal-btn"
-                                            title="Xác nhận chọn số"
-                                            @click="openConfirmModel"
-                                    >
-                                        Xác nhận
-                                    </button>
                                     <button type="button" title="Chọn ngẫu nhiên một số" @click="randomNumber()"
                                             class="mt-2 rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-300 hover:ring-1 hover:ring-slate-400 ms-2 md-max:ms-1 md-max:px-2 md-max:w-auto">
                                         Ngẫu nhiên
@@ -298,7 +292,6 @@
                 'used_selected': [],
                 'current_selecting': [],
                 'desktop': window.innerWidth >= 1024,
-                'model_confirm': false,
                 'search_value': '',
                 'random_loop': 0,
                 'total_available_number': 0,
@@ -349,13 +342,6 @@
                         this.saveSelectNumber()
                     } else {
                         alert(`Không thể bỏ số ${number}`)
-                    }
-                },
-                openConfirmModel: function () {
-                    if (this.current_selecting.length > 0) {
-                        this.model_confirm = true
-                    } else {
-                        alert("Bạn phải chọn ít nhất một số để có thể xác nhận.")
                     }
                 },
                 resetSearchQuery: function () {
@@ -424,7 +410,6 @@
                         .then(result => {
                             this.current_selecting = result.data.number_selected
                             // this.data.turn_chosen = this.current_selecting.length
-                            // this.model_confirm = false
                             this.fModel_category = result.data.status
                             if (this.fModel_category === 'warning' || this.fModel_category === 'danger') {
                                 this.fModel = true
@@ -434,7 +419,6 @@
                             refreshList(this)
                         })
                         .catch(error => {
-                            this.model_confirm = false
                             //alert('Server gặp lỗi, vui lòng thử lại sau.')
                             console.error('Error:', error);
                         });
@@ -457,7 +441,6 @@
                             this.data.turn_chosen = this.current_selecting.length
                         })
                         .catch(error => {
-                            this.model_confirm = false
                             console.error('Error:', error);
                         });
                 }
