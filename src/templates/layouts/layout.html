@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="Og0FhgivFCwZ32ntgq0sGvajkT1efhn61dp7tdjzTR8"/>
     <title>
-        Demo {% if title %}- {{ title }}{% endif %}
+        Cty Đồng xanh {% if title %}- {{ title }}{% endif %}
     </title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/alpinejs-logo.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icon-dx.ico') }}">
     <!-- Load tailwindcss !-->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/tailwind.min.css') }}">
     <!-- Load source from child page !-->
     {% block header %}{% endblock header %}
+    {% include 'layouts/gg_analytic.html' %}
 </head>
 <body>
 <!-- Flash message Jinja blog content !-->
@@ -19,6 +20,8 @@
 <!-- Navigation bar of page !-->
 {% include 'layouts/navbar.html' %}
 <!-- Block to insert content !-->
+<img class="-z-10 w-auto h-16 hidden sm-max:block sm-max:h-fl md-max:w-fl"
+     src="{{ url_for('static', filename='assets/hinhdx.png') }}" alt="Hình đồng xanh">
 
 {% block content %}
 
