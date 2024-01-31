@@ -58,7 +58,7 @@ from src.utils.utilities import update_user_join, auto_random, update_user_role
 from src.upload_drive import upload_ggdrive
 
 
-# Upload daily log_files | Fix error
+# Upload daily log_files
 def upload_daily_log():
     upload_ggdrive.upload_to_drive(
         msg_file, app_log_file, logs.log_folder_path
