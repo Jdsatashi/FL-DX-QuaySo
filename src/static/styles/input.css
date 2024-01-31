@@ -107,7 +107,7 @@
     }
 
     .navbar {
-        @apply max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4
+        @apply flex flex-wrap items-center mx-16 lg-max:mx-2 justify-between p-4
     }
 
     .nav-item {
